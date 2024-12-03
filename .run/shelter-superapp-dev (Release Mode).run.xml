@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="shelter-superapp-dev (Release Mode)" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="--release" />
+    <option name="buildFlavor" value="dev" />
+    <option name="envs">
+       <entry key="enableDevOps" value="true" />
+      <entry key="enablePageIndicator" value="true" />
+    </option>
+    <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>

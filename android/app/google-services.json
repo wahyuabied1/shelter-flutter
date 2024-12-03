@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "261984905207",
+    "project_id": "sheltersuperapp",
+    "storage_bucket": "sheltersuperapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261984905207:android:6e62beb2557ae270b070f2",
+        "android_client_info": {
+          "package_name": "com.shelter.indonesia.superapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxXvzQQZb0KfwhU4Ha4ciML0vXJeZkqRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261984905207:android:c161c710ce0503f3b070f2",
+        "android_client_info": {
+          "package_name": "com.shelter.indonesia.superapp.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxXvzQQZb0KfwhU4Ha4ciML0vXJeZkqRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
