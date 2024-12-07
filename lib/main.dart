@@ -38,7 +38,7 @@ Future<void> main() async {
 
   await _runWithDuration(
     future: _initialization(),
-    millisecond: 1000,
+    millisecond: 800,
   );
 
   /// Finding initial route based on login status

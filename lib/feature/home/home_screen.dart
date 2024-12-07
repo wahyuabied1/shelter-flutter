@@ -1,40 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:shelter_super_app/feature/home/main/main_home_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final int selectedPage;
   final bool showAlreadyLogin;
 
   const HomeScreen({
-    super.key,
+    Key? key,
     this.selectedPage = 0,
     this.showAlreadyLogin = false,
   });
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentPage = 0;
+  PageController? _pageController;
+
+  void _onNavigationTapped(int index) {
+    setState(() {
+      _currentPage = index;
+      _pageController?.jumpToPage(index);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentPage);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Screen'),
-        centerTitle: true, // Centers the title
-        backgroundColor: Colors.blue, // Customize the app bar color
-      ),
-      body: const Center(
-        child: Text(
-          'Welcome to the Home Screen!',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      backgroundColor: Colors.blue.shade700,
+      body: SafeArea(
+        child: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _pageController,
+          children: const [
+            MainHomeScreen(),
+            MainHomeScreen(),
+            MainHomeScreen(),
+          ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Action for the button
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Floating Action Button Pressed!'),
-            ),
-          );
-        },
-        backgroundColor: Colors.blue, // Floating button color
-        child: Icon(Icons.add), // Floating button icon
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(Icons.home, 'Home', 0),
+              _buildNavItem(Icons.notifications, 'Notifikasi', 1),
+              _buildNavItem(Icons.person, 'Profile', 2),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final isSelected = _currentPage == index;
+
+    return GestureDetector(
+      onTap: () => _onNavigationTapped(index),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 0, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue : Colors.transparent,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Container(
+          height: 50,
+          width: 80,
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : Colors.grey,
+              ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

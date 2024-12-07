@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/app/env_define.dart';
 import 'package:shelter_super_app/app/theme_extensions.dart';
+import 'package:shelter_super_app/core/dependency_injection/service_locator.dart';
+import 'package:shelter_super_app/core/network/http/http_inspector.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 
 /// Provide helper and utility function for debugging a page
@@ -15,12 +17,12 @@ class PageWrapper extends StatelessWidget {
   });
 
   List<DebugAction> _getAction() {
+    final HttpInspector httpInspector = serviceLocator.get();
+
     return [
       DebugAction(
         title: 'Dev Ops',
-        action: (context) => context.pushNamed(
-          HomepageRoutes.main.name!,
-        ),
+        action: (context) => httpInspector.showInspector(),
       ),
     ];
   }

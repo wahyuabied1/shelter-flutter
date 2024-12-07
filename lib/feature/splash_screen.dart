@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 logoImage,
                 Container(
-                  margin: EdgeInsets.only(top: 24),
+                  margin: const EdgeInsets.only(top: 24),
                   child: Text(
                     "SHELTER SUPER APPS",
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
