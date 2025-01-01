@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,6 +11,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool _isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,13 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'SHELTER SUPER APPS',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff1960D3)
-              ),
+            Image.asset(
+              width: 220,
+              AppAssets.ilLogo,
             ),
             const SizedBox(height: 20),
             Container(
@@ -52,20 +50,50 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const TextField(
+                  // Email TextField
+                  TextField(
                     decoration: InputDecoration(
-                      hintText: 'padadang@gmail.com',
                       labelText: 'Email',
+                      border: const OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide:  BorderSide(color: Colors.black26),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide:  BorderSide(color: Colors.blue.shade700),
+                      ),
                     ),
+                    keyboardType: TextInputType.emailAddress,
                   ),
+                  const SizedBox(height: 16.0),
                   const SizedBox(height: 10),
-                  const TextField(
+                  // Password TextField
+                  TextField(
+                    obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
-                      hintText:  '12345678',
+                      border: const OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide:  BorderSide(color: Colors.black26),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide:  BorderSide(color: Colors.blue.shade700),
+                      ),
                       labelText: 'Password',
-                      suffixIcon: Icon(Icons.visibility_off),
+
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
                     ),
-                    obscureText: true,
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -77,11 +105,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 80, vertical: 15),
                     ),
-                    child: const Text('Login',style: TextStyle(
-                      color: Colors.white,
-                      fontSize : 18,
-                      fontWeight: FontWeight.bold,
-                    ),),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),

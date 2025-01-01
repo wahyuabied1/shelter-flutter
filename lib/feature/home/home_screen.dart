@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/feature/home/main/main_home_screen.dart';
+import 'package:shelter_super_app/feature/home/notifikasi/notification_screen.dart';
+import 'package:shelter_super_app/feature/home/profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final int selectedPage;
@@ -42,35 +45,31 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: _pageController,
           children: const [
             MainHomeScreen(),
-            MainHomeScreen(),
-            MainHomeScreen(),
+            NotificationScreen(),
+            ProfileScreen(),
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 10,
-                offset: Offset(0, -2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.home, 'Home', 0),
-              _buildNavItem(Icons.notifications, 'Notifikasi', 1),
-              _buildNavItem(Icons.person, 'Profile', 2),
-            ],
-          ),
+      bottomSheet: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 10,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(Icons.home, 'Home', 0),
+            _buildNavItem(Icons.notifications, 'Notifikasi', 1),
+            _buildNavItem(Icons.person, 'Profile', 2),
+          ],
         ),
       ),
     );

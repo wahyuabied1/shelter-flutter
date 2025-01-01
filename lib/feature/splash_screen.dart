@@ -26,8 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     logoImage = Image.asset(
-      AppAssets.ilEmailPng,
-      scale: 2,
+      width: 220,
+      AppAssets.ilLogo,
     );
   }
 
@@ -52,17 +52,6 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 logoImage,
-                Container(
-                  margin: const EdgeInsets.only(top: 24),
-                  child: Text(
-                    "SHELTER SUPER APPS",
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff1960D3),
-                        ),
-                  ),
-                )
               ],
             ),
           ),

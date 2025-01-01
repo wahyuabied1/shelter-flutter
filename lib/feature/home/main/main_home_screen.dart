@@ -161,6 +161,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                     );
                   }).toList(),
                 ),
+                SizedBox(height: 80.h)
               ],
             ),
           ),

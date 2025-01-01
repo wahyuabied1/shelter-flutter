@@ -21,10 +21,10 @@ import 'package:upgrader/upgrader.dart';
 import 'core/firebase_config/firebase_remote_config_service.dart';
 import 'core/firebase_performance/firebase_performance_serivice.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 Completer<int> initializationStatus = Completer();
 
 Future<void> main() async {
+
   runApp(
     MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
