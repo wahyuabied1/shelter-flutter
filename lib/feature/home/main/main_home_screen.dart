@@ -2,8 +2,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
-class MainHomeScreen extends StatefulWidget{
+class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});
 
   @override
@@ -23,6 +25,7 @@ class _MainHomeState extends State<MainHomeScreen> {
       'assets/images/il_example_ads.jpg'
     ];
   }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -63,7 +66,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0,
-                childAspectRatio: 4 / 2,
+                childAspectRatio: 3 / 2,
               ),
               children: [
                 _buildStatisticCard('7', 'TOTAL KARYAWAN'),
@@ -73,22 +76,28 @@ class _MainHomeState extends State<MainHomeScreen> {
               ],
             ),
           ),
-      
+
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildQuickActionButton(
-                    AppAssets.ilIconHadirqu, 'HadirQu', '(Kehadiran)'),
+                    AppAssets.ilIconHadirqu, 'HadirQu', '(Kehadiran)', () {
+                  context.pushNamed(HadirQuRoutes.home.name!);
+                }),
                 _buildQuickActionButton(
-                    AppAssets.ilIconIssuequ, 'IssueQu', '(Kehadiran)'),
+                    AppAssets.ilIconIssuequ, 'IssueQu', '(Kehadiran)', () {
+                  // context.pushNamed(HadirQuRoutes.home.name!);
+                }),
                 _buildQuickActionButton(
-                    AppAssets.ilIconGuard, 'Guard', '(Keamanan)'),
+                    AppAssets.ilIconGuard, 'Guard', '(Keamanan)', () {
+                  // context.pushNamed(HadirQuRoutes.home.name!);
+                }),
               ],
             ),
           ),
-      
+
           // Notifications Section
           Container(
             decoration: BoxDecoration(
@@ -101,11 +110,15 @@ class _MainHomeState extends State<MainHomeScreen> {
             child: Column(
               children: [
                 _buildSectionHeader('Notifikasi', 'Lihat Semua'),
-                _buildNotificationItem('HadirQu',
-                    'Pengajuan Cuti dari Agus Hariyono', AppAssets.ilIconIssuequ),
-                _buildNotificationItem('IssueQu',
-                    'Presensi Karyawan dari Natasha Romanov', AppAssets.ilIconHadirqu),
-      
+                _buildNotificationItem(
+                    'HadirQu',
+                    'Pengajuan Cuti dari Agus Hariyono',
+                    AppAssets.ilIconIssuequ),
+                _buildNotificationItem(
+                    'IssueQu',
+                    'Presensi Karyawan dari Natasha Romanov',
+                    AppAssets.ilIconHadirqu),
+
                 // Promotions Section
                 _buildSectionHeader('Promosi', null),
                 Container(
@@ -131,7 +144,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                     options: CarouselOptions(
                       enlargeCenterPage: true,
                       disableCenter: true,
-                      aspectRatio: 10/5,
+                      aspectRatio: 10 / 5,
                       autoPlay: true,
                       onPageChanged: (index, reason) {
                         setState(() {
@@ -149,13 +162,16 @@ class _MainHomeState extends State<MainHomeScreen> {
                       child: Container(
                         width: 6.w,
                         height: 6.h,
-                        margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 2.w),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 8.h, horizontal: 2.w),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Color(0x9f4376f8))
-                              .withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
+                          color:
+                              (Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.white
+                                      : Color(0x9f4376f8))
+                                  .withOpacity(
+                                      _currentIndex == entry.key ? 0.9 : 0.4),
                         ),
                       ),
                     );
@@ -201,35 +217,44 @@ class _MainHomeState extends State<MainHomeScreen> {
     );
   }
 
-  Widget _buildQuickActionButton(String image, String title, String subtitle) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.white,
-          child: Image.asset(
-            image,
-            width: 30.w,
-            height: 30.h,
-          ),
+  Widget _buildQuickActionButton(
+      String image, String title, String subtitle, Function onTap) {
+    return InkWell(
+      onTap: (){
+        onTap.call();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 4.h),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.white,
+              child: Image.asset(
+                image,
+                width: 30.w,
+                height: 30.h,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Colors.white70,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 8.h),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 12.sp,
-            color: Colors.white70,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
