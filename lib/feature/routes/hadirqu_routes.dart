@@ -1,10 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/routing/core/a_page.dart';
 import 'package:shelter_super_app/feature/hadirqu/employee/list_employee_screen.dart';
-import 'package:shelter_super_app/feature/hadirqu/employee/report_dashboard/report_dashboard_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/home/hadirqu_home.dart';
-import 'package:shelter_super_app/feature/home/home_screen.dart';
-import 'package:shelter_super_app/feature/login/login_screen.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_dashboard_screen.dart';
 
 class HadirQuRoutes {
   HadirQuRoutes._();

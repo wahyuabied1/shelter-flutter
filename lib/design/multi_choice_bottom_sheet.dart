@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class EmployeeFilterBottomSheet extends StatefulWidget {
+class MultiChoiceBottomSheet extends StatefulWidget {
+  final String title;
+  final Map<String, bool> choice;
+
+  const MultiChoiceBottomSheet({
+    super.key,
+    required this.title,
+    required this.choice,
+  });
+
   @override
-  State<EmployeeFilterBottomSheet> createState() =>
-      _EmployeeFilterBottomSheetState();
+  State<MultiChoiceBottomSheet> createState() => _MultiChoiceBottomSheetState();
 }
 
-class _EmployeeFilterBottomSheetState extends State<EmployeeFilterBottomSheet> {
-  final Map<String, bool> departments = {
-    "Dept. Keamanan": false,
-    "Dept. Kebersihan": false,
-    "Dept. Quality Control": false,
-    "Dept. Produksi": false,
-    "Dept. Sales": false,
-  };
-
+class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,7 +27,7 @@ class _EmployeeFilterBottomSheetState extends State<EmployeeFilterBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Departemen",
+                widget.title,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               IconButton(
@@ -38,18 +39,25 @@ class _EmployeeFilterBottomSheetState extends State<EmployeeFilterBottomSheet> {
           Expanded(
             child: ListView(
               shrinkWrap: true,
-              children: departments.keys.map((dept) {
+              children: widget.choice.keys.map((dept) {
                 return CheckboxListTile(
                   controlAffinity: ListTileControlAffinity.leading,
                   checkColor: Colors.white,
                   activeColor: Colors.blue.shade700,
-                  title: Text(dept),
-                  subtitle: Text(
-                      "${(departments.keys.toList().indexOf(dept) + 1) * 3} Karyawan"),
-                  value: departments[dept],
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(dept),
+                      Text(
+                        "${(widget.choice.keys.toList().indexOf(dept) + 1) * 3} Karyawan",
+                        style: TextStyle(fontSize: 12.sp,color: Colors.grey.shade600),
+                      )
+                    ],
+                  ),
+                  value: widget.choice[dept],
                   onChanged: (bool? value) {
                     setState(() {
-                      departments[dept] = value!;
+                      widget.choice[dept] = value!;
                     });
                   },
                 );
@@ -60,23 +68,29 @@ class _EmployeeFilterBottomSheetState extends State<EmployeeFilterBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  setState(() {
+                    widget.choice.forEach((key, value) {
+                      widget.choice[key] = false;
+                    });
+                  });
+                },
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(width: 1.0, color: Colors.blue.shade700),
                 ),
                 child: Text(
-                  "Button text",
+                  "Reset",
                   style: TextStyle(color: Colors.blue.shade700),
                 ),
               ),
-              const SizedBox(width: 12,),
+              const SizedBox(
+                width: 12,
+              ),
               SizedBox(
-                width: 200,
+                width: 220.w,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    print(
-                        "Selected departments: ${departments.entries.where((e) => e.value).map((e) => e.key).toList()}");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue.shade700,

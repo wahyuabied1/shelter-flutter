@@ -87,7 +87,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                   context.pushNamed(HadirQuRoutes.home.name!);
                 }),
                 _buildQuickActionButton(
-                    AppAssets.ilIconIssuequ, 'IssueQu', '(Kehadiran)', () {
+                    AppAssets.ilIconIssuequ, 'IssueQu', '(Keluhan)', () {
                   // context.pushNamed(HadirQuRoutes.home.name!);
                 }),
                 _buildQuickActionButton(
@@ -116,7 +116,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                     AppAssets.ilIconIssuequ),
                 _buildNotificationItem(
                     'IssueQu',
-                    'Presensi Karyawan dari Natasha Romanov',
+                    'Keluhan dijawab oleh tim ops Shelter',
                     AppAssets.ilIconHadirqu),
 
                 // Promotions Section

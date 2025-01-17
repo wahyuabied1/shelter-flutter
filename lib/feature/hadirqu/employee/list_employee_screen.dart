@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shelter_super_app/feature/hadirqu/employee/employee_filter_bottom_sheet.dart';
+import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/feature/hadirqu/employee/profile_card.dart';
 
 class ListEmployeeScreen extends StatefulWidget {
@@ -76,25 +76,24 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
           children: [
             TextField(
               decoration: InputDecoration(
-                hintText: 'Cari karyawan',
-                hintStyle: TextStyle(color: Colors.black12),
-                prefixIcon: Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  borderSide: BorderSide(width: 1,color: Colors.black12),
-                ),
-                border: const OutlineInputBorder(
+                  hintText: 'Cari karyawan',
+                  hintStyle: TextStyle(color: Colors.black12),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  enabledBorder: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(width: 1,color: Colors.black12)
-                ),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(width: 1,color: Colors.blue.shade700)
-                )
-              ),
+                    borderSide: BorderSide(width: 1, color: Colors.black12),
+                  ),
+                  border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(width: 1, color: Colors.black12)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide:
+                          BorderSide(width: 1, color: Colors.blue.shade700))),
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 10),
@@ -104,14 +103,23 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       showModalBottomSheet(
                         context: context,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(16)),
                         ),
                         builder: (context) {
-                          return EmployeeFilterBottomSheet();
+                          return MultiChoiceBottomSheet(
+                              title: "Departemen",
+                              choice: {
+                            "Dept. Keamanan": false,
+                            "Dept. Kebersihan": false,
+                            "Dept. Quality Control": false,
+                            "Dept. Produksi": false,
+                            "Dept. Sales": false,
+                          });
                         },
                       );
                     },
@@ -119,30 +127,42 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20), // Rounded corners
-                        border: Border.all(color: Colors.grey.shade300), // Light grey border
-                      ),
-                      child: const Row(children: [
-                        Text('Departemen'),
-                        SizedBox(width: 4),
-                        Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black)
-                      ],)
-                    ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          // Rounded corners
+                          border: Border.all(
+                              color: Colors.grey.shade300), // Light grey border
+                        ),
+                        child: const Row(
+                          children: [
+                            Text('Departemen'),
+                            SizedBox(width: 4),
+                            Icon(Icons.keyboard_arrow_down_sharp,
+                                color: Colors.black)
+                          ],
+                        )),
                   ),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 12.w),
                     child: InkWell(
-                      onTap: (){
+                      onTap: () {
                         showModalBottomSheet(
                           context: context,
                           shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(16)),
                           ),
                           builder: (context) {
-                            return EmployeeFilterBottomSheet();
+                            return MultiChoiceBottomSheet(
+                                title: "Jabatan",
+                                choice: {
+                              "Staff": false,
+                              "Staff Senior": false,
+                              "Supervisor": false,
+                            });
                           },
                         );
                       },
@@ -150,29 +170,41 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(20), // Rounded corners
-                            border: Border.all(color: Colors.grey.shade300), // Light grey border
+                            borderRadius: BorderRadius.circular(20),
+                            // Rounded corners
+                            border: Border.all(
+                                color:
+                                    Colors.grey.shade300), // Light grey border
                           ),
-                          child: const Row(children: [
-                            Text('Jabatan'),
-                            SizedBox(width: 4),
-                            Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black)
-                          ],)
-                      ),
+                          child: const Row(
+                            children: [
+                              Text('Jabatan'),
+                              SizedBox(width: 4),
+                              Icon(Icons.keyboard_arrow_down_sharp,
+                                  color: Colors.black)
+                            ],
+                          )),
                     ),
                   ),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       showModalBottomSheet(
                         context: context,
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(16)),
                         ),
                         builder: (context) {
-                          return EmployeeFilterBottomSheet();
+                          return MultiChoiceBottomSheet(
+                              title: "Group/Template",
+                              choice: {
+                                "Group 1": false,
+                                "Group 2": false,
+                              });
                         },
                       );
                     },
@@ -180,18 +212,23 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20), // Rounded corners
-                          border: Border.all(color: Colors.grey.shade300), // Light grey border
+                          borderRadius: BorderRadius.circular(20),
+                          // Rounded corners
+                          border: Border.all(
+                              color: Colors.grey.shade300), // Light grey border
                         ),
-                        child: Row(children: [
-                          Text('Group/Template'),
-                          SizedBox(width: 4),
-                          Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black)
-                        ],)
-                    ),
+                        child: Row(
+                          children: [
+                            Text('Group/Template'),
+                            SizedBox(width: 4),
+                            Icon(Icons.keyboard_arrow_down_sharp,
+                                color: Colors.black)
+                          ],
+                        )),
                   ),
                 ],
               ),

@@ -186,7 +186,7 @@ class _HadirQuHomeState extends State<HadirQuHome>
                   ),
                   Container(
                     constraints:
-                        const BoxConstraints(minHeight: 200, maxHeight: 400),
+                        const BoxConstraints(minHeight: 200, maxHeight: 450),
                     child: TabBarView(
                       controller: tabController,
                       children: [

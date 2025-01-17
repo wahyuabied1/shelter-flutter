@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
+import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/rekap_tile.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_status_chip.dart';
 
 class ReportDashboardScreen extends StatefulWidget {
   const ReportDashboardScreen({super.key});
@@ -11,6 +14,8 @@ class ReportDashboardScreen extends StatefulWidget {
 }
 
 class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
+  DateTime selectedDate = DateTime.now();
+
   Map<String, double> present = {
     "Tepat Waktu": 10,
     "Terlambat & Di luar wilayah": 5,
@@ -80,19 +85,39 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                   Material(
                     color: Colors.white,
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(16)),
+                          ),
+                          builder: (context) {
+                            return const MultiChoiceBottomSheet(
+                                title: "Departemen",
+                                choice: {
+                                  "Dept. Keamanan": false,
+                                  "Dept. Kebersihan": false,
+                                  "Dept. Quality Control": false,
+                                  "Dept. Produksi": false,
+                                  "Dept. Sales": false,
+                                });
+                          },
+                        );
+                      },
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                             // Rounded corners
                             border: Border.all(
-                                color: Colors.grey.shade300), // Light grey border
+                                color:
+                                    Colors.grey.shade300), // Light grey border
                           ),
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,20 +143,23 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                       Material(
                         color: Colors.white,
                         child: InkWell(
-                          onTap: () {},
-                          customBorder: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
+                          onTap: () {
+                            setState(() {
+                              selectedDate =
+                                  selectedDate.add(const Duration(days: -1));
+                            });
+                          },
                           child: Container(
-                            padding: EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: Colors.transparent,
                               borderRadius: BorderRadius.circular(6),
                               // Rounded corners
                               border: Border.all(
-                                  color: Colors.grey.shade300), // Light grey border
+                                  color:
+                                      Colors.grey.shade300), // Light grey border
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.arrow_back_ios_new_outlined,
                               size: 20,
                             ),
@@ -142,30 +170,33 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                       Material(
                         color: Colors.white,
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            _selectDate(context);
+                          },
                           customBorder: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Container(
                               width: 240.w,
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 borderRadius: BorderRadius.circular(12),
                                 // Rounded corners
                                 border: Border.all(
-                                    color:
-                                        Colors.grey.shade300), // Light grey border
+                                    color: Colors
+                                        .grey.shade300), // Light grey border
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.calendar_today_outlined),
-                                      SizedBox(width: 8),
-                                      Text(DateTime.now().eeeeddMMMyyyy(' ')),
+                                      const Icon(Icons.calendar_today_outlined),
+                                      const SizedBox(width: 8),
+                                      Text(selectedDate.eeeeddMMMyyyy(' ')),
                                     ],
                                   ),
                                 ],
@@ -176,10 +207,12 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                       Material(
                         color: Colors.white,
                         child: InkWell(
-                          onTap: () {},
-                          customBorder: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
+                          onTap: () {
+                            setState(() {
+                              selectedDate =
+                                  selectedDate.add(const Duration(days: 1));
+                            });
+                          },
                           child: Container(
                             width: 40,
                             padding: const EdgeInsets.all(8),
@@ -188,9 +221,10 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                               borderRadius: BorderRadius.circular(6),
                               // Rounded corners
                               border: Border.all(
-                                  color: Colors.grey.shade300), // Light grey border
+                                  color:
+                                      Colors.grey.shade300), // Light grey border
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.arrow_forward_ios_outlined,
                               size: 20,
                             ),
@@ -204,21 +238,23 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
             ),
             // Karyawan Hadir Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
               child: Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "Karyawan Hadir",
                           ),
                           TextButton(
@@ -232,7 +268,7 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                       ),
                       PieChart(
                         dataMap: present,
-                        animationDuration: Duration(milliseconds: 500),
+                        animationDuration: const Duration(milliseconds: 500),
                         chartLegendSpacing: 24,
                         chartRadius: MediaQuery.of(context).size.width / 3.2,
                         colorList: presentColor,
@@ -255,22 +291,42 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                         // gradientList: ---To add gradient colors---
                         // emptyColorGradient: ---Empty Color gradient---
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       GridView(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                           childAspectRatio: 2.4 / 2,
                         ),
-                        children: [
-                          _buildStatusChip("T", "Terlambat", "10 Orang"),
-                          _buildStatusChip("P", "Pulang Cepat", "5 Orang"),
-                          _buildStatusChip("?", "Di luar wilayah", "6 Orang"),
-                          _buildStatusChip(
-                              "T", "Terlambat & di luar wilayah", "9 Orang"),
+                        children: const [
+                          ReportStatusChip(
+                            label: "T",
+                            title: "Terlambat",
+                            subtitle: "10 Orang",
+                            color: Colors.orange,
+                          ),
+                          ReportStatusChip(
+                            label: "P",
+                            title: "Pulang Cepat",
+                            subtitle: "5 Orang",
+                            color: Colors.orange,
+                          ),
+                          ReportStatusChip(
+                            label: "?",
+                            title: "Di luar wilayah",
+                            subtitle: "6 Orang",
+                            color: Colors.orange,
+                          ),
+                          ReportStatusChip(
+                            label: "T",
+                            title: "Terlambat & di luar wilayah",
+                            subtitle: "9 Orang",
+                            color: Colors.orange,
+                          ),
                         ],
                       ),
                     ],
@@ -287,14 +343,15 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "Karyawan Tidak Hadir",
                           ),
                           TextButton(
@@ -308,7 +365,7 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                       ),
                       PieChart(
                         dataMap: absent,
-                        animationDuration: Duration(milliseconds: 500),
+                        animationDuration: const Duration(milliseconds: 500),
                         chartLegendSpacing: 24,
                         chartRadius: MediaQuery.of(context).size.width / 3.2,
                         colorList: absentColor,
@@ -331,22 +388,42 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                         // gradientList: ---To add gradient colors---
                         // emptyColorGradient: ---Empty Color gradient---
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       GridView(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
                           childAspectRatio: 2.4 / 2,
                         ),
-                        children: [
-                          _buildStatusChip("T", "Terlambat", "4 Orang",color: Colors.red),
-                          _buildStatusChip("P", "Pulang Cepat", "2 Orang",color: Colors.red),
-                          _buildStatusChip("?", "Di luar wilayah", "1 Orang",color: Colors.red),
-                          _buildStatusChip(
-                              "T", "Terlambat & di luar wilayah", "2 Orang",color: Colors.red),
+                        children: const [
+                          ReportStatusChip(
+                            label: 'T',
+                            title: 'Terlambat',
+                            subtitle: "4 Orang",
+                            color: Colors.red,
+                          ),
+                          ReportStatusChip(
+                            label: "P",
+                            title: "Pulang Cepat",
+                            subtitle: "2 Orang",
+                            color: Colors.red,
+                          ),
+                          ReportStatusChip(
+                            label: "?",
+                            title: "Di luar wilayah",
+                            subtitle: "1 Orang",
+                            color: Colors.red,
+                          ),
+                          ReportStatusChip(
+                            label: "T",
+                            title: "Terlambat & di luar wilayah",
+                            subtitle: "2 Orang",
+                            color: Colors.red,
+                          ),
                         ],
                       ),
                     ],
@@ -367,28 +444,32 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         "Rekap Waktu Absensi",
-                        style:
-                            TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       GridView(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
-                          childAspectRatio: 4/2,
+                          childAspectRatio: 4 / 2,
                         ),
-                        children: [
-                          _buildRekapTile("Clock-in pertama", "07.30"),
-                          _buildRekapTile("Clock-out terakhir", "18.45"),
-                          _buildRekapTile("Rerata clock-in", "07.45"),
-                          _buildRekapTile("Rerata clock-out", "17.20"),
-                          _buildRekapTile("Rerata jam kerja", "7 j 30 m"),
-                          _buildRekapTile("Rerata istirahat", "1 j 15 m"),
+                        children: const [
+                          RekapTile(title: 'Clock-in pertama', value: '07.30'),
+                          RekapTile(
+                              title: 'Clock-out terakhir', value: '18.45'),
+                          RekapTile(title: 'Rerata clock-in', value: '07.45'),
+                          RekapTile(title: 'Rerata clock-out', value: '17.20'),
+                          RekapTile(
+                              title: 'Rerata jam kerja', value: '7 j 30 m'),
+                          RekapTile(
+                              title: 'Rerata istirahat', value: '1 j 15 m'),
                         ],
                       ),
                     ],
@@ -402,71 +483,29 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
     );
   }
 
-  Widget _buildStatusChip(String label, String title, String subtitle,
-      {Color color = Colors.orange}) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        // Rounded corners
-        border: Border.all(
-            color: Colors.grey.shade300), // Light grey border
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 12,
-            backgroundColor: color,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2999),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Colors.blue.shade700, // Header background color
+                onPrimary: Colors.white, // Header text color
+                onSurface: Colors.black, // Body text color
               ),
+              dialogBackgroundColor: Colors.white,
             ),
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(
-              title,
-                style: const TextStyle(
-                  fontSize: 12,
-                )
-            ),
-          ),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRekapTile(String title, String value) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        // Rounded corners
-        border: Border.all(
-            color: Colors.grey.shade300), // Light grey border
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
-          Text(value,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
+            child: child!,
+          );
+        });
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
   }
 }
