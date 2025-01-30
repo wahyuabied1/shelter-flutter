@@ -1,43 +1,35 @@
 import 'dart:async';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service.dart';
 import 'package:shelter_super_app/core/network/repository/core_http_repository.dart';
-import 'package:shelter_super_app/core/storage/core_secure_storage.dart';
+import 'package:shelter_super_app/core/network/response/scalar_response.dart';
+import 'package:shelter_super_app/data/model/user_response.dart';
+import 'package:shelter_super_app/data/network/auth_network.dart';
 
 class AuthRepository {
-  final CoreSecureStorage _secureStorage;
   final CoreHttpRepository _coreHttpRepository;
-  final FirebaseMessaging _firebaseMessaging;
-  final FirebaseRemoteConfigService _remoteConfig;
+  final AuthNetwork _authNetwork;
 
   AuthRepository(
-    this._secureStorage,
     this._coreHttpRepository,
-    this._firebaseMessaging,
-    this._remoteConfig,
+    this._authNetwork,
   );
 
   /// will not save null or empty [token], [sessionToken], [refreshToken]
   Future<void> saveSession({
-    String? tokenId,
-    String? token,
-    String? refreshToken,
-    String? sessionToken,
+    UserResponse? user,
   }) async {
-    if (tokenId != null && tokenId.isNotEmpty) {
-      await _coreHttpRepository.setTokenId(tokenId);
-    }
-    if (token != null && token.isNotEmpty) {
-      await _coreHttpRepository.setToken(token);
-    }
-    if (refreshToken != null && refreshToken.isNotEmpty) {
-      await _coreHttpRepository.setRefreshToken(refreshToken);
+    if (user?.token!= null && user!.token!.isNotEmpty) {
+      await _coreHttpRepository.setUser(user);
     }
   }
 
   Future<bool> isLoggedIn() =>
       _coreHttpRepository.getToken().then((token) => token.isNotEmpty);
+
+  Future<ScalarResponse> login(
+      {String username = '', String password = ''}) async {
+    return await _authNetwork.login(username: username, password: password);
+  }
 
   Future<void> logout({endSession = true}) async {
     await Future.wait([

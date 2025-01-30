@@ -1,36 +1,32 @@
 import 'package:shelter_super_app/app/env_define.dart';
 import 'package:shelter_super_app/core/env/api_env.dart';
-import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service.dart';
 import 'package:shelter_super_app/core/platform/platform_information.dart';
 import 'package:shelter_super_app/core/storage/core_secure_storage.dart';
+import 'package:shelter_super_app/data/model/user_response.dart';
 
 class CoreHttpRepository {
-  static const coreTokenIdKey = 'token_id';
   static const coreTokenKey = 'token';
-  static const coreRefreshTokenKey = 'refresh_token';
+  static const userKey = 'user';
   static const coreEnv = 'current_environment';
 
   final CoreSecureStorage secureStorage;
-  final FirebaseRemoteConfigService remoteConfigService;
 
-  CoreHttpRepository(this.secureStorage, this.remoteConfigService);
+  CoreHttpRepository(this.secureStorage);
 
   Future<void> setToken(String token) =>
       secureStorage.setString(coreTokenKey, token);
 
+  Future<void> setUser(UserResponse user)async {
+    setToken(user.token ?? "");
+    await secureStorage.setString(userKey, UserResponse.serialize(user));
+  }
+
+  Future<UserResponse> getUser() async{
+    return UserResponse.deserialize(userKey);
+  }
+
   // can be empty
   Future<String> getToken() => secureStorage.getString(coreTokenKey);
-
-  Future<void> setTokenId(String tokenId) =>
-      secureStorage.setString(coreTokenIdKey, tokenId);
-
-  Future<String> getTokenId() => secureStorage.getString(coreTokenIdKey);
-
-  Future<void> setRefreshToken(String refreshToken) =>
-      secureStorage.setString(coreRefreshTokenKey, refreshToken);
-
-  Future<String> getRefreshToken() =>
-      secureStorage.getString(coreRefreshTokenKey);
 
   Future<ApiEnv> getEnv() async {
     final currentEnv = await secureStorage.getString(coreEnv);
@@ -61,10 +57,6 @@ class CoreHttpRepository {
   Future<void> clear() async {
     await secureStorage.deleteData(coreTokenKey);
     await secureStorage.deleteData(coreEnv);
-    await secureStorage.deleteData(coreTokenIdKey);
   }
 
-  Future clearRefreshToken() async {
-    await secureStorage.deleteData(coreRefreshTokenKey);
-  }
 }

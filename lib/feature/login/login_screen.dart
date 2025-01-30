@@ -1,17 +1,36 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
+import 'package:shelter_super_app/core/utils/result/result.dart';
+import 'package:shelter_super_app/design/common_loading_dialog.dart';
+import 'package:shelter_super_app/feature/login/login_viewmodel.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => LoginViewModel(),
+      child: _LoginView(),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginView extends StatefulWidget {
+  @override
+  State<_LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<_LoginView> {
   bool _isPasswordVisible = false;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,16 +71,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
                   // Email TextField
                   TextField(
+                    controller: emailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       border: const OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide:  BorderSide(color: Colors.black26),
+                        borderSide: BorderSide(color: Colors.black26),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide:  BorderSide(color: Colors.blue.shade700),
+                        borderSide: BorderSide(color: Colors.blue.shade700),
                       ),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -70,22 +90,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 10),
                   // Password TextField
                   TextField(
+                    controller: passwordController,
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide:  BorderSide(color: Colors.black26),
+                        borderSide: BorderSide(color: Colors.black26),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide:  BorderSide(color: Colors.blue.shade700),
+                        borderSide: BorderSide(color: Colors.blue.shade700),
                       ),
                       labelText: 'Password',
-
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
@@ -98,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      context.pushNamed(HomepageRoutes.main.name!);
+                      login(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xff1960D3),
@@ -121,5 +143,26 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void login(BuildContext context) async {
+    var vm = context.read<LoginViewModel>();
+
+    await LoadingDialog.runWithLoading(
+      context,
+      () => context.read<LoginViewModel>().login(
+            emailController.text,
+            passwordController.text,
+          ),
+      width: 250,
+      message: "Memproses",
+    ).then((value) {
+      if (!context.mounted) return;
+      if (vm.loginResult.isSuccess) {
+        unawaited(
+            context.pushNamed(HomepageRoutes.main.name!)
+        );
+      }
+    });
   }
 }

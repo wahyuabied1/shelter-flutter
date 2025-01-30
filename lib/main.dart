@@ -13,6 +13,7 @@ import 'package:shelter_super_app/app/env_define.dart';
 import 'package:shelter_super_app/core/dependency_injection/service_locator.dart';
 import 'package:shelter_super_app/core/platform/platform_information.dart';
 import 'package:shelter_super_app/core/utils/common.dart';
+import 'package:shelter_super_app/data/repository/auth_repository.dart';
 import 'package:shelter_super_app/feature/profile/view_model/shared_user_model.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 import 'package:shelter_super_app/feature/splash_screen.dart';
@@ -59,10 +60,10 @@ Future<void> main() async {
 }
 
 Future<String> _findInitialRoute() async {
-  final isLoggedIn = false;
-  // if (isLoggedIn) {
-  //   return HomepageRoutes.main.path;
-  // }
+  final isLoggedIn = await serviceLocator<AuthRepository>().isLoggedIn();;
+  if (isLoggedIn) {
+    return HomepageRoutes.main.path;
+  }
   return HomepageRoutes.login.path;
 }
 

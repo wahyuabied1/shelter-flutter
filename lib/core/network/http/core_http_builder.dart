@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:http/http.dart' as http;
 import 'package:shelter_super_app/core/env/api_env.dart';
-import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service.dart';
 import 'package:shelter_super_app/core/network/http/core_http_client.dart';
 import 'package:shelter_super_app/core/network/repository/core_http_repository.dart';
 import 'package:shelter_super_app/core/network/response/type_defs.dart';
@@ -13,13 +12,11 @@ class CoreHttpBuilder {
   final Map<String, String> defaultHeaders;
   final http.Client Function() coreClient;
   final CoreHttpRepository coreHttpRepository;
-  final FirebaseRemoteConfigService remoteConfig;
 
   CoreHttpBuilder({
     required this.defaultHeaders,
     required this.coreClient,
     required this.coreHttpRepository,
-    required this.remoteConfig,
   });
 
   Future<ApiEnv> get apiEnv => coreHttpRepository.getEnv();
@@ -63,8 +60,7 @@ class CoreHttpBuilder {
     return CoreHttpClient(
       uri,
       finalHeaders,
-      coreClient,
-      remoteConfig,
+      coreClient
     );
   }
 }

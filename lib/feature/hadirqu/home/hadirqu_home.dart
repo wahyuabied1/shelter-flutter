@@ -121,12 +121,14 @@ class _HadirQuHomeState extends State<HadirQuHome>
                             _buildQuickActionButton(
                               image: AppAssets.icReportDashboard,
                               title: 'Report Dashboard',
-                              onTap: () => context
-                                  .pushNamed(HadirQuRoutes.reportDashboard.name!),
+                              onTap: () => context.pushNamed(
+                                  HadirQuRoutes.reportDashboard.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icPresensiKaryawan,
                               title: 'Presensi Karyawan',
+                              onTap: () => context.pushNamed(
+                                  HadirQuRoutes.presence.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icPresensiKaryawan,
@@ -178,6 +180,8 @@ class _HadirQuHomeState extends State<HadirQuHome>
                     tabAlignment: TabAlignment.start,
                     controller: tabController,
                     indicatorColor: Colors.blue,
+                    labelColor: Colors.blue.shade700,
+                    unselectedLabelColor: Colors.grey,
                     tabs: [
                       Tab(text: 'Izin'),
                       Tab(text: 'Cuti'),

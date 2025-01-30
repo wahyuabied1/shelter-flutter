@@ -47,5 +47,7 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>FLAVOR</key>
+        <string>$(FLAVOR)</string>
 	</dict>
 </plist>

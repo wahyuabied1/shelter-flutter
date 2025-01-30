@@ -2,12 +2,6 @@ class ApiEnv {
   static const String dev = 'dev';
   static const String prod = 'prod';
 
-  final Set<String> whitelistHost = {
-    'amartha.id',
-    'amartha.net',
-    'amartha.com'
-  };
-
   final String currentEnv;
 
   ApiEnv({
@@ -15,9 +9,9 @@ class ApiEnv {
   });
 
   String get shelter => env(
-        key: 'aplusUrl',
-        dev: 'api-aplus-dev.amartha.id/v1/api/',
-        prod: 'api.amartha.net/v1/api/',
+        key: 'striveapp',
+        dev: 'striveapp.id/api/v1/',
+        prod: 'striveapp.id/api/v1/',
       );
 
   String env({

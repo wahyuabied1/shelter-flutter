@@ -4,21 +4,18 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:shelter_super_app/core/dependency_injection/service_locator.dart';
-import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service.dart';
 import 'package:shelter_super_app/core/network/interceptor/auth_interceptor.dart';
 
 class CoreHttpClient {
   final Future<Uri> _uri;
   final Map<String, String> _additionalHeaders;
   final http.Client Function() _httpClient;
-  final FirebaseRemoteConfigService _remoteConfig;
   final _authInterceptor = serviceLocator.get<AuthInterceptor>();
 
   CoreHttpClient(
     this._uri,
     this._additionalHeaders,
     this._httpClient,
-    this._remoteConfig,
   );
 
   Future<http.Response> post<T extends Object>([T? body]) async {

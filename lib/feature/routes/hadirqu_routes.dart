@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/routing/core/a_page.dart';
 import 'package:shelter_super_app/feature/hadirqu/employee/list_employee_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/home/hadirqu_home.dart';
+import 'package:shelter_super_app/feature/hadirqu/presence/presence_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_dashboard_screen.dart';
 
 class HadirQuRoutes {
@@ -10,7 +11,8 @@ class HadirQuRoutes {
   static final mainRoutes = [
     home,
     listEmployee,
-    reportDashboard
+    reportDashboard,
+    presence
   ];
 
   static final home = GoRoute(
@@ -45,6 +47,18 @@ class HadirQuRoutes {
         key: state.pageKey,
         name: 'ReportDashboardScreen',
         child: ReportDashboardScreen(),
+      );
+    },
+  );
+
+  static final presence = GoRoute(
+    path: '/presence',
+    name: 'Presence',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'PresenceScreen',
+        child: PresenceScreen(),
       );
     },
   );
