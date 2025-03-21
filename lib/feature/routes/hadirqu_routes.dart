@@ -12,7 +12,8 @@ class HadirQuRoutes {
     home,
     listEmployee,
     reportDashboard,
-    presence
+    reportPresence,
+    logPresence
   ];
 
   static final home = GoRoute(
@@ -51,16 +52,27 @@ class HadirQuRoutes {
     },
   );
 
-  static final presence = GoRoute(
-    path: '/presence',
-    name: 'Presence',
+  static final reportPresence = GoRoute(
+    path: '/reportPreference',
+    name: 'Report Presence',
     pageBuilder: (context, state) {
       return APage(
         key: state.pageKey,
-        name: 'PresenceScreen',
-        child: PresenceScreen(),
+        name: 'ReportPresenceScreen',
+        child: const PresenceScreen(tab: 0),
       );
     },
   );
 
+  static final logPresence = GoRoute(
+    path: '/logPresence',
+    name: 'Log Presence',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'LogPresenceScreen',
+        child: const PresenceScreen(tab: 1),
+      );
+    },
+  );
 }

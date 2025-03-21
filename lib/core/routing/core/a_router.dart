@@ -117,10 +117,7 @@ class ARouteObserver extends RouteObserver<ModalRoute> {
     currentRoute = route;
 
     if (route is APageRoute) {
-      route.goRouterState.then((value) {
-        FirebaseCrashlytics.instance
-            .log('Page Changed : ${value?.name ?? 'Unknown'}');
-      });
+      route.goRouterState.then((value) {});
     }
   }
 }

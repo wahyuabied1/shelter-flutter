@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,11 +81,15 @@ _initialization() async {
   ]));
 
   //firebase
-  await retry(3, () => Firebase.initializeApp());
-  FirebasePerformanceService();
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  final remoteConfig = FirebaseRemoteConfigService();
-  serviceLocator.registerSingleton<FirebaseRemoteConfigService>(remoteConfig);
+  // await retry(3, () => Firebase.initializeApp());
+  // FirebasePerformanceService();
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // final remoteConfig = FirebaseRemoteConfigService();
+  // serviceLocator.registerSingleton<FirebaseRemoteConfigService>(remoteConfig);
+  // serviceLocator.registerSingleton<FirebaseInAppMessaging>(firebaseInAppMessaging());
+  // serviceLocator.registerSingleton<FirebaseMessaging>(firebaseMessaging());
+  // FirebaseMessaging firebaseMessaging() => FirebaseMessaging.instance;
+  // FirebaseInAppMessaging firebaseInAppMessaging() => FirebaseInAppMessaging.instance;
 
   //dependencies
   await configureCoreDependencies();

@@ -4,21 +4,26 @@ import 'package:shelter_super_app/feature/hadirqu/presence/presence_log_screen.d
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_report_screen.dart';
 
 class PresenceScreen extends StatefulWidget {
+  final int tab;
+  const PresenceScreen({super.key, required this.tab});
+
   @override
-  State<PresenceScreen> createState() => _PresenceScreenState();
+  State<PresenceScreen> createState() => _PresenceScreenState(tab: tab);
 }
 
-class _PresenceScreenState extends State<PresenceScreen> with SingleTickerProviderStateMixin{
-  late int currentTab;
+class _PresenceScreenState extends State<PresenceScreen>
+    with SingleTickerProviderStateMixin {
+  late int tab;
+  _PresenceScreenState({required this.tab});
   late TabController tabController;
 
   @override
   void initState() {
-    currentTab = 0;
-    tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    tabController =
+        TabController(length: 2, vsync: this, initialIndex: tab);
     tabController.animation!.addListener(() {
       final value = tabController.animation!.value.round();
-      if (value != currentTab && mounted) {
+      if (value != tab && mounted) {
         changePage(value);
       }
     });
@@ -27,15 +32,16 @@ class _PresenceScreenState extends State<PresenceScreen> with SingleTickerProvid
 
   void changePage(int newTab) {
     setState(() {
-      currentTab = newTab;
+      tab = newTab;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        titleSpacing: 0,
+        centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: Text(
           "Presensi Karyawan",
@@ -66,14 +72,10 @@ class _PresenceScreenState extends State<PresenceScreen> with SingleTickerProvid
               ],
             ),
             Container(
-              constraints:
-              const BoxConstraints(minHeight: 200, maxHeight: 450),
+              constraints: const BoxConstraints(minHeight: 200, maxHeight: 700),
               child: TabBarView(
                 controller: tabController,
-                children: [
-                  PresenceReportScreen(),
-                  PresenceLogScreen()
-                ],
+                children: [PresenceReportScreen(), PresenceLogScreen()],
               ),
             )
           ],

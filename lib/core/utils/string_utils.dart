@@ -44,7 +44,7 @@ extension StringValidatorExtension on String {
 
   bool get isValidEmail {
     final emailRegExp = RegExp(
-      r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$',
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,7}$',
     );
     return emailRegExp.hasMatch(this);
   }

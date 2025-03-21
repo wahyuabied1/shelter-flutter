@@ -108,7 +108,7 @@ class _HadirQuHomeState extends State<HadirQuHome>
                     Container(
                       color: Colors.transparent,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
+                          horizontal: 16, vertical: 8),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -128,11 +128,13 @@ class _HadirQuHomeState extends State<HadirQuHome>
                               image: AppAssets.icPresensiKaryawan,
                               title: 'Presensi Karyawan',
                               onTap: () => context.pushNamed(
-                                  HadirQuRoutes.presence.name!),
+                                  HadirQuRoutes.reportPresence.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icPresensiKaryawan,
                               title: 'Log Presensi',
+                              onTap: () => context.pushNamed(
+                                  HadirQuRoutes.logPresence.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icIzinKaryawan,

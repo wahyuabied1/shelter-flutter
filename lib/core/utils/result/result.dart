@@ -112,7 +112,7 @@ sealed class Result<T> with EquatableMixin {
       onResult.call(Result<T>.error(e, s));
       onError?.call(e);
       if (e is! ApiResultException) {
-        unawaited(FirebaseCrashlytics.instance.recordError(e, s));
+        // unawaited(FirebaseCrashlytics.instance.recordError(e, s));
       }
       return Future.value(false);
     }

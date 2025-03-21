@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:alice/alice.dart';
-import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -74,11 +72,6 @@ class CoreModule {
 
   CoreSecureStorage coreSecureStorage() => CoreSecureStorage.defaultInstance;
 
-  FirebaseMessaging firebaseMessaging() => FirebaseMessaging.instance;
-
-  FirebaseInAppMessaging firebaseInAppMessaging() =>
-      FirebaseInAppMessaging.instance;
-
   ARouter aRouter() => ARouter();
 
   static const _defaultHeaders = 'defaultHeaders';
@@ -88,9 +81,7 @@ class CoreModule {
     serviceLocator.registerSingleton<ARouter>(aRouter());
     serviceLocator.registerSingleton<CoreSecureStorage>(coreSecureStorage());
     serviceLocator.registerSingleton<EventBus>(eventBus());
-    serviceLocator
-        .registerSingleton<FirebaseInAppMessaging>(firebaseInAppMessaging());
-    serviceLocator.registerSingleton<FirebaseMessaging>(firebaseMessaging());
+
     serviceLocator.registerSingleton<Map<String, String>>(
       await defaultHttpHeaders(),
       instanceName: _defaultHeaders,
