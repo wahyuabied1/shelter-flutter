@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shelter_super_app/feature/hadirqu/overtime/overtime_report_screen.dart';
+import 'package:shelter_super_app/feature/hadirqu/overtime/overtime_submission_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_log_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_report_screen.dart';
 
-class PresenceScreen extends StatefulWidget {
-  final int tab;
-  const PresenceScreen({super.key, required this.tab});
+class OverTimeScreen extends StatefulWidget {
+  const OverTimeScreen({super.key});
 
   @override
-  State<PresenceScreen> createState() => _PresenceScreenState(tab: tab);
+  State<OverTimeScreen> createState() => _OverTimeScreenState();
 }
 
-class _PresenceScreenState extends State<PresenceScreen>
+class _OverTimeScreenState extends State<OverTimeScreen>
     with SingleTickerProviderStateMixin {
   late int tab;
-  _PresenceScreenState({required this.tab});
   late TabController tabController;
 
   @override
   void initState() {
-    tabController =
-        TabController(length: 2, vsync: this, initialIndex: tab);
+    tab = 0;
+    tabController = TabController(length: 2, vsync: this, initialIndex: tab);
     tabController.animation!.addListener(() {
       final value = tabController.animation!.value.round();
       if (value != tab && mounted) {
@@ -42,8 +43,8 @@ class _PresenceScreenState extends State<PresenceScreen>
       appBar: AppBar(
         centerTitle: false,
         leading: const BackButton(color: Colors.white),
-        title: const Text(
-          "Presensi Karyawan",
+        title: Text(
+          "Lembur Karyawan",
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -66,15 +67,18 @@ class _PresenceScreenState extends State<PresenceScreen>
               labelColor: Colors.blue.shade700,
               unselectedLabelColor: Colors.grey,
               tabs: [
-                Tab(text: 'Laporan Presensi'),
-                Tab(text: 'Log Presensi'),
+                Tab(text: 'Pengajuan Lembur'),
+                Tab(text: 'Laporan Lembur'),
               ],
             ),
             Container(
               constraints: const BoxConstraints(minHeight: 200, maxHeight: 700),
               child: TabBarView(
                 controller: tabController,
-                children: [PresenceReportScreen(), PresenceLogScreen()],
+                children: [
+                  OverTimeSubmissionScreen(),
+                  OverTimeReportScreen(),
+                ],
               ),
             )
           ],

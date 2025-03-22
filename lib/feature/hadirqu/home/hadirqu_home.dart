@@ -80,12 +80,13 @@ class _HadirQuHomeState extends State<HadirQuHome>
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         _buildDateCard(DateTime.now().eeeeddMMMMyyyy(' ')),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
                           child: GridView(
+                            padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
@@ -139,14 +140,14 @@ class _HadirQuHomeState extends State<HadirQuHome>
                             _buildQuickActionButton(
                               image: AppAssets.icIzinKaryawan,
                               title: 'Izin Karyawan',
+                                onTap: () => context.pushNamed(
+                                    HadirQuRoutes.permission.name!)
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icLemburKaryawan,
                               title: 'Lembur Karyawan',
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icRiwayatAktivitas,
-                              title: 'Riwayat Aktivitas',
+                              onTap: () => context.pushNamed(
+                                  HadirQuRoutes.overTimeSubmission.name!),
                             ),
                           ],
                         ),

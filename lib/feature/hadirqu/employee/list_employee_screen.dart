@@ -54,6 +54,7 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
       backgroundColor: const Color(0XFFF3F5F6),
       appBar: AppBar(
         titleSpacing: 0,
+        centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: const Text(
           "List Karyawan",

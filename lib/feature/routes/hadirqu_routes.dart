@@ -2,6 +2,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/routing/core/a_page.dart';
 import 'package:shelter_super_app/feature/hadirqu/employee/list_employee_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/home/hadirqu_home.dart';
+import 'package:shelter_super_app/feature/hadirqu/overtime/overtime_screen.dart';
+import 'package:shelter_super_app/feature/hadirqu/permission/permission_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_dashboard_screen.dart';
 
@@ -13,7 +15,9 @@ class HadirQuRoutes {
     listEmployee,
     reportDashboard,
     reportPresence,
-    logPresence
+    logPresence,
+    overTimeSubmission,
+    permission
   ];
 
   static final home = GoRoute(
@@ -72,6 +76,28 @@ class HadirQuRoutes {
         key: state.pageKey,
         name: 'LogPresenceScreen',
         child: const PresenceScreen(tab: 1),
+      );
+    },
+  );
+  static final overTimeSubmission = GoRoute(
+    path: '/overTimeSubmission',
+    name: 'OverTime Submission',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'OverTimeSubmissionScreen',
+        child: const OverTimeScreen(),
+      );
+    },
+  );
+  static final permission = GoRoute(
+    path: '/permission',
+    name: 'Permission',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'PermissionScreen',
+        child: const PermissionScreen(),
       );
     },
   );

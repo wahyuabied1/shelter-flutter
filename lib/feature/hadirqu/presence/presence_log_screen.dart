@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/design/hadirqu_double_date_widget.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 
 class PresenceLogScreen extends StatefulWidget {
@@ -10,29 +11,7 @@ class PresenceLogScreen extends StatefulWidget {
 
 class _PresenceLogScreenState extends State<PresenceLogScreen> {
   String _startDate = '01/11/2024';
-
   String _endDate = '27/11/2024';
-
-  // Function to show DatePicker
-  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        if (isStartDate) {
-          _startDate =
-              '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
-        } else {
-          _endDate = '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
-        }
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +159,7 @@ class _PresenceLogScreenState extends State<PresenceLogScreen> {
           // Employee Cards
           Text(
             'Menampilkan 2 Karyawan',
-            style: TextStyle(color: Colors.black54),
+            style: TextStyle(color: Colors.black54,fontSize: 12),
           ),
           SizedBox(height: 4.0),
           ListView.builder(
@@ -201,69 +180,16 @@ class _PresenceLogScreenState extends State<PresenceLogScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Date Input Fields
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Tanggal Mulai'),
-                    const SizedBox(height: 8.0),
-                    GestureDetector(
-                      onTap: () => _selectDate(context, true),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 16.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_today,
-                                color: Colors.grey),
-                            const SizedBox(width: 8.0),
-                            Text(_startDate),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Tanggal Berakhir'),
-                    const SizedBox(height: 8.0),
-                    GestureDetector(
-                      onTap: () => _selectDate(context, false),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 16.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_today,
-                                color: Colors.grey),
-                            const SizedBox(width: 8.0),
-                            Text(_endDate),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          HadirQuDoubleDateWidget(
+            startDate: _startDate,
+            endDate: _endDate,
+            onChangeStartDate: (date){
 
+            },
+            onChangeEndDate: (date){
+
+            },
+          ),
           const SizedBox(height: 12.0),
           SizedBox(
             width: double.infinity,
@@ -323,11 +249,12 @@ class _PresenceLogScreenState extends State<PresenceLogScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CircleAvatar(
+                backgroundColor: Colors.blue.shade700,
                 child: Text(
                   "Disma Ramadani".initialName(),
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black54,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

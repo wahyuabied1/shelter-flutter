@@ -55,11 +55,12 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        centerTitle: false,
         leading: const BackButton(color: Colors.white),
-        title: Text(
+        title: const Text(
           "Report Absensi",
           style: TextStyle(
-            fontSize: 20.sp,
+            fontSize: 20,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
