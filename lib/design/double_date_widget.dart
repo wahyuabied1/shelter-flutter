@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 
-class HadirQuDoubleDateWidget extends StatefulWidget {
+class DoubleDateWidget extends StatefulWidget {
   String startDate;
   String endDate;
   final Function(String) onChangeStartDate;
   final Function(String) onChangeEndDate;
+  DoubleDateTheme? theme;
 
-  HadirQuDoubleDateWidget({
+  DoubleDateWidget({
     super.key,
     required this.endDate,
     required this.startDate,
     required this.onChangeStartDate,
-    required this.onChangeEndDate
+    required this.onChangeEndDate,
+    theme = DoubleDateTheme.blue
   });
 
   @override
-  State<HadirQuDoubleDateWidget> createState() =>
-      _HadirQuDoubleDateWidgetState();
+  State<DoubleDateWidget> createState() => _DoubleDateWidgetState();
 }
 
-class _HadirQuDoubleDateWidgetState extends State<HadirQuDoubleDateWidget> {
+
+class _DoubleDateWidgetState extends State<DoubleDateWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -41,10 +43,9 @@ class _HadirQuDoubleDateWidgetState extends State<HadirQuDoubleDateWidget> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today,
-                          color: Colors.grey),
+                      const Icon(Icons.calendar_today, color: Colors.grey),
                       const SizedBox(width: 8.0),
-                      Text(widget.startDate ?? ''),
+                      Flexible(child: Text(widget.startDate ?? '')),
                     ],
                   ),
                 ),
@@ -70,10 +71,9 @@ class _HadirQuDoubleDateWidgetState extends State<HadirQuDoubleDateWidget> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today,
-                          color: Colors.grey),
+                      const Icon(Icons.calendar_today, color: Colors.grey),
                       const SizedBox(width: 8.0),
-                      Text(widget.endDate ?? ''),
+                      Flexible(child: Text(widget.endDate ?? '')),
                     ],
                   ),
                 ),
@@ -85,13 +85,28 @@ class _HadirQuDoubleDateWidgetState extends State<HadirQuDoubleDateWidget> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+  Future<void> _selectDate(
+    BuildContext context,
+    bool isStartDate,
+  ) async {
     DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1500),
+        lastDate: DateTime(2500),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: widget.theme == DoubleDateTheme.blue ? Colors.blue.shade700 : Colors.orange.shade700, // Header background color
+                onPrimary: Colors.white, // Header text color
+                onSurface: Colors.black, // Body text color
+              ),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child!,
+          );
+        });
 
     if (pickedDate != null) {
       setState(() {
@@ -107,4 +122,8 @@ class _HadirQuDoubleDateWidgetState extends State<HadirQuDoubleDateWidget> {
       });
     }
   }
+}
+
+enum DoubleDateTheme{
+  blue,orange
 }

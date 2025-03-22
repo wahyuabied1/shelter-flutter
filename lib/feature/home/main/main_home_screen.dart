@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
 class MainHomeScreen extends StatefulWidget {
@@ -61,6 +62,7 @@ class _MainHomeState extends State<MainHomeScreen> {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: GridView(
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -77,24 +79,31 @@ class _MainHomeState extends State<MainHomeScreen> {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildQuickActionButton(
-                    AppAssets.ilIconHadirqu, 'HadirQu', '(Kehadiran)', () {
-                  context.pushNamed(HadirQuRoutes.home.name!);
-                }),
-                _buildQuickActionButton(
-                    AppAssets.ilIconIssuequ, 'IssueQu', '(Keluhan)', () {
-                  // context.pushNamed(HadirQuRoutes.home.name!);
-                }),
-                _buildQuickActionButton(
-                    AppAssets.ilIconGuard, 'Guard', '(Keamanan)', () {
-                  // context.pushNamed(HadirQuRoutes.home.name!);
-                }),
-              ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildQuickActionButton(
+                      AppAssets.ilIconHadirqu, 'HadirQu', '(Kehadiran)', () {
+                    context.pushNamed(HadirQuRoutes.home.name!);
+                  }),
+                  _buildQuickActionButton(
+                      AppAssets.ilIconHadirqu, 'CleaningQu', '(Kebersihan)', () {
+                    context.pushNamed(CleaningquRoutes.home.name!);
+                  }),
+                  _buildQuickActionButton(
+                      AppAssets.ilIconIssuequ, 'IssueQu', '(Keluhan)', () {
+                    // context.pushNamed(HadirQuRoutes.home.name!);
+                  }),
+                  _buildQuickActionButton(
+                      AppAssets.ilIconGuard, 'Guard', '(Keamanan)', () {
+                    // context.pushNamed(HadirQuRoutes.home.name!);
+                  }),
+                ],
+              ),
             ),
           ),
 

@@ -13,4 +13,8 @@ class AppAssets {
   static const icPresensiKaryawan = '$imageDir/ic_presensi_karyawan.svg';
   static const icReportDashboard = '$imageDir/ic_report_dashboard.svg';
   static const icRiwayatAktivitas = '$imageDir/ic_riwayat_aktivitas.svg';
+  static const icAbsesnsi = '$imageDir/ic_absensi.svg';
+  static const icAktivitas = '$imageDir/ic_aktivitas.svg';
+  static const icRingkasan = '$imageDir/ic_ringkasan.svg';
+  static const icTerjadwal = '$imageDir/ic_terjadwal.svg';
 }

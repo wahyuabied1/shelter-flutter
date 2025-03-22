@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
-import 'package:shelter_super_app/design/hadirqu_double_date_widget.dart';
+import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 
 class PresenceLogScreen extends StatefulWidget {
@@ -164,6 +164,7 @@ class _PresenceLogScreenState extends State<PresenceLogScreen> {
           SizedBox(height: 4.0),
           ListView.builder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: 2,
             itemBuilder: (context, index) {
               return _cardEmployee();
@@ -180,7 +181,7 @@ class _PresenceLogScreenState extends State<PresenceLogScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HadirQuDoubleDateWidget(
+          DoubleDateWidget(
             startDate: _startDate,
             endDate: _endDate,
             onChangeStartDate: (date){

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shelter_super_app/design/hadirqu_double_date_widget.dart';
+import 'package:shelter_super_app/design/double_date_widget.dart';
 
 class OverTimeHeader extends StatefulWidget {
   final String startDate;
@@ -31,7 +31,7 @@ class _OverTimeHeaderState extends State<OverTimeHeader> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Date Input Fields
-        HadirQuDoubleDateWidget(
+        DoubleDateWidget(
           startDate: widget.startDate,
           endDate: widget.endDate,
           onChangeStartDate: (date) {},

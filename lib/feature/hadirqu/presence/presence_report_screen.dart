@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
-import 'package:shelter_super_app/design/hadirqu_double_date_widget.dart';
+import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 
 class PresenceReportScreen extends StatefulWidget{
@@ -181,7 +181,7 @@ class _PresenceReportScreenState extends State<PresenceReportScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Date Input Fields
-          HadirQuDoubleDateWidget(
+          DoubleDateWidget(
             startDate: _startDate,
             endDate: _endDate,
             onChangeStartDate: (date){

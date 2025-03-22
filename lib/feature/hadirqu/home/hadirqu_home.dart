@@ -49,6 +49,7 @@ class _HadirQuHomeState extends State<HadirQuHome>
       backgroundColor: Colors.blue.shade700,
       appBar: AppBar(
         titleSpacing: 0,
+        centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: const Text(
           'Kehadiran',
@@ -81,7 +82,7 @@ class _HadirQuHomeState extends State<HadirQuHome>
                           ),
                         ),
                         const SizedBox(height: 8),
-                        _buildDateCard(DateTime.now().eeeeddMMMMyyyy(' ')),
+                        _buildDateCard(DateTime.now().eeeedMMMyyyyHHmm(dateDelimiter:' ')),
                         const SizedBox(height: 16),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -240,6 +241,7 @@ class _HadirQuHomeState extends State<HadirQuHome>
       margin: EdgeInsets.symmetric(horizontal: 16),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.calendar_today, color: Color(0Xff04297A)),
           SizedBox(width: 8),

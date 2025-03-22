@@ -1,3 +1,4 @@
+import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 
@@ -7,6 +8,7 @@ class MainRoutes {
 
   static final routes = [
     ...HomepageRoutes.mainRoutes,
-    ...HadirQuRoutes.mainRoutes
+    ...HadirQuRoutes.mainRoutes,
+    ...CleaningquRoutes.mainRoutes
   ];
 }
