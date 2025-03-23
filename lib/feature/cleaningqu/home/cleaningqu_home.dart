@@ -63,19 +63,19 @@ class CleaningQuHome extends StatelessWidget {
                               image: AppAssets.icAktivitas,
                               title: 'Laporan Aktivitas',
                               onTap: () => context.pushNamed(
-                                  HadirQuRoutes.reportDashboard.name!),
+                                  CleaningquRoutes.scheduleActivity.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icAbsesnsi,
                               title: 'Laporan Absensi',
                               onTap: () => context.pushNamed(
-                                  HadirQuRoutes.reportPresence.name!),
+                                  CleaningquRoutes.absence.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icRingkasan,
                               title: 'Laporan Ringkasan',
                               onTap: () => context
-                                  .pushNamed(HadirQuRoutes.logPresence.name!),
+                                  .pushNamed(CleaningquRoutes.summary.name!),
                             ),
                           ],
                         ),
