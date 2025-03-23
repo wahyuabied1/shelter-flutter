@@ -5,6 +5,7 @@ import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
 class CleaningQuHome extends StatelessWidget {
@@ -57,7 +58,7 @@ class CleaningQuHome extends StatelessWidget {
                                 image: AppAssets.icTerjadwal,
                                 title: 'Laporan Terjawal',
                                 onTap: () => context.pushNamed(
-                                    HadirQuRoutes.listEmployee.name!)),
+                                    CleaningquRoutes.scheduleReport.name!)),
                             _buildQuickActionButton(
                               image: AppAssets.icAktivitas,
                               title: 'Laporan Aktivitas',
@@ -98,15 +99,16 @@ class CleaningQuHome extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 12),
-                          DoubleDateWidget(
-                            theme: DoubleDateTheme.orange,
-                            endDate: DateTime.now().ddMMyyyy('/'),
-                            startDate: DateTime.now().ddMMyyyy('/'),
-                            onChangeStartDate: (date) {},
-                            onChangeEndDate: (date) {},
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: DoubleDateWidget(
+                              theme: DoubleDateTheme.orange,
+                              endDate: DateTime.now().ddMMyyyy('/'),
+                              startDate: DateTime.now().ddMMyyyy('/'),
+                              onChangeStartDate: (date) {},
+                              onChangeEndDate: (date) {},
+                            ),
                           ),
-                          SizedBox(height: 12),
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,

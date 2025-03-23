@@ -13,7 +13,7 @@ class DoubleDateWidget extends StatefulWidget {
     required this.startDate,
     required this.onChangeStartDate,
     required this.onChangeEndDate,
-    theme = DoubleDateTheme.blue
+    this.theme = DoubleDateTheme.blue
   });
 
   @override

@@ -7,6 +7,7 @@ class AppAssets {
   static const ilIconHadirqu = '$imageDir/il_icon_hadirqu.png';
   static const ilIconIssuequ = '$imageDir/il_icon_issuequ.png';
   static const ilIconGuard = '$imageDir/il_icon_guard.png';
+  static const ilIconCleaningqu = '$imageDir/il_cleaningqu.png';
   static const icIzinKaryawan = '$imageDir/ic_izin_karyawan.svg';
   static const icLemburKaryawan = '$imageDir/ic_lembur_karyawan.svg';
   static const icListKaryawan = '$imageDir/ic_list_karyawan.svg';

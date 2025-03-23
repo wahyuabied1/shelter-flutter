@@ -82,7 +82,7 @@ class _MainHomeState extends State<MainHomeScreen> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -91,7 +91,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                     context.pushNamed(HadirQuRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
-                      AppAssets.ilIconHadirqu, 'CleaningQu', '(Kebersihan)', () {
+                      AppAssets.ilIconCleaningqu, 'CleaningQu', '(Kebersihan)', () {
                     context.pushNamed(CleaningquRoutes.home.name!);
                   }),
                   _buildQuickActionButton(

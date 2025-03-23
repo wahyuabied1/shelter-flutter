@@ -26,6 +26,12 @@ class _OverTimeHeaderState extends State<OverTimeHeader> {
   TextEditingController employeeController = TextEditingController();
 
   @override
+  void dispose() {
+    employeeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,13 +1,14 @@
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/routing/core/a_page.dart';
 import 'package:shelter_super_app/feature/cleaningqu/home/cleaningqu_home.dart';
-import 'package:shelter_super_app/feature/hadirqu/home/hadirqu_home.dart';
+import 'package:shelter_super_app/feature/cleaningqu/schedule_report/schedule_report_screen.dart';
 
 class CleaningquRoutes {
   CleaningquRoutes._();
 
   static final mainRoutes = [
     home,
+    scheduleReport,
   ];
 
   static final home = GoRoute(
@@ -17,7 +18,19 @@ class CleaningquRoutes {
       return APage(
         key: state.pageKey,
         name: 'CleaningQuScreen',
-        child: CleaningQuHome(),
+        child: const CleaningQuHome(),
+      );
+    },
+  );
+
+  static final scheduleReport = GoRoute(
+    path: '/scheduleReport',
+    name: 'ScheduleReport',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'ScheduleReportScreen',
+        child: ScheduleReportScreen(),
       );
     },
   );
