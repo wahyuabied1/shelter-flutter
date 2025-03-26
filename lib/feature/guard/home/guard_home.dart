@@ -7,28 +7,28 @@ import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_exte
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
 import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
-import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
+import 'package:shelter_super_app/feature/routes/guard_routes.dart';
 
-class CleaningQuHome extends StatelessWidget {
-  const CleaningQuHome({super.key});
+class GuardHome extends StatelessWidget {
+  const GuardHome({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange.shade700,
+      backgroundColor: Colors.red.shade700,
       appBar: AppBar(
         titleSpacing: 0,
         centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: const Text(
-          'Dashboard CleaningQu',
+          'Dashboard Shelter Guard',
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.orange.shade700,
+        backgroundColor: Colors.red.shade700,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -37,8 +37,9 @@ class CleaningQuHome extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                color: Colors.orange.shade700,
+                color: Colors.red.shade700,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
                       children: [
@@ -46,6 +47,16 @@ class CleaningQuHome extends StatelessWidget {
                             .eeeedMMMyyyyHHmm(dateDelimiter: ' ')),
                         const SizedBox(height: 16),
                       ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text(
+                        'Rekap Guard',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                     Container(
                       color: Colors.transparent,
@@ -56,27 +67,98 @@ class CleaningQuHome extends StatelessWidget {
                         child: Row(
                           children: [
                             _buildQuickActionButton(
-                                image: AppAssets.icTerjadwal,
-                                title: 'Laporan Terjawal',
-                                onTap: () => context.pushNamed(
-                                    CleaningquRoutes.scheduleReport.name!)),
-                            _buildQuickActionButton(
                               image: AppAssets.icAktivitas,
-                              title: 'Laporan Aktivitas',
+                              title: 'Rekap Checklist',
                               onTap: () => context.pushNamed(
                                   CleaningquRoutes.scheduleActivity.name!),
                             ),
                             _buildQuickActionButton(
-                              image: AppAssets.icAbsesnsi,
-                              title: 'Laporan Absensi',
-                              onTap: () => context.pushNamed(
-                                  CleaningquRoutes.absence.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icRingkasan,
-                              title: 'Laporan Ringkasan',
+                              image: AppAssets.icTerjadwal,
+                              title: 'Temuan Patrol',
                               onTap: () => context
                                   .pushNamed(CleaningquRoutes.summary.name!),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Text(
+                        'Rekap Posko',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildQuickActionButton(
+                              image: AppAssets.icAbsesnsi,
+                              title: 'Rekap Karyawan',
+                              onTap: () => context.pushNamed(
+                                  CleaningquRoutes.scheduleActivity.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icTransporter,
+                              title: 'Trans\nporter',
+                              // onTap: () => context
+                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icKey,
+                              title: 'Pinjaman Kunci',
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.pinjamanKunci.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icPresensiKaryawan,
+                              title: 'Tamu\n',
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.guest.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icMail,
+                              title: 'Surat\n',
+                              // onTap: () => context
+                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icProyek,
+                              title: 'Proyek\n',
+                              // onTap: () => context
+                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icTelp,
+                              title: 'Pemakaian Telpon',
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.pemakaianTelp.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icNewspaper,
+                              title: 'Berita Acara',
+                              // onTap: () => context
+                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icJournal,
+                              title: 'Jurnal Harian',
+                              // onTap: () => context
+                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                            ),
+                            _buildQuickActionButton(
+                              image: AppAssets.icCar,
+                              title: 'Kendaraan\n',
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.kendaraan.name!),
                             ),
                           ],
                         ),
@@ -103,7 +185,7 @@ class CleaningQuHome extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: DoubleDateWidget(
-                              theme: ThemeWidget.orange,
+                              theme: ThemeWidget.red,
                               endDate: DateTime.now().ddMMyyyy('/'),
                               startDate: DateTime.now().ddMMyyyy('/'),
                               onChangeStartDate: (date) {},
@@ -127,9 +209,9 @@ class CleaningQuHome extends StatelessWidget {
                               children: [
                                 _buildStatisticCard('13', 'Total Petugas', 1),
                                 _buildStatisticCard('12', 'Total Absensi', 2),
-                                _buildStatisticCard('7', 'Total Aktivitas', 3),
+                                _buildStatisticCard('7', 'Total Rekap Checklist', 3),
                                 _buildStatisticCard(
-                                    '28', 'Total Lap. Terjadwal', 4),
+                                    '28', 'Total Temuan Patroli', 4),
                               ],
                             ),
                           )
@@ -189,14 +271,14 @@ class CleaningQuHome extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.calendar_today, color: Colors.orange.shade900),
+          Icon(Icons.calendar_today, color: Colors.red.shade900),
           const SizedBox(width: 8),
           Text(
             date,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.orange.shade900,
+              color: Colors.red.shade900,
             ),
           ),
         ],
@@ -210,7 +292,7 @@ class CleaningQuHome extends StatelessWidget {
     Function? onTap,
   }) {
     return Material(
-      color: Colors.orange.shade700,
+      color: Colors.red.shade700,
       child: InkWell(
         onTap: () {
           onTap?.call();
@@ -222,12 +304,18 @@ class CleaningQuHome extends StatelessWidget {
             children: [
               CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.orange.shade500,
-                  child: SvgPicture.asset(
-                    image,
-                    width: 24,
-                    height: 24,
-                  )),
+                  backgroundColor: Colors.red.shade500,
+                  child: image.contains('svg')
+                      ? SvgPicture.asset(
+                          image,
+                          width: 24,
+                          height: 24,
+                        )
+                      : Image.asset(
+                          image,
+                          width: 24,
+                          height: 24,
+                        )),
               SizedBox(height: 12.h),
               Text(
                 textAlign: TextAlign.center,

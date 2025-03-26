@@ -18,4 +18,12 @@ class AppAssets {
   static const icAktivitas = '$imageDir/ic_aktivitas.svg';
   static const icRingkasan = '$imageDir/ic_ringkasan.svg';
   static const icTerjadwal = '$imageDir/ic_terjadwal.svg';
+  static const icCar = '$imageDir/ic_car.png';
+  static const icJournal = '$imageDir/ic_journal.png';
+  static const icKey = '$imageDir/ic_key.png';
+  static const icMail = '$imageDir/ic_mail.png';
+  static const icNewspaper = '$imageDir/ic_newspaper.png';
+  static const icProyek = '$imageDir/ic_proyek.png';
+  static const icTelp = '$imageDir/ic_telp.png';
+  static const icTransporter = '$imageDir/ic_transporter.png';
 }

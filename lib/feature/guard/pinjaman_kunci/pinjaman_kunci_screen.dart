@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/double_info_widget.dart';
+import 'package:shelter_super_app/design/double_list_tile.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/search_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
 
-class ScheduleReportScreen extends StatefulWidget {
-  const ScheduleReportScreen({super.key});
+class PinjamanKunciScreen extends StatefulWidget {
+  const PinjamanKunciScreen({super.key});
 
   @override
-  State<ScheduleReportScreen> createState() => _ScheduleReportScreenState();
+  State<PinjamanKunciScreen> createState() => _PinjamanKunciScreenState();
 }
 
-class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
-
+class _PinjamanKunciScreenState extends State<PinjamanKunciScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,14 +24,14 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
         centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: const Text(
-          "Laporan Terjadwal",
+          "Pinjaman Kunci",
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.orange.shade700,
+        backgroundColor: Colors.red.shade700,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(12),
@@ -39,7 +40,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
       ),
       body: Container(
         color: Colors.white,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
             DoubleDateWidget(
@@ -47,7 +48,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
               startDate: DateTime.now().ddMMyyyy('/'),
               onChangeStartDate: (date) {},
               onChangeEndDate: (date) {},
-              theme: ThemeWidget.orange,
+              theme: ThemeWidget.red,
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -58,8 +59,8 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: Colors.orange.shade700,
-                  side: const BorderSide(color: Colors.orange, width: 1.0),
+                  foregroundColor: Colors.red.shade700,
+                  side: const BorderSide(color: Colors.red, width: 1.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
@@ -71,7 +72,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                       'Export ke Excel',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        color: Colors.orange.shade700,
+                        color: Colors.red.shade700,
                       ),
                     ),
                   ],
@@ -87,21 +88,19 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(16)),
                         ),
                         builder: (context) {
                           return MultiChoiceBottomSheet(
-                            title: "Tempat",
+                            title: "Shift",
                             choice: {
-                              "LT 3 Ruang HRD": false,
-                              "LT 3 RUANG SALES & MARKOM	": false,
-                              "L3 TANGGA GED. LAMA	": false,
-                              "L3 R. MAN MARKOM	": false,
-                              "L1 R. STUDIO	": false,
+                              "Shift Pagi": false,
+                              "Shift Siang": false,
+                              "Sihft Malam": false,
                             },
-                            theme: ThemeWidget.orange,
+                            theme: ThemeWidget.red,
                           );
                         },
                       );
@@ -121,7 +120,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                         ),
                         child: const Row(
                           children: [
-                            Text('Tempat'),
+                            Text('Shift'),
                             SizedBox(width: 4),
                             Icon(Icons.keyboard_arrow_down_sharp,
                                 color: Colors.black)
@@ -129,7 +128,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                         )),
                   ),
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 12),
+                    margin: const EdgeInsets.symmetric(horizontal: 12),
                     child: InkWell(
                       onTap: () {
                         showModalBottomSheet(
@@ -140,13 +139,11 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                           ),
                           builder: (context) {
                             return MultiChoiceBottomSheet(
-                              title: "Jadwal",
+                              title: "Petugas",
                               choice: {
-                                "Harian": false,
-                                "Mingguan": false,
-                                "Bulanan": false,
+                                "Petugas Pos Bayar Rungkut": false,
                               },
-                              theme: ThemeWidget.orange,
+                              theme: ThemeWidget.red,
                             );
                           },
                         );
@@ -156,7 +153,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                       ),
                       child: Container(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: Colors.transparent,
                             borderRadius: BorderRadius.circular(20),
@@ -167,7 +164,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                           ),
                           child: const Row(
                             children: [
-                              Text('Jadwal'),
+                              Text('Petugas'),
                               SizedBox(width: 4),
                               Icon(Icons.keyboard_arrow_down_sharp,
                                   color: Colors.black)
@@ -175,15 +172,65 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                           )),
                     ),
                   ),
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        builder: (context) {
+                          return MultiChoiceBottomSheet(
+                            title: "Ruang Kunci",
+                            choice: {
+                              "Lobby": false,
+                              "Office Produksi": false,
+                              "Meeting Room 1": false,
+                              "SGC": false,
+                              "Kantin": false,
+                              "Poliklinik": false,
+                              "Logistik": false,
+                              "M1 dan APD": false,
+                              "ENG": false,
+                              "B3": false,
+                            },
+                            theme: ThemeWidget.red,
+                          );
+                        },
+                      );
+                    },
+                    customBorder: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                          // Rounded corners
+                          border: Border.all(
+                              color: Colors.grey.shade300), // Light grey border
+                        ),
+                        child: const Row(
+                          children: [
+                            Text('Ruang Kunci'),
+                            SizedBox(width: 4),
+                            Icon(Icons.keyboard_arrow_down_sharp,
+                                color: Colors.black)
+                          ],
+                        )),
+                  ),
                 ],
               ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
               child: SearchWidget(
-                hint: 'Cari Karyawan',
-                theme: ThemeWidget.orange,
+                hint: 'Cari Peminjam',
                 onSearch: (search) {},
+                theme: ThemeWidget.red,
               ),
             ),
             const Text(
@@ -192,7 +239,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
             ),
             const SizedBox(height: 8),
             ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: 2,
               itemBuilder: (context, index) {
@@ -214,126 +261,44 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: CircleAvatar(
-                radius: 24.0,
-                backgroundColor: Colors.orange.shade700,
+                radius: 24,
+                backgroundColor: Colors.red.shade700,
                 child: Text(
-                  'Justinus William'.initialName(),
-                  style: TextStyle(
-                    fontSize: 14,
+                  'Dedi'.initialName(),
+                  style: const TextStyle(
+                    fontSize: 20,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              title: const Text(
-                'Justinus William',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: const Text('justinuswilliam • KRY-001'),
+              title: const Text('Dedi',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              subtitle: const Text('Petugas Pos Bayer Rungkut'),
             ),
-            const Divider(),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  Icon(Icons.calendar_today, size: 18),
-                  SizedBox(width: 8),
-                  Text('Tanggal: 31 Des 2024'),
-                  Spacer(),
-                  Icon(Icons.schedule, size: 18),
-                  SizedBox(width: 8),
-                  Text('Jadwal: Harian'),
-                ],
-              ),
+            DoubleListTile(
+              firstIcon: Icons.calendar_today,
+              firstTitle: 'Tanggal',
+              firstSubtitle: DateTime.now().ddMMMyyyy(' '),
+              secondIcon: Icons.access_time,
+              secondTitle: 'Shift',
+              secondSubtitle: '1',
             ),
-            const Row(
-              children: [
-                Icon(Icons.location_on, size: 18),
-                SizedBox(width: 8),
-                Text('Lokasi: L2 TANGGA GED. LAMA'),
-              ],
+            const DoubleListTile(
+              firstIcon: Icons.location_on_outlined,
+              firstTitle: 'Ruang Kunci',
+              firstSubtitle: 'Lobby',
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    constraints: new BoxConstraints(
-                      minHeight: 170,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      // Rounded corners
-                      border: Border.all(
-                          color: Colors.grey.shade300), // Light grey border
-                    ),
-                    child: Column(
-                      children: [
-                        const Text('MULAI'),
-                        const Text('06:42 WIB',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                          ),
-                          onPressed: () {},
-                          icon: const Icon(Icons.location_on_outlined),
-                          label: const Text(
-                            'Lihat Maps',
-                            style: TextStyle(
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ),
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                          ),
-                          onPressed: () {},
-                          icon: const Icon(Icons.image),
-                          label: const Text('image-23',
-                              style: TextStyle(
-                                color: Colors.black87,
-                              )),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Container(
-                    constraints: new BoxConstraints(
-                      minHeight: 170,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      // Rounded corners
-                      border: Border.all(
-                          color: Colors.grey.shade300), // Light grey border
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('SELESAI',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        const Text('Belum Dikerjakan',
-                            style: TextStyle(fontSize: 16, color: Colors.red)),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            const SizedBox(height: 8),
+            const DoubleInfoWidget(
+              firstInfo: 'Jam Ambil',
+              firstValue: '08:00 WIB',
+              secondInfo: 'Jam Kembali',
+              theme: ThemeWidget.red,
             ),
           ],
         ),

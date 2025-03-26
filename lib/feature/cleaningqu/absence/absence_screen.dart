@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/search_widget.dart';
+import 'package:shelter_super_app/design/theme_widget.dart';
 
 class AbsenceScreen extends StatefulWidget {
   const AbsenceScreen({super.key});
@@ -11,14 +13,6 @@ class AbsenceScreen extends StatefulWidget {
 }
 
 class _AbsenceScreenState extends State<AbsenceScreen> {
-  TextEditingController employeeController = TextEditingController();
-
-  @override
-  void dispose() {
-    employeeController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +45,7 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
               startDate: DateTime.now().ddMMyyyy('/'),
               onChangeStartDate: (date) {},
               onChangeEndDate: (date) {},
-              theme: DoubleDateTheme.orange,
+              theme: ThemeWidget.orange,
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -84,28 +78,10 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
-              child: TextField(
-                controller: employeeController,
-                decoration: InputDecoration(
-                  labelText: 'Cari karyawan',
-                  contentPadding: EdgeInsets.zero,
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Colors.black26,
-                  ),
-                  border: const OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.black26),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.blue.shade700),
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (data) {},
+              child: SearchWidget(
+                hint: 'Cari Karyawan',
+                theme: ThemeWidget.orange,
+                onSearch: (search) {},
               ),
             ),
             const Text(

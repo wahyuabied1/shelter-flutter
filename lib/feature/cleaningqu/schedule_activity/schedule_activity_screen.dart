@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/search_widget.dart';
+import 'package:shelter_super_app/design/theme_widget.dart';
 
 class ScheduleActivityScreen extends StatefulWidget {
   const ScheduleActivityScreen({super.key});
@@ -11,13 +13,6 @@ class ScheduleActivityScreen extends StatefulWidget {
 }
 
 class _ScheduleActivityScreenState extends State<ScheduleActivityScreen> {
-  TextEditingController employeeController = TextEditingController();
-
-  @override
-  void dispose() {
-    employeeController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +46,7 @@ class _ScheduleActivityScreenState extends State<ScheduleActivityScreen> {
               startDate: DateTime.now().ddMMyyyy('/'),
               onChangeStartDate: (date) {},
               onChangeEndDate: (date) {},
-              theme: DoubleDateTheme.orange,
+              theme: ThemeWidget.orange,
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -84,29 +79,11 @@ class _ScheduleActivityScreenState extends State<ScheduleActivityScreen> {
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
-              child: TextField(
-                controller: employeeController,
-                decoration: InputDecoration(
-                  labelText: 'Cari karyawan',
-                  contentPadding: EdgeInsets.zero,
-                  floatingLabelBehavior: FloatingLabelBehavior.never,
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Colors.black26,
-                  ),
-                  border: const OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.black26),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide(color: Colors.blue.shade700),
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (data) {},
-              ),
+              child: SearchWidget(
+                hint: 'Cari Karyawan',
+                theme: ThemeWidget.orange,
+                onSearch: (search) {},
+              )
             ),
             const Text(
               'Menampilkan 2 Data',

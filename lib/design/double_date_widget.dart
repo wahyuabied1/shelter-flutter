@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shelter_super_app/design/theme_widget.dart';
 
 class DoubleDateWidget extends StatefulWidget {
   String startDate;
   String endDate;
   final Function(String) onChangeStartDate;
   final Function(String) onChangeEndDate;
-  DoubleDateTheme? theme;
+  ThemeWidget? theme;
 
   DoubleDateWidget({
     super.key,
@@ -13,7 +14,7 @@ class DoubleDateWidget extends StatefulWidget {
     required this.startDate,
     required this.onChangeStartDate,
     required this.onChangeEndDate,
-    this.theme = DoubleDateTheme.blue
+    this.theme = ThemeWidget.blue
   });
 
   @override
@@ -98,9 +99,9 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
           return Theme(
             data: ThemeData.light().copyWith(
               colorScheme: ColorScheme.light(
-                primary: widget.theme == DoubleDateTheme.blue ? Colors.blue.shade700 : Colors.orange.shade700, // Header background color
-                onPrimary: Colors.white, // Header text color
-                onSurface: Colors.black, // Body text color
+                primary: widget.theme.colorTheme(),
+                onPrimary: Colors.white,
+                onSurface: Colors.black,
               ),
               dialogBackgroundColor: Colors.white,
             ),
@@ -124,6 +125,3 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
   }
 }
 
-enum DoubleDateTheme{
-  blue,orange
-}

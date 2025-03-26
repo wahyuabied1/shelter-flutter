@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/data/model/summary_response.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/theme_widget.dart';
 
 class SummaryScreen extends StatefulWidget {
   const SummaryScreen({super.key});
@@ -61,7 +62,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
               startDate: DateTime.now().ddMMyyyy('/'),
               onChangeStartDate: (date) {},
               onChangeEndDate: (date) {},
-              theme: DoubleDateTheme.orange,
+              theme: ThemeWidget.orange,
             ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),

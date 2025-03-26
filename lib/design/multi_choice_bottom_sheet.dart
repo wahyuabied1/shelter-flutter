@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shelter_super_app/design/theme_widget.dart';
 
 class MultiChoiceBottomSheet extends StatefulWidget {
   final String title;
   final Map<String, bool> choice;
-  MultiChoiceBottomSheetTheme? theme;
+  final ThemeWidget? theme;
 
   MultiChoiceBottomSheet({
     super.key,
@@ -35,10 +36,11 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
             height: 4,
             margin: EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.grey.shade300 ,
+              color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(2),
               // Rounded corners
-              border: Border.all(color: Colors.grey.shade300), // Light grey border
+              border:
+                  Border.all(color: Colors.grey.shade300), // Light grey border
             ),
             width: 100,
           ),
@@ -62,7 +64,7 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                 return CheckboxListTile(
                   controlAffinity: ListTileControlAffinity.leading,
                   checkColor: Colors.white,
-                  activeColor: Colors.blue.shade700,
+                  activeColor: widget.theme?.colorTheme(),
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -100,11 +102,14 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                   });
                 },
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(width: 1.0, color: _colorTheme()),
+                  side: BorderSide(
+                    width: 1.0,
+                    color: widget.theme.colorTheme(),
+                  ),
                 ),
                 child: Text(
                   "Reset",
-                  style: TextStyle(color: _colorTheme()),
+                  style: TextStyle(color: widget.theme.colorTheme()),
                 ),
               ),
               const SizedBox(
@@ -117,7 +122,7 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _colorTheme(),
+                    backgroundColor: widget.theme.colorTheme(),
                   ),
                   child: const Text(
                     "Terapkan",
@@ -131,15 +136,4 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
       ),
     );
   }
-
-  Color _colorTheme() {
-    switch (widget.theme) {
-      case MultiChoiceBottomSheetTheme.orange:
-        return Colors.orange.shade700;
-      default:
-        return Colors.blue.shade700;
-    }
-  }
 }
-
-enum MultiChoiceBottomSheetTheme { blue, orange, red }

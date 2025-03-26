@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
+import 'package:shelter_super_app/feature/routes/guard_routes.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
 class MainHomeScreen extends StatefulWidget {
@@ -100,7 +101,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                   }),
                   _buildQuickActionButton(
                       AppAssets.ilIconGuard, 'Guard', '(Keamanan)', () {
-                    // context.pushNamed(HadirQuRoutes.home.name!);
+                    context.pushNamed(GuardRoutes.home.name!);
                   }),
                 ],
               ),
