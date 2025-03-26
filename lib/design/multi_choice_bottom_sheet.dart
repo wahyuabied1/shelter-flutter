@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class MultiChoiceBottomSheet extends StatefulWidget {
   final String title;
   final Map<String, bool> choice;
+  MultiChoiceBottomSheetTheme? theme;
 
-  const MultiChoiceBottomSheet({
+  MultiChoiceBottomSheet({
     super.key,
     required this.title,
     required this.choice,
+    this.theme,
   });
 
   @override
@@ -18,11 +20,28 @@ class MultiChoiceBottomSheet extends StatefulWidget {
 class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        // Rounded corners
+        border: Border.all(color: Colors.grey.shade300), // Light grey border
+      ),
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Container(
+            height: 4,
+            margin: EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300 ,
+              borderRadius: BorderRadius.circular(2),
+              // Rounded corners
+              border: Border.all(color: Colors.grey.shade300), // Light grey border
+            ),
+            width: 100,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -47,10 +66,15 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(dept),
+                      SizedBox(
+                        width: 150,
+                        child: Text(dept),
+                      ),
+                      Spacer(),
                       Text(
                         "${(widget.choice.keys.toList().indexOf(dept) + 1) * 3} Karyawan",
-                        style: TextStyle(fontSize: 12.sp,color: Colors.grey.shade600),
+                        style: TextStyle(
+                            fontSize: 12.sp, color: Colors.grey.shade600),
                       )
                     ],
                   ),
@@ -76,11 +100,11 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                   });
                 },
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(width: 1.0, color: Colors.blue.shade700),
+                  side: BorderSide(width: 1.0, color: _colorTheme()),
                 ),
                 child: Text(
                   "Reset",
-                  style: TextStyle(color: Colors.blue.shade700),
+                  style: TextStyle(color: _colorTheme()),
                 ),
               ),
               const SizedBox(
@@ -93,9 +117,9 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade700,
+                    backgroundColor: _colorTheme(),
                   ),
-                  child: Text(
+                  child: const Text(
                     "Terapkan",
                     style: TextStyle(color: Colors.white),
                   ),
@@ -107,4 +131,15 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
       ),
     );
   }
+
+  Color _colorTheme() {
+    switch (widget.theme) {
+      case MultiChoiceBottomSheetTheme.orange:
+        return Colors.orange.shade700;
+      default:
+        return Colors.blue.shade700;
+    }
+  }
 }
+
+enum MultiChoiceBottomSheetTheme { blue, orange, red }

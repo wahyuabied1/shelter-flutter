@@ -94,7 +94,7 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                                 BorderRadius.vertical(top: Radius.circular(16)),
                           ),
                           builder: (context) {
-                            return const MultiChoiceBottomSheet(
+                            return MultiChoiceBottomSheet(
                                 title: "Departemen",
                                 choice: {
                                   "Dept. Keamanan": false,

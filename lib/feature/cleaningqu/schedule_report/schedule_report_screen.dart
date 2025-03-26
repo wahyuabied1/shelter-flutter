@@ -105,7 +105,9 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                                 "L3 TANGGA GED. LAMA	": false,
                                 "L3 R. MAN MARKOM	": false,
                                 "L1 R. STUDIO	": false,
-                              });
+                              },
+                            theme: MultiChoiceBottomSheetTheme.orange,
+                          );
                         },
                       );
                     },
@@ -143,12 +145,14 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                           ),
                           builder: (context) {
                             return MultiChoiceBottomSheet(
-                                title: "Jadwal",
-                                choice: {
-                                  "Harian": false,
-                                  "Mingguan": false,
-                                  "Bulanan": false,
-                                });
+                              title: "Jadwal",
+                              choice: {
+                                "Harian": false,
+                                "Mingguan": false,
+                                "Bulanan": false,
+                              },
+                              theme: MultiChoiceBottomSheetTheme.orange,
+                            );
                           },
                         );
                       },
@@ -314,7 +318,7 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
                         ),
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
+                            backgroundColor: Colors.white,
                           ),
                           onPressed: () {},
                           icon: const Icon(Icons.image),
