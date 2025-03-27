@@ -5,14 +5,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/di/core_di.dart';
 import 'package:shelter_super_app/app/env_define.dart';
 import 'package:shelter_super_app/core/dependency_injection/service_locator.dart';
+import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service_extended.dart';
 import 'package:shelter_super_app/core/platform/platform_information.dart';
 import 'package:shelter_super_app/core/utils/common.dart';
 import 'package:shelter_super_app/data/repository/auth_repository.dart';
@@ -22,12 +26,10 @@ import 'package:shelter_super_app/feature/splash_screen.dart';
 import 'package:shelter_super_app/my_app.dart';
 import 'package:upgrader/upgrader.dart';
 import 'core/firebase_config/firebase_remote_config_service.dart';
-import 'core/firebase_performance/firebase_performance_serivice.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 Completer<int> initializationStatus = Completer();
 
 Future<void> main() async {
-
   runApp(
     MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -80,14 +82,14 @@ _initialization() async {
     DeviceOrientation.portraitUp,
   ]));
 
+  //localStorage
+  _initHiveAsync();
+
   //firebase
   await retry(3, () => Firebase.initializeApp());
-  FirebasePerformanceService();
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  final remoteConfig = FirebaseRemoteConfigService();
+  await _configureFirebaseRemoteConfig();
   FirebaseMessaging firebaseMessaging() => FirebaseMessaging.instance;
   FirebaseInAppMessaging firebaseInAppMessaging() => FirebaseInAppMessaging.instance;
-  serviceLocator.registerSingleton<FirebaseRemoteConfigService>(remoteConfig);
   serviceLocator.registerSingleton<FirebaseInAppMessaging>(firebaseInAppMessaging());
   serviceLocator.registerSingleton<FirebaseMessaging>(firebaseMessaging());
 
@@ -100,9 +102,58 @@ _initialization() async {
   if (Platform.isAndroid) {
     await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
   }
-
 }
 
+void _initHiveAsync() {
+  serviceLocator.registerSingletonAsync<HiveInterface>(() async {
+    await Hive.initFlutter();
+    return Hive;
+  });
+}
+
+Future<void> _configureFirebaseRemoteConfig() async {
+  await withTracer(
+        () async {
+      final remoteConfig = kEnableDevOps
+          ? FirebaseRemoteConfigServiceExtended()
+          : FirebaseRemoteConfigService();
+      await remoteConfig.configure();
+      serviceLocator
+          .registerSingleton<FirebaseRemoteConfigService>(remoteConfig);
+    },
+    traceName: 'init-firebase-remote-config',
+    library: 'FirebaseRemoteConfig',
+    errorContext: 'while configuring remoteConfig',
+  );
+}
+
+Future<T?> withTracer<T>(
+    Future<T> Function() task, {
+      required String traceName,
+      required String library,
+      required String errorContext,
+    }) async {
+  Trace? trace;
+
+  try {
+    trace = FirebasePerformance.instance.newTrace(traceName);
+    await trace.start();
+    final result = await task();
+    return result;
+  } catch (error, stack) {
+    FlutterErrorDetails details = FlutterErrorDetails(
+      exception: error,
+      stack: stack,
+      library: library,
+      context: ErrorDescription(errorContext),
+    );
+
+    unawaited(FirebaseCrashlytics.instance.recordFlutterError(details));
+    return null;
+  } finally {
+    await trace?.stop();
+  }
+}
 
 Future<bool> _setupEnvMode() async {
   if (kReleaseMode) {

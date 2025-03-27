@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shelter_super_app/app/di/service_locator.dart';
+import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service.dart';
+import 'package:shelter_super_app/core/firebase_config/remote_config_key.dart';
+import 'package:shelter_super_app/data/model/promotion_response.dart';
 import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/guard_routes.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});
@@ -16,16 +23,17 @@ class MainHomeScreen extends StatefulWidget {
 
 class _MainHomeState extends State<MainHomeScreen> {
   int _currentIndex = 0;
-  late List<String> _images;
+  final _remoteConfig = serviceLocator.get<FirebaseRemoteConfigService>();
+  List<PromotionResponse> listData = [];
 
   @override
-  void initState() {
+  initState() {
     super.initState();
-    _images = [
-      'assets/images/il_example_ads.jpg',
-      'assets/images/il_example_ads.jpg',
-      'assets/images/il_example_ads.jpg'
-    ];
+    String jsonString = _remoteConfig.getString(promotion);
+    print(jsonString);
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+    listData =
+        jsonList.map((json) => PromotionResponse.fromJson(json)).toList();
   }
 
   @override
@@ -83,7 +91,8 @@ class _MainHomeState extends State<MainHomeScreen> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 8),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -92,7 +101,8 @@ class _MainHomeState extends State<MainHomeScreen> {
                     context.pushNamed(HadirQuRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
-                      AppAssets.ilIconCleaningqu, 'CleaningQu', '(Kebersihan)', () {
+                      AppAssets.ilIconCleaningqu, 'CleaningQu', '(Kebersihan)',
+                      () {
                     context.pushNamed(CleaningquRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
@@ -133,21 +143,21 @@ class _MainHomeState extends State<MainHomeScreen> {
                 _buildSectionHeader('Promosi', null),
                 Container(
                   child: CarouselSlider(
-                    items: _images.map((image) {
+                    items: listData.map((data) {
                       return Builder(
                         builder: (BuildContext context) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              'assets/images/il_example_ads.jpg',
-                              fit: BoxFit.cover,
+                          return InkWell(
+                            onTap: () {
+                              launchBrowser(data.url);
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                data.image,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           );
-                          /*return Image.network(
-                            image,
-                            fit: BoxFit.cover,
-                            width: MediaQuery.of(context).size.width,
-                          );*/
                         },
                       );
                     }).toList(),
@@ -166,7 +176,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: _images.asMap().entries.map((entry) {
+                  children: listData.asMap().entries.map((entry) {
                     return GestureDetector(
                       onTap: () => setState(() => _currentIndex = entry.key),
                       child: Container(
@@ -179,7 +189,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                           color:
                               (Theme.of(context).brightness == Brightness.dark
                                       ? Colors.white
-                                      : Color(0x9f4376f8))
+                                      : Colors.blue.shade700)
                                   .withOpacity(
                                       _currentIndex == entry.key ? 0.9 : 0.4),
                         ),
@@ -230,11 +240,11 @@ class _MainHomeState extends State<MainHomeScreen> {
   Widget _buildQuickActionButton(
       String image, String title, String subtitle, Function onTap) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         onTap.call();
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 4.h),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         child: Column(
           children: [
             CircleAvatar(
@@ -270,7 +280,7 @@ class _MainHomeState extends State<MainHomeScreen> {
 
   Widget _buildSectionHeader(String title, String? actionText) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -332,5 +342,14 @@ class _MainHomeState extends State<MainHomeScreen> {
         ],
       ),
     );
+  }
+
+  void launchBrowser(String url) async{
+     var uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      // can't launch url
+    }
   }
 }
