@@ -1,9 +1,9 @@
-package com.shelter.indonesia.superapp.feature.splash.view
+package com.shelter.indonesia.superapps.feature.splash.view
 
 import android.content.Intent
 import android.os.Build
-import com.shelter.indonesia.superapp.channel.PlatformInfoMethodCallHandler
-import com.shelter.indonesia.superapp.channel.PlatformInformation
+import com.shelter.indonesia.superapps.channel.PlatformInfoMethodCallHandler
+import com.shelter.indonesia.superapps.channel.PlatformInformation
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -11,7 +11,7 @@ import io.flutter.plugin.common.StandardMethodCodec
 
 class SplashActivity : FlutterFragmentActivity() {
 
-    private val platformInfoChannelName = "com.shelter.indonesia.superapp/platformInfo"
+    private val platformInfoChannelName = "com.shelter.indonesia.superapps/platformInfo"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

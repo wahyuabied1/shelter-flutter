@@ -26,7 +26,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.shelter.indonesia.superapp"
+    namespace "com.shelter.indonesia.superapps"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -42,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.shelter.indonesia.superapp"
+        applicationId "com.shelter.indonesia.superapps"
         minSdk 23
         targetSdk 34
         compileSdk 34

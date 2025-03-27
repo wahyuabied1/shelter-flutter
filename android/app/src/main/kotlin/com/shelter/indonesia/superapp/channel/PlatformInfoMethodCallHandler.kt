@@ -1,9 +1,9 @@
-package com.shelter.indonesia.superapp.channel
+package com.shelter.indonesia.superapps.channel
 
 import android.content.Context
 import android.provider.Settings
 import androidx.annotation.WorkerThread
-import com.shelter.indonesia.superapp.BuildConfig
+import com.shelter.indonesia.superapps.BuildConfig
 import com.google.android.gms.appset.AppSet
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel

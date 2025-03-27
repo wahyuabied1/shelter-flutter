@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart';
 // Enable DevOps screen
 const kEnableDevOps = !kReleaseMode || bool.fromEnvironment('enableDevOps');
 
-// const String kFlavor = String.fromEnvironment('flavor');
+const String kFlavor = String.fromEnvironment('flavor');
 
 const isDev = 'dev';
 const isProd = 'prod';

@@ -50,14 +50,14 @@
     </queries>
 
     <application
-        android:name="com.shelter.indonesia.superapp.ShelterSuperAppApplication"
+        android:name="com.shelter.indonesia.superapps.ShelterSuperAppApplication"
         android:extractNativeLibs="true"
         android:allowBackup="false"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         tools:replace="android:label">
         <activity
-            android:name="com.shelter.indonesia.superapp.feature.splash.view.SplashActivity"
+            android:name="com.shelter.indonesia.superapps.feature.splash.view.SplashActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:exported="true"
             android:launchMode="singleTask"

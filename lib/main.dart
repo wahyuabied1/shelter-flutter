@@ -81,15 +81,15 @@ _initialization() async {
   ]));
 
   //firebase
-  // await retry(3, () => Firebase.initializeApp());
-  // FirebasePerformanceService();
-  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  // final remoteConfig = FirebaseRemoteConfigService();
-  // serviceLocator.registerSingleton<FirebaseRemoteConfigService>(remoteConfig);
-  // serviceLocator.registerSingleton<FirebaseInAppMessaging>(firebaseInAppMessaging());
-  // serviceLocator.registerSingleton<FirebaseMessaging>(firebaseMessaging());
-  // FirebaseMessaging firebaseMessaging() => FirebaseMessaging.instance;
-  // FirebaseInAppMessaging firebaseInAppMessaging() => FirebaseInAppMessaging.instance;
+  await retry(3, () => Firebase.initializeApp());
+  FirebasePerformanceService();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  final remoteConfig = FirebaseRemoteConfigService();
+  FirebaseMessaging firebaseMessaging() => FirebaseMessaging.instance;
+  FirebaseInAppMessaging firebaseInAppMessaging() => FirebaseInAppMessaging.instance;
+  serviceLocator.registerSingleton<FirebaseRemoteConfigService>(remoteConfig);
+  serviceLocator.registerSingleton<FirebaseInAppMessaging>(firebaseInAppMessaging());
+  serviceLocator.registerSingleton<FirebaseMessaging>(firebaseMessaging());
 
   //dependencies
   await configureCoreDependencies();

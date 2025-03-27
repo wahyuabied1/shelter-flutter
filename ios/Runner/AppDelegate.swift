@@ -10,7 +10,7 @@ import Flutter
     GeneratedPluginRegistrant.register(with: self)
 
      let controller = window?.rootViewController as! FlutterViewController
-            let channel = FlutterMethodChannel(name: "com.shelter.indonesia.superapp/platformInfo", binaryMessenger: controller.binaryMessenger)
+            let channel = FlutterMethodChannel(name: "com.shelter.indonesia.superapps/platformInfo", binaryMessenger: controller.binaryMessenger)
             channel.setMethodCallHandler({ (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
                 if call.method == "isDebuggerConnected" {
                     result(self.isDebugger())

@@ -1,7 +1,7 @@
-package com.shelter.indonesia.superapp
+package com.shelter.indonesia.superapps
 
 import android.app.Application
-import com.shelter.indonesia.superapp.channel.PlatformInformation
+import com.shelter.indonesia.superapps.channel.PlatformInformation
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 

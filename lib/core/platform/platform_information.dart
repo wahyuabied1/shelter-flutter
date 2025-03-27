@@ -6,7 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class PlatformInformation {
   static const MethodChannel _channel =
-      MethodChannel('com.shelter.indonesia.superapp/platformInfo');
+      MethodChannel('com.shelter.indonesia.superapps/platformInfo');
 
   static Future<bool> isVirtualMachine() async {
     try {

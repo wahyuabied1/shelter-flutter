@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:261984905207:android:6e62beb2557ae270b070f2",
+        "mobilesdk_app_id": "1:261984905207:android:b81e1bbebd035868b070f2",
         "android_client_info": {
-          "package_name": "com.shelter.indonesia.superapp"
+          "package_name": "com.shelter.indonesia.superapps"
         }
       },
       "oauth_client": [],
@@ -26,9 +26,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:261984905207:android:c161c710ce0503f3b070f2",
+        "mobilesdk_app_id": "1:261984905207:android:9a71333ce2ff8689b070f2",
         "android_client_info": {
-          "package_name": "com.shelter.indonesia.superapp.debug"
+          "package_name": "com.shelter.indonesia.superapps.debug"
         }
       },
       "oauth_client": [],

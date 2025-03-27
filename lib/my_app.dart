@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -41,7 +42,7 @@ class _MyAppState extends State<MyApp>
       ShellRoute(
         observers: [
           aRouter.routeObserver,
-          // FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
         ],
         navigatorKey: aRouter.rootSheelNavigatorKey,
         builder: (context, state, child) => child,

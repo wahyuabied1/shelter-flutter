@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
-import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/guard_routes.dart';
 
 class GuardHome extends StatelessWidget {
@@ -69,14 +68,14 @@ class GuardHome extends StatelessWidget {
                             _buildQuickActionButton(
                               image: AppAssets.icAktivitas,
                               title: 'Rekap Checklist',
-                              onTap: () => context.pushNamed(
-                                  CleaningquRoutes.scheduleActivity.name!),
+                              // onTap: () => context.pushNamed(
+                              //     CleaningquRoutes.scheduleActivity.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icTerjadwal,
                               title: 'Temuan Patrol',
-                              onTap: () => context
-                                  .pushNamed(CleaningquRoutes.summary.name!),
+                              // onTap: () => context
+                              //     .pushNamed(CleaningquRoutes.summary.name!),
                             ),
                           ],
                         ),
@@ -103,8 +102,8 @@ class GuardHome extends StatelessWidget {
                             _buildQuickActionButton(
                               image: AppAssets.icAbsesnsi,
                               title: 'Rekap Karyawan',
-                              onTap: () => context.pushNamed(
-                                  CleaningquRoutes.scheduleActivity.name!),
+                              // onTap: () => context.pushNamed(
+                              //     CleaningquRoutes.scheduleActivity.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icTransporter,
