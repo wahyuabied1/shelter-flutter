@@ -27,6 +27,7 @@ import 'package:shelter_super_app/my_app.dart';
 import 'package:upgrader/upgrader.dart';
 import 'core/firebase_config/firebase_remote_config_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 Completer<int> initializationStatus = Completer();
 
 Future<void> main() async {
@@ -64,19 +65,15 @@ Future<void> main() async {
 }
 
 Future<String> _findInitialRoute() async {
-  final isLoggedIn = await serviceLocator<AuthRepository>().isLoggedIn();;
+  final isLoggedIn = await serviceLocator<AuthRepository>().isLoggedIn();
   if (isLoggedIn) {
     return HomepageRoutes.main.path;
   }
   return HomepageRoutes.login.path;
 }
 
-_initialization() async {
+Future<bool> _initialization() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final valid = await _setupEnvMode();
-  if (!valid) {
-    return false;
-  }
   //potrait screen
   unawaited(SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -88,20 +85,22 @@ _initialization() async {
   //firebase
   await retry(3, () => Firebase.initializeApp());
   await _configureFirebaseRemoteConfig();
+  configureCoreDependencies();
   FirebaseMessaging firebaseMessaging() => FirebaseMessaging.instance;
-  FirebaseInAppMessaging firebaseInAppMessaging() => FirebaseInAppMessaging.instance;
-  serviceLocator.registerSingleton<FirebaseInAppMessaging>(firebaseInAppMessaging());
+  FirebaseInAppMessaging firebaseInAppMessaging() =>
+      FirebaseInAppMessaging.instance;
+  serviceLocator
+      .registerSingleton<FirebaseInAppMessaging>(firebaseInAppMessaging());
   serviceLocator.registerSingleton<FirebaseMessaging>(firebaseMessaging());
 
   //dependencies
-  await configureCoreDependencies();
-
   if (kDebugMode) {
     await Upgrader.clearSavedSettings();
   }
   if (Platform.isAndroid) {
     await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
   }
+  return true;
 }
 
 void _initHiveAsync() {
@@ -113,7 +112,7 @@ void _initHiveAsync() {
 
 Future<void> _configureFirebaseRemoteConfig() async {
   await withTracer(
-        () async {
+    () async {
       final remoteConfig = kEnableDevOps
           ? FirebaseRemoteConfigServiceExtended()
           : FirebaseRemoteConfigService();
@@ -128,11 +127,11 @@ Future<void> _configureFirebaseRemoteConfig() async {
 }
 
 Future<T?> withTracer<T>(
-    Future<T> Function() task, {
-      required String traceName,
-      required String library,
-      required String errorContext,
-    }) async {
+  Future<T> Function() task, {
+  required String traceName,
+  required String library,
+  required String errorContext,
+}) async {
   Trace? trace;
 
   try {
@@ -153,21 +152,6 @@ Future<T?> withTracer<T>(
   } finally {
     await trace?.stop();
   }
-}
-
-Future<bool> _setupEnvMode() async {
-  if (kReleaseMode) {
-    String flavor = await PlatformInformation.getFlavor();
-    if (flavor == isProd) {
-      return false;
-    } else if (kDebugMode) {
-      await Upgrader.clearSavedSettings();
-      if (Platform.isAndroid) {
-        await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
-      }
-    }
-  }
-  return true;
 }
 
 Future<T> _runWithDuration<T>({

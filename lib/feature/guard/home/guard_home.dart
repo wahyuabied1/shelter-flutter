@@ -100,16 +100,10 @@ class GuardHome extends StatelessWidget {
                         child: Row(
                           children: [
                             _buildQuickActionButton(
-                              image: AppAssets.icAbsesnsi,
-                              title: 'Rekap Karyawan',
-                              // onTap: () => context.pushNamed(
-                              //     CleaningquRoutes.scheduleActivity.name!),
-                            ),
-                            _buildQuickActionButton(
                               image: AppAssets.icTransporter,
                               title: 'Trans\nporter',
-                              // onTap: () => context
-                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.transporter.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icKey,
@@ -126,14 +120,14 @@ class GuardHome extends StatelessWidget {
                             _buildQuickActionButton(
                               image: AppAssets.icMail,
                               title: 'Surat\n',
-                              // onTap: () => context
-                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.mail.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icProyek,
                               title: 'Proyek\n',
-                              // onTap: () => context
-                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.project.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icTelp,
@@ -144,14 +138,14 @@ class GuardHome extends StatelessWidget {
                             _buildQuickActionButton(
                               image: AppAssets.icNewspaper,
                               title: 'Berita Acara',
-                              // onTap: () => context
-                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.news.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icJournal,
                               title: 'Jurnal Harian',
-                              // onTap: () => context
-                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.dailyJournal.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icCar,
@@ -203,7 +197,7 @@ class GuardHome extends StatelessWidget {
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
-                                childAspectRatio: 4 / 2,
+                                childAspectRatio: 3 / 2,
                               ),
                               children: [
                                 _buildStatisticCard('13', 'Total Petugas', 1),

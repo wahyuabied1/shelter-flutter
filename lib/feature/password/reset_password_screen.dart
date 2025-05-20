@@ -44,20 +44,9 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
+        titleSpacing: 0,
+        centerTitle: false,
+        leading: const BackButton(color: Colors.white),
         title: Text(
           "Reset Password",
           style: TextStyle(

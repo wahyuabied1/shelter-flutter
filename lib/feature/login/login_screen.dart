@@ -88,6 +88,7 @@ class _LoginViewState extends State<_LoginView> {
                               controller: emailController,
                               decoration: InputDecoration(
                                 labelText: 'Email',
+                                labelStyle: const TextStyle(color: Colors.black54),
                                 border: const OutlineInputBorder(),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4.0),
@@ -115,6 +116,7 @@ class _LoginViewState extends State<_LoginView> {
                                   borderSide: BorderSide(color: Colors.blue.shade700),
                                 ),
                                 labelText: 'Password',
+                                labelStyle: const TextStyle(color: Colors.black54),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _isPasswordVisible

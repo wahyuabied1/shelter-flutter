@@ -12,6 +12,7 @@ import 'package:shelter_super_app/data/model/promotion_response.dart';
 import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/guard_routes.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
+import 'package:shelter_super_app/feature/routes/issuequ_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainHomeScreen extends StatefulWidget {
@@ -92,7 +93,7 @@ class _MainHomeState extends State<MainHomeScreen> {
             scrollDirection: Axis.horizontal,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -107,7 +108,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                   }),
                   _buildQuickActionButton(
                       AppAssets.ilIconIssuequ, 'IssueQu', '(Keluhan)', () {
-                    // context.pushNamed(HadirQuRoutes.home.name!);
+                    context.pushNamed(IssueQuRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
                       AppAssets.ilIconGuard, 'Guard', '(Keamanan)', () {
@@ -133,11 +134,11 @@ class _MainHomeState extends State<MainHomeScreen> {
                 _buildNotificationItem(
                     'HadirQu',
                     'Pengajuan Cuti dari Agus Hariyono',
-                    AppAssets.ilIconIssuequ),
+                    AppAssets.ilIconHadirqu),
                 _buildNotificationItem(
                     'IssueQu',
                     'Keluhan dijawab oleh tim ops Shelter',
-                    AppAssets.ilIconHadirqu),
+                    AppAssets.ilIconIssuequ),
 
                 // Promotions Section
                 _buildSectionHeader('Promosi', null),
@@ -197,7 +198,7 @@ class _MainHomeState extends State<MainHomeScreen> {
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 80.h)
+                SizedBox(height: 40.h)
               ],
             ),
           ),

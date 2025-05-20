@@ -38,6 +38,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   alice: ^0.4.2
+  collection: ^1.17.2
   get_it: ^7.6.7
   flutter_localizations:
     sdk: flutter

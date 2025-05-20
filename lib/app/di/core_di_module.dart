@@ -106,14 +106,14 @@ class CoreModule {
       ),
     );
 
-    serviceLocator.registerFactory<AuthNetwork>(
-            () => AuthNetwork(serviceLocator<CoreHttpBuilder>()));
-
     serviceLocator.registerFactory<AuthRepository>(
           () => AuthRepository(
-        serviceLocator<CoreHttpRepository>(),
-        serviceLocator<AuthNetwork>()
+          serviceLocator<CoreHttpRepository>(),
+          serviceLocator<AuthNetwork>()
       ),
     );
+
+    serviceLocator.registerFactory<AuthNetwork>(
+            () => AuthNetwork(serviceLocator<CoreHttpBuilder>()));
   }
 }

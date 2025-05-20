@@ -33,6 +33,7 @@ class NotificationScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               decoration: InputDecoration(
+                labelStyle: const TextStyle(color: Colors.black54),
                 prefixIcon: const Icon(Icons.filter_alt),
                 hintText: 'Filter',
                 border: OutlineInputBorder(

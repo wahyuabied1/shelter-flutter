@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,29 +7,48 @@ import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
-import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
-import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
+import 'package:shelter_super_app/feature/routes/guard_routes.dart';
+import 'package:shelter_super_app/feature/routes/issuequ_routes.dart';
 
-class CleaningQuHome extends StatelessWidget {
-  const CleaningQuHome({super.key});
+class IssueQuHome extends StatelessWidget {
+  const IssueQuHome({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final List<Color> indicatorColors = [
+      Colors.red,
+      Colors.blue.shade900,
+      Colors.blue,
+      Colors.blue.shade100,
+      Colors.green,
+      Colors.orange,
+    ];
+
+    // Define the report data
+    final List<Map<String, dynamic>> reportItems = [
+      {'title': 'Total Laporan', 'value': 13},
+      {'title': 'Total Menunggu', 'value': 12},
+      {'title': 'Total Sedang Dikerjakan', 'value': 7},
+      {'title': 'Total Menunggu Approval', 'value': 280},
+      {'title': 'Total Selesai', 'value': 280},
+      {'title': 'Total Ditolak', 'value': 280},
+    ];
+
     return Scaffold(
-      backgroundColor: Colors.orange.shade700,
+      backgroundColor: Color(0XFF154B79),
       appBar: AppBar(
         titleSpacing: 0,
         centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: const Text(
-          'Dashboard CleaningQu',
+          'Dashboard IssueQu',
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.orange.shade700,
+        backgroundColor: Color(0XFF154B79),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -37,8 +57,9 @@ class CleaningQuHome extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                color: Colors.orange.shade700,
+                color: Color(0XFF154B79),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Column(
                       children: [
@@ -56,27 +77,16 @@ class CleaningQuHome extends StatelessWidget {
                         child: Row(
                           children: [
                             _buildQuickActionButton(
-                                image: AppAssets.icTerjadwal,
-                                title: 'Laporan Terjadwal',
-                                onTap: () => context.pushNamed(
-                                    CleaningquRoutes.scheduleReport.name!)),
-                            _buildQuickActionButton(
                               image: AppAssets.icAktivitas,
-                              title: 'Laporan Aktivitas',
+                              title: 'Laporan MoM',
                               onTap: () => context.pushNamed(
-                                  CleaningquRoutes.scheduleActivity.name!),
+                                  IssueQuRoutes.mom.name!),
                             ),
                             _buildQuickActionButton(
-                              image: AppAssets.icAbsesnsi,
-                              title: 'Laporan Absensi',
-                              onTap: () => context.pushNamed(
-                                  CleaningquRoutes.absence.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icRingkasan,
-                              title: 'Laporan Ringkasan',
+                              image: AppAssets.icTerjadwal,
+                              title: 'Kelola Keluhan',
                               onTap: () => context
-                                  .pushNamed(CleaningquRoutes.summary.name!),
+                                  .pushNamed(IssueQuRoutes.keluhan.name!),
                             ),
                           ],
                         ),
@@ -103,36 +113,71 @@ class CleaningQuHome extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: DoubleDateWidget(
-                              theme: ThemeWidget.orange,
+                              theme: ThemeWidget.darkBlue,
                               endDate: DateTime.now().ddMMyyyy('/'),
                               startDate: DateTime.now().ddMMyyyy('/'),
                               onChangeStartDate: (date) {},
                               onChangeEndDate: (date) {},
                             ),
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: GridView(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 3 / 2,
-                              ),
+                      Container(
+                        margin: EdgeInsets.only(top: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: reportItems.mapIndexed((index, item) {
+                            final isFirst = index == 0;
+                            final isLast = index == reportItems.length - 1;
+
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildStatisticCard('13', 'Total Petugas', 1),
-                                _buildStatisticCard('12', 'Total Absensi', 2),
-                                _buildStatisticCard('7', 'Total Aktivitas', 3),
-                                _buildStatisticCard(
-                                    '28', 'Total Lap. Terjadwal', 4),
+                                // Colored Indicator
+                                Container(
+                                  width: 6,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: indicatorColors[index],
+                                    borderRadius: BorderRadius.vertical(
+                                      top: isFirst ? const Radius.circular(12) : Radius.zero,
+                                      bottom: isLast ? const Radius.circular(12) : Radius.zero,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                // Content
+                                Expanded(
+                                  child: Container(
+                                    height: 60,
+                                    alignment: Alignment.centerLeft,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          item['title'],
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        Text(
+                                          item['value'].toString(),
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
                               ],
-                            ),
-                          )
+                            );
+                          }).toList(),
+                        ),
+                      ),
                         ],
                       ),
                     )
@@ -142,38 +187,6 @@ class CleaningQuHome extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatisticCard(String value, String label, int number) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        border: Border(
-          left: (number == 2 || number == 4)
-              ? BorderSide(color: Colors.grey, width: 0.2)
-              : BorderSide(color: Colors.transparent),
-          right: (number == 1 || number == 3)
-              ? BorderSide(color: Colors.grey, width: 0.2)
-              : BorderSide(color: Colors.transparent),
-          bottom: (number == 1 || number == 2)
-              ? BorderSide(color: Colors.grey, width: 0.2)
-              : BorderSide(color: Colors.transparent),
-          top: (number == 3 || number == 4)
-              ? BorderSide(color: Colors.grey, width: 0.2)
-              : BorderSide(color: Colors.transparent),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 14)),
-          const SizedBox(height: 4),
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        ],
       ),
     );
   }
@@ -189,14 +202,14 @@ class CleaningQuHome extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.calendar_today, color: Colors.orange.shade900),
+          Icon(Icons.calendar_today, color: Color(0XFF154B79)),
           const SizedBox(width: 8),
           Text(
             date,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.orange.shade900,
+              color: Color(0XFF154B79),
             ),
           ),
         ],
@@ -210,7 +223,7 @@ class CleaningQuHome extends StatelessWidget {
     Function? onTap,
   }) {
     return Material(
-      color: Colors.orange.shade700,
+      color: Color(0XFF154B79),
       child: InkWell(
         onTap: () {
           onTap?.call();
@@ -222,12 +235,18 @@ class CleaningQuHome extends StatelessWidget {
             children: [
               CircleAvatar(
                   radius: 30,
-                  backgroundColor: Colors.orange.shade500,
-                  child: SvgPicture.asset(
-                    image,
-                    width: 24,
-                    height: 24,
-                  )),
+                  backgroundColor: Colors.blue.shade800,
+                  child: image.contains('svg')
+                      ? SvgPicture.asset(
+                          image,
+                          width: 24,
+                          height: 24,
+                        )
+                      : Image.asset(
+                          image,
+                          width: 24,
+                          height: 24,
+                        )),
               SizedBox(height: 12.h),
               Text(
                 textAlign: TextAlign.center,
