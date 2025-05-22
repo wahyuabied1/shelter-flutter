@@ -86,6 +86,7 @@ class CoreModule {
       await defaultHttpHeaders(),
       instanceName: _defaultHeaders,
     );
+
     if (kEnableDevOps) {
       serviceLocator.registerLazySingleton<HttpInspector>(
         () => aliceHttpInspector(),
@@ -97,6 +98,7 @@ class CoreModule {
       ),
     );
     serviceLocator.registerSingleton(AuthInterceptor());
+
     serviceLocator.registerFactory(
       () => coreHttpBuilder(
         serviceLocator(instanceName: _defaultHeaders),
@@ -105,6 +107,7 @@ class CoreModule {
         inspector: kEnableDevOps ? serviceLocator() : null,
       ),
     );
+
 
     serviceLocator.registerFactory<AuthRepository>(
           () => AuthRepository(

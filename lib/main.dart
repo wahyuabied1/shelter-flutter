@@ -17,7 +17,6 @@ import 'package:shelter_super_app/app/di/core_di.dart';
 import 'package:shelter_super_app/app/env_define.dart';
 import 'package:shelter_super_app/core/dependency_injection/service_locator.dart';
 import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service_extended.dart';
-import 'package:shelter_super_app/core/platform/platform_information.dart';
 import 'package:shelter_super_app/core/utils/common.dart';
 import 'package:shelter_super_app/data/repository/auth_repository.dart';
 import 'package:shelter_super_app/feature/profile/view_model/shared_user_model.dart';
@@ -42,10 +41,7 @@ Future<void> main() async {
     ),
   );
 
-  await _runWithDuration(
-    future: _initialization(),
-    millisecond: 800,
-  );
+  await _initialization();
 
   /// Finding initial route based on login status
   final String initialRoute = await _findInitialRoute();
@@ -85,7 +81,7 @@ Future<bool> _initialization() async {
   //firebase
   await retry(3, () => Firebase.initializeApp());
   await _configureFirebaseRemoteConfig();
-  configureCoreDependencies();
+  await configureCoreDependencies();
   FirebaseMessaging firebaseMessaging() => FirebaseMessaging.instance;
   FirebaseInAppMessaging firebaseInAppMessaging() =>
       FirebaseInAppMessaging.instance;

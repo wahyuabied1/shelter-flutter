@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:shelter_super_app/app/env_define.dart';
 import 'package:shelter_super_app/core/dependency_injection/service_locator.dart';
 import 'package:shelter_super_app/core/event_bus/event_bus.dart';
 import 'package:shelter_super_app/core/event_bus/http_unauthorized_event.dart';
@@ -25,7 +25,7 @@ class AuthInterceptor extends InterceptorContract {
   late final CoreHttpRepository _coreHttpRepository = serviceLocator();
   late final AuthRepository _authRepository = serviceLocator();
   late final EventBus _networkEventBus = serviceLocator();
-  late final HttpInspector? _inspector = kDebugMode ? serviceLocator() : null;
+  late final HttpInspector? _inspector = kEnableDevOps ? serviceLocator() : null;
 
   final _shouldIgnore401 = {
     '/realms/amartha/protocol/openid-connect/token',
