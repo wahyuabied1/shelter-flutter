@@ -16,7 +16,8 @@ import 'package:shelter_super_app/feature/routes/issuequ_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainHomeScreen extends StatefulWidget {
-  const MainHomeScreen({super.key});
+  final Function onNavigate;
+  MainHomeScreen({super.key,required this.onNavigate});
 
   @override
   State<MainHomeScreen> createState() => _MainHomeState();
@@ -31,7 +32,6 @@ class _MainHomeState extends State<MainHomeScreen> {
   initState() {
     super.initState();
     String jsonString = _remoteConfig.getString(promotion);
-    print(jsonString);
     final List<dynamic> jsonList = jsonDecode(jsonString);
     listData =
         jsonList.map((json) => PromotionResponse.fromJson(json)).toList();
@@ -130,7 +130,9 @@ class _MainHomeState extends State<MainHomeScreen> {
             ),
             child: Column(
               children: [
-                _buildSectionHeader('Notifikasi', 'Lihat Semua'),
+                _buildSectionHeader('Notifikasi', 'Lihat Semua', () {
+                  widget.onNavigate(1);
+                }),
                 _buildNotificationItem(
                     'HadirQu',
                     'Pengajuan Cuti dari Agus Hariyono',
@@ -141,38 +143,36 @@ class _MainHomeState extends State<MainHomeScreen> {
                     AppAssets.ilIconIssuequ),
 
                 // Promotions Section
-                _buildSectionHeader('Promosi', null),
-                Container(
-                  child: CarouselSlider(
-                    items: listData.map((data) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return InkWell(
-                            onTap: () {
-                              launchBrowser(data.url);
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                data.image,
-                                fit: BoxFit.cover,
-                              ),
+                _buildSectionHeader('Promosi', null, null),
+                CarouselSlider(
+                  items: listData.map((data) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return InkWell(
+                          onTap: () {
+                            launchBrowser(data.url);
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              data.image,
+                              fit: BoxFit.cover,
                             ),
-                          );
-                        },
-                      );
-                    }).toList(),
-                    options: CarouselOptions(
-                      enlargeCenterPage: true,
-                      disableCenter: true,
-                      aspectRatio: 10 / 5,
-                      autoPlay: true,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
+                          ),
+                        );
                       },
-                    ),
+                    );
+                  }).toList(),
+                  options: CarouselOptions(
+                    enlargeCenterPage: true,
+                    disableCenter: true,
+                    aspectRatio: 10 / 5,
+                    autoPlay: true,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
                   ),
                 ),
                 Row(
@@ -279,9 +279,10 @@ class _MainHomeState extends State<MainHomeScreen> {
     );
   }
 
-  Widget _buildSectionHeader(String title, String? actionText) {
+  Widget _buildSectionHeader(
+      String title, String? actionText, Function? onClickActionText) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.only(left: 12.0,top: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -294,11 +295,24 @@ class _MainHomeState extends State<MainHomeScreen> {
             ),
           ),
           if (actionText != null)
-            Text(
-              actionText,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.blue,
+            OutlinedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                side: BorderSide.none,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () {
+                onClickActionText?.call();
+              },
+              child: Text(
+                actionText,
+                style: TextStyle(
+                  color: Colors.blue.shade700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
         ],
@@ -345,8 +359,8 @@ class _MainHomeState extends State<MainHomeScreen> {
     );
   }
 
-  void launchBrowser(String url) async{
-     var uri = Uri.parse(url);
+  void launchBrowser(String url) async {
+    var uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {

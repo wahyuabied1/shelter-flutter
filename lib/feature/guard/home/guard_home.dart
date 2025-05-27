@@ -68,14 +68,14 @@ class GuardHome extends StatelessWidget {
                             _buildQuickActionButton(
                               image: AppAssets.icAktivitas,
                               title: 'Rekap Checklist',
-                              // onTap: () => context.pushNamed(
-                              //     CleaningquRoutes.scheduleActivity.name!),
+                              onTap: () => context.pushNamed(
+                                  GuardRoutes.checklistRecap.name!),
                             ),
                             _buildQuickActionButton(
                               image: AppAssets.icTerjadwal,
                               title: 'Temuan Patrol',
-                              // onTap: () => context
-                              //     .pushNamed(CleaningquRoutes.summary.name!),
+                              onTap: () => context
+                                  .pushNamed(GuardRoutes.patrolFinding.name!),
                             ),
                           ],
                         ),

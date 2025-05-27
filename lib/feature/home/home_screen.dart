@@ -19,19 +19,20 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentPage = 0;
-  PageController? _pageController;
+  PageController? pageController;
 
-  void _onNavigationTapped(int index) {
+  void onNavigationTapped(int index) {
     setState(() {
       _currentPage = index;
-      _pageController?.jumpToPage(index);
+      pageController?.jumpToPage(index);
     });
   }
 
   @override
   void initState() {
+    _currentPage = widget.selectedPage;
     super.initState();
-    _pageController = PageController(initialPage: _currentPage);
+    pageController = PageController(initialPage: _currentPage);
   }
 
   @override
@@ -41,9 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: PageView(
           physics: const NeverScrollableScrollPhysics(),
-          controller: _pageController,
-          children: const [
-            MainHomeScreen(),
+          controller: pageController,
+          children: [
+            MainHomeScreen(onNavigate: onNavigationTapped),
             NotificationScreen(),
             ProfileScreen(),
           ],
@@ -78,10 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final isSelected = _currentPage == index;
 
     return GestureDetector(
-      onTap: () => _onNavigationTapped(index),
+      onTap: () => onNavigationTapped(index),
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 0, vertical: 8),
+        padding:
+            EdgeInsets.symmetric(horizontal: isSelected ? 16 : 0, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? Colors.blue : Colors.transparent,
           borderRadius: BorderRadius.circular(30),
@@ -95,13 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon,
                 color: isSelected ? Colors.white : Colors.grey,
               ),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.grey,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
             ],
           ),
         ),

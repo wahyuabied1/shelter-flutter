@@ -1,11 +1,13 @@
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/routing/core/a_page.dart';
+import 'package:shelter_super_app/feature/guard/checklist_recap/checklist_recap_screen.dart';
 import 'package:shelter_super_app/feature/guard/daily_journal/daily_journal_screen.dart';
 import 'package:shelter_super_app/feature/guard/guest/guest_screen.dart';
 import 'package:shelter_super_app/feature/guard/home/guard_home.dart';
 import 'package:shelter_super_app/feature/guard/kendaraan_operasional/kendaraan_operasional_screen.dart';
 import 'package:shelter_super_app/feature/guard/mail/mail_screen.dart';
 import 'package:shelter_super_app/feature/guard/news/news_screen.dart';
+import 'package:shelter_super_app/feature/guard/patrol_finding/patrol_finding_screen.dart';
 import 'package:shelter_super_app/feature/guard/pemakaian_telp/pemakaian_telp_screen.dart';
 import 'package:shelter_super_app/feature/guard/pinjaman_kunci/pinjaman_kunci_screen.dart';
 import 'package:shelter_super_app/feature/guard/project/project_screen.dart';
@@ -24,7 +26,9 @@ class GuardRoutes {
     transporter,
     dailyJournal,
     mail,
-    news
+    news,
+    patrolFinding,
+    checklistRecap
   ];
 
   static final home = GoRoute(
@@ -132,6 +136,7 @@ class GuardRoutes {
       );
     },
   );
+
   static final news = GoRoute(
     path: '/news',
     name: 'newsScreen',
@@ -140,6 +145,30 @@ class GuardRoutes {
         key: state.pageKey,
         name: 'NewsScreen',
         child: const NewsScreen(),
+      );
+    },
+  );
+
+  static final patrolFinding = GoRoute(
+    path: '/patrolFinding',
+    name: 'patrolFindingScreen',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'PatrolFindingScreen',
+        child: const PatrolFindingScreen(),
+      );
+    },
+  );
+
+  static final checklistRecap = GoRoute(
+    path: '/checklistRecap',
+    name: 'checklistRecapScreen',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'ChecklistRecapScreen',
+        child: const ChecklistRecapScreen(),
       );
     },
   );

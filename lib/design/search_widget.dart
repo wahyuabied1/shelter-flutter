@@ -31,6 +31,8 @@ class _SearchWidgetState extends State<SearchWidget> {
       cursorColor: widget.theme.colorTheme(),
       controller: employeeController,
       decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
         labelText: widget.hint,
         contentPadding: EdgeInsets.zero,
         floatingLabelBehavior: FloatingLabelBehavior.never,
