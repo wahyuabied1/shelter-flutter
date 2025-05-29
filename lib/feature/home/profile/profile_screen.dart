@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shelter_super_app/app/di/service_locator.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/data/repository/auth_repository.dart';
+import 'package:shelter_super_app/design/common_loading_dialog.dart';
+import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,13 +15,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  var name = "Dwisandi Arifin";
+  final authRepository = serviceLocator.get<AuthRepository>();
+  String name = "Dwisandi Arifin";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
+        centerTitle: false,
         automaticallyImplyLeading: false,
         title: Text(
           "Profile",
@@ -152,7 +159,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       ListTile(
-                        onTap:(){},
+                        onTap: () {
+                          context.pushNamed(HomepageRoutes.editProfile.name!);
+                        },
                         leading:
                             Icon(Icons.person, color: Colors.blue.shade700),
                         title: Text(
@@ -174,7 +183,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         subtitle: Text('Perbarui Sekuritas Akun'),
-                        onTap: () {},
+                        onTap: () {
+                          context.pushNamed(HomepageRoutes.forgotPass.name!);
+                        },
                       ),
                     ],
                   ),
@@ -197,7 +208,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 subtitle: Text('Securely logout your Account'),
-                onTap: () {},
+                onTap: () async {
+                  await LoadingDialog.runWithLoading(
+                    context,
+                    () => authRepository.logout(endSession: true),
+                    width: 250,
+                    message: "Memproses Logout",
+                  ).then((value) {
+                    if (!context.mounted) return;
+                    context.pushNamed(HomepageRoutes.login.name!);
+                  });
+                },
               ),
             ),
           ),

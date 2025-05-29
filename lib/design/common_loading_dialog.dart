@@ -120,9 +120,17 @@ class CommonLoadingWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
                 strokeWidth: 4.0, // Adjust the thickness of the loader
               ),
+              Text(
+                message ?? '',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.blue.shade700
+                ),
+              )
             ],
           ),
         ),

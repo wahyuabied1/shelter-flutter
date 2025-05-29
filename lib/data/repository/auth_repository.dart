@@ -32,6 +32,7 @@ class AuthRepository {
   }
 
   Future<void> logout({endSession = true}) async {
+    await Future.delayed(Duration(seconds: 2));
     await Future.wait([
       _coreHttpRepository.clear(),
     ]);

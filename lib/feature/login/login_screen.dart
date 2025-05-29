@@ -197,7 +197,7 @@ class _LoginViewState extends State<_LoginView> {
             passwordController.text,
           ),
       width: 250,
-      message: "Memproses",
+      message: "Memproses Login",
     ).then((value) {
       if (!context.mounted) return;
       if (vm.loginResult.isSuccess) {

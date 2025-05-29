@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class SuccessBottomSheet extends StatefulWidget {
   final String? image;
   final String? title;
   final String? desc;
+  final String? buttonTextPrimary;
+  final Function? actionTextPrimary;
   final String? buttonText;
 
   const SuccessBottomSheet({
@@ -12,6 +15,8 @@ class SuccessBottomSheet extends StatefulWidget {
     this.image,
     this.title,
     this.desc,
+    this.buttonTextPrimary,
+    this.actionTextPrimary,
     this.buttonText,
   });
 
@@ -23,6 +28,13 @@ class _MultiChoiceBottomSheetState extends State<SuccessBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -64,32 +76,64 @@ class _MultiChoiceBottomSheetState extends State<SuccessBottomSheet> {
             ],
           ),
           const SizedBox(height: 24),
-          SvgPicture.asset(widget.image ??''),
+          SvgPicture.asset(widget.image ?? ''),
           const SizedBox(height: 24),
           Text(
             textAlign: TextAlign.center,
             widget.desc ?? '',
-            style: const TextStyle(
-                fontSize: 14),
+            style: const TextStyle(fontSize: 14),
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () {
-                // Button action here
-              },
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.blue, // Text color
-                side: const BorderSide(color: Colors.blue, width: 1.0), // Blue border
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0), // Rounded border
+          Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        width: 1.0,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                    child: Text(
+                      "Kembali",
+                      style: TextStyle(color: Colors.blue.shade700),
+                    ),
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
               ),
-              child: Text(widget.buttonText ?? ""),
-            ),
+              widget.buttonTextPrimary != null
+                  ? const SizedBox(
+                      width: 16,
+                    )
+                  : SizedBox(),
+              widget.buttonTextPrimary != null
+                  ? Flexible(
+                      flex: 1,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            widget.actionTextPrimary?.call();
+                            context.pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                          ),
+                          child: Text(
+                            widget.buttonTextPrimary ?? '',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    )
+                  : SizedBox()
+            ],
           ),
           const SizedBox(height: 12),
         ],

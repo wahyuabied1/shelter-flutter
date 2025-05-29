@@ -10,6 +10,7 @@ class NotificationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: false,
         automaticallyImplyLeading: false,
         title: Text(
           "Notifikasi",
