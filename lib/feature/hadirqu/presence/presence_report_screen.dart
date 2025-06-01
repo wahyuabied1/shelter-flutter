@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/export_bottom_sheet.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
+import 'package:shelter_super_app/feature/hadirqu/presence/attendance_sheet.dart';
 
 class PresenceReportScreen extends StatefulWidget{
   @override
@@ -12,6 +14,23 @@ class PresenceReportScreen extends StatefulWidget{
 class _PresenceReportScreenState extends State<PresenceReportScreen> {
   String _startDate = '01/11/2024';
   String _endDate = '27/11/2024';
+  final actualData = [
+    {'day': 1, 'statuses': [{'type': 'T'}], 'desc': 'Terlambat'},
+    {'day': 2, 'statuses': [{'type': 'T'}], 'desc': 'Terlambat'},
+    {'day': 4, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+    {'day': 5, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+    {'day': 6, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+    {
+      'day': 7,
+      'statuses': [
+        {'type': '?'},
+        {'type': 'T'}
+      ],
+      'desc': 'Terlambat & Di luar wilayah'
+    },
+    {'day': 8, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +215,12 @@ class _PresenceReportScreenState extends State<PresenceReportScreen> {
             width: double.infinity,
             child: OutlinedButton(
               onPressed: () {
-                // Button action here
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const ExportBottomSheet(),
+                );
               },
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -335,30 +359,34 @@ class _PresenceReportScreenState extends State<PresenceReportScreen> {
           ),
 
           const SizedBox(height: 16.0),
-
           // Detail Link
           Center(
-            child: Text(
-              'Lihat Detail ▼',
-              style: TextStyle(
-                color: Colors.blue.shade700,
-                fontWeight: FontWeight.w500,
+            child: TextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => AttendanceSheet(
+                    name: 'Abdul Rahman Hakim',
+                    role: 'Staff Keamanan',
+                    id: 'KRY-002',
+                    imageUrl: 'https://randomuser.me/api/portraits/men/2.jpg',
+                    attendanceData: actualData,
+                  ),
+                );
+              },
+              child: Text(
+                'Lihat Detail ▼',
+                style: TextStyle(
+                  color: Colors.blue.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatusCard(String label, String count, Color color) {
-    return Column(
-      children: [
-        Text(count,
-            style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-        SizedBox(height: 4.0),
-        Text(label, style: TextStyle(fontSize: 12.0)),
-      ],
     );
   }
 }

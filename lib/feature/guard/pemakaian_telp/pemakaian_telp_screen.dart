@@ -95,7 +95,7 @@ class _PemakaianTelpScreenState extends State<PemakaianTelpScreen> {
                         builder: (context) {
                           return MultiChoiceBottomSheet(
                             title: "Shift",
-                            choice: const {
+                            choice: {
                               "Shift Pagi": false,
                               "Shift Siang": false,
                               "Sihft Malam": false,
@@ -140,7 +140,7 @@ class _PemakaianTelpScreenState extends State<PemakaianTelpScreen> {
                           builder: (context) {
                             return MultiChoiceBottomSheet(
                               title: "Petugas",
-                              choice: const {
+                              choice: {
                                 "Petugas Pos Bayar Rungkut": false,
                               },
                               theme: ThemeWidget.red,

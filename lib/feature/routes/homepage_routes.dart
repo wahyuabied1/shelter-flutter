@@ -29,7 +29,6 @@ class HomepageRoutes {
     pageBuilder: (context, state) {
       final queryParams = state.uri.queryParameters;
       final page = int.tryParse(queryParams['page'] ?? '') ?? 0;
-      print('Abid $page');
       final showAlreadyLogin = queryParams['showAlreadyLogin'] == 'true';
 
       return APage(

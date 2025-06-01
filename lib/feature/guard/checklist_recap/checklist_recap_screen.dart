@@ -104,7 +104,7 @@ class _ChecklistRecapScreenState extends State<ChecklistRecapScreen> {
                           builder: (context) {
                             return MultiChoiceBottomSheet(
                               title: "Shift",
-                              choice: const {
+                              choice: {
                                 "Pagi": false,
                                 "Siang": false,
                                 "Sore": false,
@@ -151,7 +151,7 @@ class _ChecklistRecapScreenState extends State<ChecklistRecapScreen> {
                             builder: (context) {
                               return MultiChoiceBottomSheet(
                                 title: "Petugas",
-                                choice: const {
+                                choice: {
                                   "Petugas Pos Bayar Rungkut": false,
                                 },
                                 theme: ThemeWidget.red,

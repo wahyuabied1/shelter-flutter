@@ -94,7 +94,7 @@ class _MailScreenState extends State<MailScreen> {
                         builder: (context) {
                           return MultiChoiceBottomSheet(
                             title: "Shift",
-                            choice: const {
+                            choice: {
                               "Pagi": false,
                               "Siang": false,
                               "Sore": false,
@@ -140,7 +140,7 @@ class _MailScreenState extends State<MailScreen> {
                           builder: (context) {
                             return MultiChoiceBottomSheet(
                               title: "Petugas",
-                              choice: const {
+                              choice: {
                                 "Petugas Pos Bayar Rungkut": false,
                               },
                               theme: ThemeWidget.red,

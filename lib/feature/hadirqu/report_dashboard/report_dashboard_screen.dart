@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
+import 'package:shelter_super_app/core/routing/core/a_page.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/rekap_tile.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_status_chip.dart';
+import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
 class ReportDashboardScreen extends StatefulWidget {
   const ReportDashboardScreen({super.key});
@@ -259,7 +262,9 @@ class _ReportDashboardScreenState extends State<ReportDashboardScreen> {
                             "Karyawan Hadir",
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.pushNamed(HadirQuRoutes.employeePresentDetail.name!);
+                            },
                             child: Text(
                               "Lihat Semua",
                               style: TextStyle(color: Colors.blue.shade700),

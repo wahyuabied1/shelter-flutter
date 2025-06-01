@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/export_bottom_sheet.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
+import 'package:shelter_super_app/feature/hadirqu/presence/attendance_sheet.dart';
 
 class PresenceLogScreen extends StatefulWidget {
   @override
@@ -12,6 +14,22 @@ class PresenceLogScreen extends StatefulWidget {
 class _PresenceLogScreenState extends State<PresenceLogScreen> {
   String _startDate = '01/11/2024';
   String _endDate = '27/11/2024';
+  final actualData = [
+    {'day': 1, 'statuses': [{'type': 'T'}], 'desc': 'Terlambat'},
+    {'day': 2, 'statuses': [{'type': 'T'}], 'desc': 'Terlambat'},
+    {'day': 4, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+    {'day': 5, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+    {'day': 6, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+    {
+      'day': 7,
+      'statuses': [
+        {'type': '?'},
+        {'type': 'T'}
+      ],
+      'desc': 'Terlambat & Di luar wilayah'
+    },
+    {'day': 8, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +214,12 @@ class _PresenceLogScreenState extends State<PresenceLogScreen> {
             width: double.infinity,
             child: OutlinedButton(
               onPressed: () {
-                // Button action here
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const ExportBottomSheet(),
+                );
               },
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -338,11 +361,27 @@ class _PresenceLogScreenState extends State<PresenceLogScreen> {
 
           // Detail Link
           Center(
-            child: Text(
-              'Lihat Detail ▼',
-              style: TextStyle(
-                color: Colors.blue.shade700,
-                fontWeight: FontWeight.w500,
+            child: TextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => AttendanceSheet(
+                    name: 'Abdul Rahman Hakim',
+                    role: 'Staff Keamanan',
+                    id: 'KRY-002',
+                    imageUrl: 'https://randomuser.me/api/portraits/men/2.jpg',
+                    attendanceData: actualData,
+                  ),
+                );
+              },
+              child: Text(
+                'Lihat Detail ▼',
+                style: TextStyle(
+                  color: Colors.blue.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),

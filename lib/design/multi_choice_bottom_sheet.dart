@@ -11,7 +11,7 @@ class MultiChoiceBottomSheet extends StatefulWidget {
     super.key,
     required this.title,
     required this.choice,
-    this.theme,
+    this.theme = ThemeWidget.blue,
   });
 
   @override
@@ -65,20 +65,9 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                   controlAffinity: ListTileControlAffinity.leading,
                   checkColor: Colors.white,
                   activeColor: widget.theme?.colorTheme(),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: Text(dept),
-                      ),
-                      Spacer(),
-                      Text(
-                        "${(widget.choice.keys.toList().indexOf(dept) + 1) * 3} Karyawan",
-                        style: TextStyle(
-                            fontSize: 12.sp, color: Colors.grey.shade600),
-                      )
-                    ],
+                  title: SizedBox(
+                    width: 150,
+                    child: Text(dept),
                   ),
                   value: widget.choice[dept],
                   onChanged: (bool? value) {

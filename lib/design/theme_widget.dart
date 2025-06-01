@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-enum ThemeWidget { blue, orange, red, darkBlue }
+enum ThemeWidget { blue, orange, red, darkBlue, green }
 
 extension ThemeExt on ThemeWidget? {
   Color colorTheme() {
     switch (this) {
+      case ThemeWidget.green:
+        return Colors.green.shade700;
       case ThemeWidget.darkBlue:
         return Color(0XFF154B79);
       case ThemeWidget.orange:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/double_info_widget.dart';
 import 'package:shelter_super_app/design/double_list_tile.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/search_widget.dart';
@@ -23,7 +24,7 @@ class _PatrolFindingScreenState extends State<PatrolFindingScreen> {
         centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: const Text(
-          "Temuan Patrol",
+          "Checklist Patrol",
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -99,12 +100,12 @@ class _PatrolFindingScreenState extends State<PatrolFindingScreen> {
                           context: context,
                           shape: const RoundedRectangleBorder(
                             borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16)),
+                                BorderRadius.vertical(top: Radius.circular(16)),
                           ),
                           builder: (context) {
                             return MultiChoiceBottomSheet(
                               title: "Shift",
-                              choice: const {
+                              choice: {
                                 "Pagi": false,
                                 "Siang": false,
                                 "Sore": false,
@@ -127,7 +128,7 @@ class _PatrolFindingScreenState extends State<PatrolFindingScreen> {
                             // Rounded corners
                             border: Border.all(
                                 color:
-                                Colors.grey.shade300), // Light grey border
+                                    Colors.grey.shade300), // Light grey border
                           ),
                           child: const Row(
                             children: [
@@ -151,7 +152,7 @@ class _PatrolFindingScreenState extends State<PatrolFindingScreen> {
                             builder: (context) {
                               return MultiChoiceBottomSheet(
                                 title: "Petugas",
-                                choice: const {
+                                choice: {
                                   "Petugas Pos Bayar Rungkut": false,
                                 },
                                 theme: ThemeWidget.red,
@@ -193,7 +194,7 @@ class _PatrolFindingScreenState extends State<PatrolFindingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SearchWidget(
-                    hint: 'Cari Temuan',
+                    hint: 'Cari Checklist Patrol',
                     onSearch: (search) {},
                     theme: ThemeWidget.red,
                   ),
@@ -235,84 +236,120 @@ class _PatrolFindingScreenState extends State<PatrolFindingScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Card(
-        color: Colors.white,
+        color: Colors.grey.shade100,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.red.shade700,
-                  child: Text(
-                    'Dedi'.initialName(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.red.shade700,
+                      child: Text(
+                        'Dedi'.initialName(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
+                    title: const Text('Dedi',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    subtitle: const Text('Petugas Pos Bayer Rungkut'),
                   ),
-                ),
-                title: const Text('Dedi',
-                    style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                subtitle: const Text('Petugas Pos Bayer Rungkut'),
-              ),
-              DoubleListTile(
-                firstIcon: Icons.date_range,
-                firstTitle: 'Tanggal',
-                firstSubtitle: DateTime.now().ddMMMyyyy(' '),
-                secondIcon: Icons.access_time,
-                secondTitle: 'Jam Upload',
-                secondSubtitle: '09:00',
-              ),
-              const ListTile(
-                visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'Judul',
-                  style: TextStyle(fontSize: 11, color: Colors.black54),
-                ),
-                subtitle: Text(
-                  'Pengait Lampu TL',
-                  style: TextStyle(fontSize: 12, color: Colors.black),
-                ),
-                leading: Icon(Icons.description_rounded),
-              ),
-              const ListTile(
-                visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'Deskripsi',
-                  style: TextStyle(fontSize: 11, color: Colors.black54),
-                ),
-                subtitle: Text(
-                  'Pengait Lampu TL Lepas',
-                  style: TextStyle(fontSize: 12, color: Colors.black),
-                ),
-                leading: Icon(Icons.description_rounded),
-              ),
-              ListTile(
-                  onTap: (){},
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.black12, width: 0.5),
-                    borderRadius: BorderRadius.circular(8),
+                  DoubleListTile(
+                    firstIcon: Icons.date_range,
+                    firstTitle: 'Tanggal',
+                    firstSubtitle: DateTime.now().ddMMMyyyy(' '),
+                    secondIcon: Icons.access_time,
+                    secondTitle: 'Shift',
+                    secondSubtitle: 'Pagi',
                   ),
-                  visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                  title: const Text(
-                    'Image-232132.jpg',
-                    style: TextStyle(fontSize: 14,color: Colors.black54),
+                  DoubleListTile(
+                    firstIcon: Icons.access_time,
+                    firstTitle: 'Waktu Scan',
+                    firstSubtitle: DateTime.now().hHmm(),
+                    secondIcon: Icons.location_on_outlined,
+                    secondTitle: 'Tempat',
+                    secondSubtitle: 'L2 TANGGA GED. LAMA',
                   ),
-                  leading: const Icon(Icons.image),
-                  trailing:Icon(Icons.download)
+                  const ListTile(
+                    visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      'Keterangan',
+                      style: TextStyle(fontSize: 11, color: Colors.black54),
+                    ),
+                    subtitle: Text(
+                      'input media order dari AE cetak kuitansi cek kelengkapan dokumen yang sudah do ttd GM sebelum diserahkan kebagian keuangan buat rekap iklan kompetitor input / narik iklan baris closhing	',
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                    leading: Icon(Icons.description_rounded),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const DoubleInfoWidget(
+                    firstInfo: 'Kriteria',
+                    firstValue: 'Normal',
+                    secondInfo: 'Status',
+                    secondValue: 'Sudak Di Cek',
+                    theme: ThemeWidget.green,
+                    bg: Colors.white,
+                  ),
+                  SizedBox(height: 12),
+                  ListTile(
+                    tileColor: Colors.white,
+                    onTap: () {},
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: Colors.black12, width: 0.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    visualDensity:
+                        const VisualDensity(horizontal: -4, vertical: -4),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                    title: const Text(
+                      'Lihat Maps',
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                    leading: const Icon(Icons.location_on),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                  ),
+                  SizedBox(height: 12),
+                  ListTile(
+                      tileColor: Colors.white,
+                      onTap: () {},
+                      shape: RoundedRectangleBorder(
+                        side:
+                            const BorderSide(color: Colors.black12, width: 0.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      visualDensity:
+                          const VisualDensity(horizontal: -4, vertical: -4),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                      title: const Text(
+                        'Image-232132.jpg',
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
+                      leading: const Icon(Icons.image),
+                      trailing: Icon(Icons.download)),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

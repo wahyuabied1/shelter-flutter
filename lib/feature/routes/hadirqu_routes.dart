@@ -5,6 +5,7 @@ import 'package:shelter_super_app/feature/hadirqu/home/hadirqu_home.dart';
 import 'package:shelter_super_app/feature/hadirqu/overtime/overtime_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/permission/permission_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_screen.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/detail/employee_present_detail_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_dashboard_screen.dart';
 
 class HadirQuRoutes {
@@ -14,6 +15,7 @@ class HadirQuRoutes {
     home,
     listEmployee,
     reportDashboard,
+    employeePresentDetail,
     reportPresence,
     logPresence,
     overTimeSubmission,
@@ -52,6 +54,18 @@ class HadirQuRoutes {
         key: state.pageKey,
         name: 'ReportDashboardScreen',
         child: ReportDashboardScreen(),
+      );
+    },
+  );
+
+  static final employeePresentDetail = GoRoute(
+    path: '/employeePresentDetail',
+    name: 'EmployeePresentDetail',
+    pageBuilder: (context, state) {
+      return APage(
+        key: state.pageKey,
+        name: 'EmployeePresentDetailScreen',
+        child: EmployeePresentDetailScreen(),
       );
     },
   );

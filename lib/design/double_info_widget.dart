@@ -7,6 +7,7 @@ class DoubleInfoWidget extends StatelessWidget {
   final String? secondInfo;
   final String? secondValue;
   final ThemeWidget? theme;
+  final Color? bg;
 
   const DoubleInfoWidget({
     super.key,
@@ -15,6 +16,7 @@ class DoubleInfoWidget extends StatelessWidget {
     this.secondInfo,
     this.secondValue,
     this.theme,
+    this.bg
   });
 
   @override
@@ -27,7 +29,7 @@ class DoubleInfoWidget extends StatelessWidget {
             padding: EdgeInsets.all(8),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.transparent,
+              color: bg ?? Colors.transparent,
               borderRadius: BorderRadius.circular(8),
               // Rounded corners
               border:
@@ -51,7 +53,7 @@ class DoubleInfoWidget extends StatelessWidget {
             padding: EdgeInsets.all(8),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.transparent,
+              color: bg ?? Colors.transparent,
               borderRadius: BorderRadius.circular(8),
               // Rounded corners
               border: Border.all(
@@ -66,8 +68,9 @@ class DoubleInfoWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                   secondValue ?? '-',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: secondValue == null ? theme.colorTheme() : null),
+                    fontWeight: FontWeight.bold,
+                    color: secondValue != null ? theme.colorTheme() : null,
+                  ),
                 )
               ],
             ),

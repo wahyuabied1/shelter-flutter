@@ -44,159 +44,161 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ),
       ),
-      body: Container(
-        margin: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
-                    )
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Buat Password Baru',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0D1C3D),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 12,
+                        offset: Offset(0, 6),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Buat Password Baru',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0D1C3D),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text('Masukkan password sekarang.'),
-                    const SizedBox(height: 12),
-                    _buildPasswordField(
-                      label: 'Password Sekarang',
-                      controller: _currentPasswordController,
-                      visible: _currentPasswordVisible,
-                      onToggle: () {
-                        setState(() {
-                          _currentPasswordVisible = !_currentPasswordVisible;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    const Text.rich(
-                      TextSpan(
-                        text:
-                            'Buat password baru, pastikan password memiliki kombinasi huruf besar ',
+                      const SizedBox(height: 12),
+                      const Text('Masukkan password sekarang.'),
+                      const SizedBox(height: 12),
+                      _buildPasswordField(
+                        label: 'Password Sekarang',
+                        controller: _currentPasswordController,
+                        visible: _currentPasswordVisible,
+                        onToggle: () {
+                          setState(() {
+                            _currentPasswordVisible = !_currentPasswordVisible;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      const Text.rich(
+                        TextSpan(
+                          text:
+                              'Buat password baru, pastikan password memiliki kombinasi huruf besar ',
+                          children: [
+                            TextSpan(
+                              text: 'huruf kecil',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: ' dan '),
+                            TextSpan(
+                              text: 'angka',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildPasswordField(
+                        label: 'Password Baru',
+                        controller: _newPasswordController,
+                        visible: _newPasswordVisible,
+                        onToggle: () {
+                          setState(() {
+                            _newPasswordVisible = !_newPasswordVisible;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildPasswordField(
+                        label: 'Ulangi Password Baru',
+                        controller: _confirmPasswordController,
+                        visible: _confirmPasswordVisible,
+                        onToggle: () {
+                          setState(() {
+                            _confirmPasswordVisible = !_confirmPasswordVisible;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          TextSpan(
-                            text: 'huruf kecil',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          TextSpan(text: ' dan '),
-                          TextSpan(
-                            text: 'angka',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildPasswordField(
-                      label: 'Password Baru',
-                      controller: _newPasswordController,
-                      visible: _newPasswordVisible,
-                      onToggle: () {
-                        setState(() {
-                          _newPasswordVisible = !_newPasswordVisible;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _buildPasswordField(
-                      label: 'Ulangi Password Baru',
-                      controller: _confirmPasswordController,
-                      visible: _confirmPasswordVisible,
-                      onToggle: () {
-                        setState(() {
-                          _confirmPasswordVisible = !_confirmPasswordVisible;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1.0,
-                                  color: Colors.blue.shade700,
+                          Flexible(
+                            flex: 1,
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(
+                                    width: 1.0,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                ),
+                                child: Text(
+                                  "Kembali",
+                                  style: TextStyle(color: Colors.blue.shade700),
                                 ),
                               ),
-                              child: Text(
-                                "Kembali",
-                                style: TextStyle(color: Colors.blue.shade700),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Flexible(
+                            flex: 1,
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16)),
+                                    ),
+                                    builder: (context) {
+                                      return SuccessBottomSheet(
+                                        title: "Konfirmasi Simpan",
+                                        image: AppAssets.ilEmail,
+                                        desc:
+                                            'Apakah anda yakin untuk menyimpan perubahan ?',
+                                        buttonText: 'Kembali',
+                                        actionTextPrimary: () {
+                                          context.pop();
+                                        },
+                                        buttonTextPrimary: "Simpan",
+                                      );
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue.shade700,
+                                ),
+                                child: const Text(
+                                  "Simpan",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 12),
-                        Flexible(
-                          flex: 1,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(16)),
-                                  ),
-                                  builder: (context) {
-                                    return SuccessBottomSheet(
-                                      title: "Konfirmasi Simpan",
-                                      image: AppAssets.ilEmail,
-                                      desc:
-                                          'Apakah anda yakin untuk menyimpan perubahan ?',
-                                      buttonText: 'Kembali',
-                                      actionTextPrimary: () {
-                                        context.pop();
-                                      },
-                                      buttonTextPrimary: "Simpan",
-                                    );
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue.shade700,
-                              ),
-                              child: const Text(
-                                "Simpan",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -218,6 +220,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           obscureText: !visible,
           decoration: InputDecoration(
             hintText: '*********',
+            hintStyle: TextStyle(color: Colors.black12),
             border: const OutlineInputBorder(),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(4.0),
@@ -233,9 +236,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 visible ? Icons.visibility : Icons.visibility_off,
               ),
               onPressed: () {
-                setState(() {
-                  visible ? Icons.visibility : Icons.visibility_off;
-                });
+                onToggle.call();
               },
             ),
           ),

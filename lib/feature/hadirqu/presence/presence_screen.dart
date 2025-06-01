@@ -40,6 +40,7 @@ class _PresenceScreenState extends State<PresenceScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        titleSpacing: 0,
         centerTitle: false,
         leading: const BackButton(color: Colors.white),
         title: const Text(
