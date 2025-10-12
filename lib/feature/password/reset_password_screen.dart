@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
+import 'package:shelter_super_app/core/utils/result/result.dart';
+import 'package:shelter_super_app/design/common_loading_dialog.dart';
 import 'package:shelter_super_app/design/success_bottom_sheet.dart';
 import 'package:shelter_super_app/feature/password/reset_password_viewmodel.dart';
 
@@ -119,21 +120,7 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
                   ),
                   onPressed: vm.isEnableButton
                       ? () {
-                          showModalBottomSheet(
-                            context: context,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(16)),
-                            ),
-                            builder: (context) {
-                              return SuccessBottomSheet(
-                                title: "Password Terkirim",
-                                image: AppAssets.ilEmail,
-                                desc: 'Kami sudah mengirimkan surel yang berisi tautan untuk reset password Anda!',
-                                buttonText: 'Kembali',
-                              );
-                            },
-                          );
+                          resetPassword(context);
                         }
                       : null,
                   child: Text(
@@ -151,5 +138,34 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
         ),
       ),
     );
+  }
+
+  void resetPassword(BuildContext context) async {
+    var vm = context.read<ResetPasswordViewmodel>();
+
+    await LoadingDialog.runWithLoading(
+      context,
+      () => context.read<ResetPasswordViewmodel>().resetPassword(),
+      width: 250,
+      message: "Memproses Reset",
+    ).then((value) {
+      if (!context.mounted) return;
+      if (vm.resetPassResult.isSuccess) {
+        showModalBottomSheet(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          builder: (context) {
+            return const SuccessBottomSheet(
+              title: 'Password Reset',
+              image: AppAssets.ilEmail,
+              desc: 'Link reset password telah dikirim ke email!',
+              buttonText: 'Kembali',
+            );
+          },
+        );
+      }
+    });
   }
 }

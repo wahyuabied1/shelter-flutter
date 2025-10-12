@@ -43,7 +43,7 @@ class UserResponse {
 @JsonSerializable()
 class Menus {
   @JsonKey(name: "HadirKu")
-  final List<int>? hadirKu;
+  final bool? hadirKu;
   @JsonKey(name: "CleaningQu")
   final bool? cleaningQu;
   @JsonKey(name: "IssueQu")
@@ -59,7 +59,7 @@ class Menus {
   });
 
   Menus copyWith({
-    List<int>? hadirKu,
+    bool? hadirKu,
     bool? cleaningQu,
     bool? issueQu,
     bool? poskoPatrol,
@@ -87,17 +87,17 @@ class User {
   @JsonKey(name: "email")
   final String? email;
   @JsonKey(name: "foto")
-  final dynamic foto;
+  final String? foto;
   @JsonKey(name: "alamat")
-  final dynamic alamat;
+  final String? alamat;
   @JsonKey(name: "site_ids")
   final List<int>? siteIds;
   @JsonKey(name: "role_ids")
   final List<int>? roleIds;
   @JsonKey(name: "created_at")
-  final DateTime? createdAt;
+  final String? createdAt;
   @JsonKey(name: "updated_at")
-  final DateTime? updatedAt;
+  final String? updatedAt;
 
   User({
     this.id,
@@ -121,8 +121,8 @@ class User {
     dynamic alamat,
     List<int>? siteIds,
     List<int>? roleIds,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? createdAt,
+    String? updatedAt,
   }) =>
       User(
         id: id ?? this.id,

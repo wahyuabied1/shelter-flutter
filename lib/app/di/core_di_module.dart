@@ -34,8 +34,9 @@ class CoreModule {
 
   Future<Map<String, String>> defaultHttpHeaders() async {
     final packageInfo = await PackageInfo.fromPlatform();
+    String apikey = 'pub_72497f7768a5ac7d484c5f03856154fa';
     return Map.unmodifiable({
-      'api-key': "TEST",
+      'api-key': apikey,
       'App-Version': packageInfo.buildNumber,
       'App-Name': 'shelterApp-flutter',
       'App-OS': Platform.operatingSystem,

@@ -10,8 +10,8 @@ class ApiEnv {
 
   String get shelter => env(
         key: 'striveapp',
-        dev: 'striveapp.id/api/v1/',
-        prod: 'striveapp.id/api/v1/',
+        dev: 'striveapp.id/api/v2/',
+        prod: 'striveapp.id/api/v2/',
       );
 
   String env({

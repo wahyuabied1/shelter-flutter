@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:shelter_super_app/core/network/repository/core_http_repository.dart';
-import 'package:shelter_super_app/core/network/response/scalar_response.dart';
+import 'package:shelter_super_app/core/network/response/api_response.dart';
+import 'package:shelter_super_app/core/network/response/json_response.dart';
 import 'package:shelter_super_app/data/model/user_response.dart';
 import 'package:shelter_super_app/data/network/auth_network.dart';
 
@@ -23,12 +24,26 @@ class AuthRepository {
     }
   }
 
+  Future<UserResponse> getUser() async{
+    return _coreHttpRepository.getUser();
+  }
+
   Future<bool> isLoggedIn() =>
       _coreHttpRepository.getToken().then((token) => token.isNotEmpty);
 
-  Future<ScalarResponse> login(
+  Future<JsonResponse<UserResponse>> login(
       {String username = '', String password = ''}) async {
     return await _authNetwork.login(username: username, password: password);
+  }
+
+  Future<JsonResponse<UserResponse>> refreshToken(
+      {String username = '', String password = ''}) async {
+    return await _authNetwork.refreshToken();
+  }
+
+  Future<ApiResponse> resetPasword(
+      {String email = ''}) async {
+    return await _authNetwork.resetPassword(email: email);
   }
 
   Future<void> logout({endSession = true}) async {

@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/app/di/service_locator.dart';
 import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service.dart';
 import 'package:shelter_super_app/core/firebase_config/remote_config_key.dart';
+import 'package:shelter_super_app/core/utils/result/result.dart';
 import 'package:shelter_super_app/data/model/promotion_response.dart';
 import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/guard_routes.dart';
@@ -15,15 +17,30 @@ import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/issuequ_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MainHomeScreen extends StatefulWidget {
+import 'main_home_viewmodel.dart';
+
+class MainHomeScreen extends StatelessWidget {
   final Function onNavigate;
   MainHomeScreen({super.key,required this.onNavigate});
 
   @override
-  State<MainHomeScreen> createState() => _MainHomeState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<MainHomeViewmodel>(
+      create: (context) => MainHomeViewmodel()..init(),
+      child: _MainHomeView(onNavigate: onNavigate,),
+    );
+  }
 }
 
-class _MainHomeState extends State<MainHomeScreen> {
+class _MainHomeView extends StatefulWidget {
+  final Function onNavigate;
+  const _MainHomeView({required this.onNavigate});
+
+  @override
+  State<_MainHomeView> createState() => _MainHomeState();
+}
+
+class _MainHomeState extends State<_MainHomeView> {
   int _currentIndex = 0;
   final _remoteConfig = serviceLocator.get<FirebaseRemoteConfigService>();
   List<PromotionResponse> listData = [];
@@ -33,32 +50,32 @@ class _MainHomeState extends State<MainHomeScreen> {
     super.initState();
     String jsonString = _remoteConfig.getString(promotion);
     final List<dynamic> jsonList = jsonDecode(jsonString);
-    listData =
-        jsonList.map((json) => PromotionResponse.fromJson(json)).toList();
+    listData = jsonList.map((json) => PromotionResponse.fromJson(json)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    var vm = context.watch<MainHomeViewmodel>();
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Selamat Pagi 👋',
-                  style: TextStyle(
+                  vm.greeting ?? '',
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'Dwisandi Arifin',
-                  style: TextStyle(
+                  vm.userResult.dataOrNull?.user?.nama ?? '-',
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,

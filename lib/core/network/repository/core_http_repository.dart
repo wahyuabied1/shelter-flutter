@@ -22,7 +22,9 @@ class CoreHttpRepository {
   }
 
   Future<UserResponse> getUser() async{
-    return UserResponse.deserialize(userKey);
+    var json = await secureStorage.getString(userKey);
+    print('Abid ${DateTime.now()}');
+    return UserResponse.deserialize(json);
   }
 
   // can be empty

@@ -24,9 +24,7 @@ Map<String, dynamic> _$UserResponseToJson(UserResponse instance) =>
     };
 
 Menus _$MenusFromJson(Map<String, dynamic> json) => Menus(
-      hadirKu: (json['HadirKu'] as List<dynamic>?)
-          ?.map((e) => (e as num).toInt())
-          .toList(),
+      hadirKu: json['HadirKu'] as bool?,
       cleaningQu: json['CleaningQu'] as bool?,
       issueQu: json['IssueQu'] as bool?,
       poskoPatrol: json['Posko Patrol'] as bool?,
@@ -44,20 +42,16 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       nama: json['nama'] as String?,
       username: json['username'] as String?,
       email: json['email'] as String?,
-      foto: json['foto'],
-      alamat: json['alamat'],
+      foto: json['foto'] as String?,
+      alamat: json['alamat'] as String?,
       siteIds: (json['site_ids'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList(),
       roleIds: (json['role_ids'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList(),
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
-      updatedAt: json['updated_at'] == null
-          ? null
-          : DateTime.parse(json['updated_at'] as String),
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -69,6 +63,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'alamat': instance.alamat,
       'site_ids': instance.siteIds,
       'role_ids': instance.roleIds,
-      'created_at': instance.createdAt?.toIso8601String(),
-      'updated_at': instance.updatedAt?.toIso8601String(),
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };

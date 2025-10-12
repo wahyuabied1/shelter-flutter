@@ -52,7 +52,8 @@ class AuthInterceptor extends InterceptorContract {
       final token = await _coreHttpRepository.getToken();
       if (oldToken == token) {
         // refresh token later
-        // return await _authRepository.refreshToken();
+        final newUser = await _authRepository.refreshToken();
+        await _authRepository.saveSession(user: newUser.data);
       }
       return true;
     });
