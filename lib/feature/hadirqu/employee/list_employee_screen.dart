@@ -76,6 +76,7 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
         child: Column(
           children: [
             TextField(
+              cursorColor:Colors.blue[800],
               decoration: InputDecoration(
                   hintText: 'Cari karyawan',
                   hintStyle: TextStyle(color: Colors.black12),

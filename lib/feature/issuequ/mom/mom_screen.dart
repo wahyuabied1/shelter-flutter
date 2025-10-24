@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
-import 'package:shelter_super_app/design/double_info_widget.dart';
-import 'package:shelter_super_app/design/double_list_tile.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/search_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';

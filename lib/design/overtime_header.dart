@@ -47,6 +47,7 @@ class _OverTimeHeaderState extends State<OverTimeHeader> {
         SizedBox(
           width: double.infinity,
           child: TextField(
+            cursorColor:Colors.blue[800],
             controller: employeeController,
             decoration: InputDecoration(
               labelText: 'Cari karyawan',

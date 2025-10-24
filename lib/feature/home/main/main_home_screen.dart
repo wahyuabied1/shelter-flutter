@@ -11,6 +11,7 @@ import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_se
 import 'package:shelter_super_app/core/firebase_config/remote_config_key.dart';
 import 'package:shelter_super_app/core/utils/result/result.dart';
 import 'package:shelter_super_app/data/model/promotion_response.dart';
+import 'package:shelter_super_app/design/shimmer.dart';
 import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
 import 'package:shelter_super_app/feature/routes/guard_routes.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
@@ -21,19 +22,23 @@ import 'main_home_viewmodel.dart';
 
 class MainHomeScreen extends StatelessWidget {
   final Function onNavigate;
-  MainHomeScreen({super.key,required this.onNavigate});
+
+  MainHomeScreen({super.key, required this.onNavigate});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<MainHomeViewmodel>(
       create: (context) => MainHomeViewmodel()..init(),
-      child: _MainHomeView(onNavigate: onNavigate,),
+      child: _MainHomeView(
+        onNavigate: onNavigate,
+      ),
     );
   }
 }
 
 class _MainHomeView extends StatefulWidget {
   final Function onNavigate;
+
   const _MainHomeView({required this.onNavigate});
 
   @override
@@ -50,7 +55,8 @@ class _MainHomeState extends State<_MainHomeView> {
     super.initState();
     String jsonString = _remoteConfig.getString(promotion);
     final List<dynamic> jsonList = jsonDecode(jsonString);
-    listData = jsonList.map((json) => PromotionResponse.fromJson(json)).toList();
+    listData =
+        jsonList.map((json) => PromotionResponse.fromJson(json)).toList();
   }
 
   @override
@@ -115,20 +121,35 @@ class _MainHomeState extends State<_MainHomeView> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildQuickActionButton(
-                      AppAssets.ilIconHadirqu, 'HadirQu', '(Kehadiran)', () {
+                      vm.userResult.isLoading,
+                      vm.userResult.dataOrNull?.menus?.hadirKu ?? false,
+                      AppAssets.ilIconHadirqu,
+                      'HadirQu',
+                      '(Kehadiran)', () {
                     context.pushNamed(HadirQuRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
-                      AppAssets.ilIconCleaningqu, 'CleaningQu', '(Kebersihan)',
-                      () {
+                      vm.userResult.isLoading,
+                      vm.userResult.dataOrNull?.menus?.cleaningQu ?? false,
+                      AppAssets.ilIconCleaningqu,
+                      'CleaningQu',
+                      '(Kebersihan)', () {
                     context.pushNamed(CleaningquRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
-                      AppAssets.ilIconIssuequ, 'IssueQu', '(Keluhan)', () {
+                      vm.userResult.isLoading,
+                      vm.userResult.dataOrNull?.menus?.issueQu ?? false,
+                      AppAssets.ilIconIssuequ,
+                      'IssueQu',
+                      '(Keluhan)', () {
                     context.pushNamed(IssueQuRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
-                      AppAssets.ilIconGuard, 'Guard', '(Keamanan)', () {
+                      vm.userResult.isLoading,
+                      vm.userResult.dataOrNull?.menus?.poskoPatrol ?? false,
+                      AppAssets.ilIconGuard,
+                      'Guard',
+                      '(Keamanan)', () {
                     context.pushNamed(GuardRoutes.home.name!);
                   }),
                 ],
@@ -256,41 +277,61 @@ class _MainHomeState extends State<_MainHomeView> {
   }
 
   Widget _buildQuickActionButton(
-      String image, String title, String subtitle, Function onTap) {
-    return InkWell(
-      onTap: () {
-        onTap.call();
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.white,
-              child: Image.asset(
-                image,
-                width: 30.w,
-                height: 30.h,
+    bool isLoading,
+    bool isVisible,
+    String image,
+    String title,
+    String subtitle,
+    Function onTap,
+  ) {
+    return Visibility(
+      visible: isVisible,
+      child: InkWell(
+        onTap: () {
+          if (!isLoading) {
+            onTap.call();
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+          child: Column(
+            children: [
+              Shimmer(
+                isLoading: isLoading,
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.white,
+                  child: Image.asset(
+                    image,
+                    width: 30.w,
+                    height: 30.h,
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+              SizedBox(height: 8.h),
+              Shimmer(
+                isLoading: isLoading,
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.white70,
+              Shimmer(
+                isLoading: isLoading,
+                child: Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.white70,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -299,7 +340,7 @@ class _MainHomeState extends State<_MainHomeView> {
   Widget _buildSectionHeader(
       String title, String? actionText, Function? onClickActionText) {
     return Padding(
-      padding: const EdgeInsets.only(left: 12.0,top: 8),
+      padding: const EdgeInsets.only(left: 12.0, top: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

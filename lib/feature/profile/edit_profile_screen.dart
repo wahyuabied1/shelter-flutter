@@ -204,6 +204,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       initialValue: initialValue,
       keyboardType: keyboardType,
       maxLines: maxLines,
+        cursorColor:Colors.blue[800],
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4.0),

@@ -23,12 +23,11 @@ class CoreHttpRepository {
 
   Future<UserResponse> getUser() async{
     var json = await secureStorage.getString(userKey);
-    print('Abid ${DateTime.now()}');
     return UserResponse.deserialize(json);
   }
 
   // can be empty
-  Future<String> getToken() => secureStorage.getString(coreTokenKey);
+  Future<String> getToken() async =>  await secureStorage.getString(coreTokenKey);
 
   Future<ApiEnv> getEnv() async {
     final currentEnv = await secureStorage.getString(coreEnv);
@@ -58,6 +57,7 @@ class CoreHttpRepository {
 
   Future<void> clear() async {
     await secureStorage.deleteData(coreTokenKey);
+    await secureStorage.deleteData(userKey);
     await secureStorage.deleteData(coreEnv);
   }
 

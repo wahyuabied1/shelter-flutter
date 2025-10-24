@@ -1,25 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/di/service_locator.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/core/utils/result/result.dart';
 import 'package:shelter_super_app/data/repository/auth_repository.dart';
 import 'package:shelter_super_app/design/common_loading_dialog.dart';
+import 'package:shelter_super_app/design/shimmer.dart';
+import 'package:shelter_super_app/feature/home/profile/profile_viewmodel.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ProfileViewmodel>(
+      create: (context) => ProfileViewmodel()..init(),
+      child: _ProfileView(),
+    );
+  }
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileView extends StatefulWidget {
+  const _ProfileView();
+
+  @override
+  State<_ProfileView> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<_ProfileView> {
   final authRepository = serviceLocator.get<AuthRepository>();
-  String name = "Dwisandi Arifin";
 
   @override
   Widget build(BuildContext context) {
+    var vm = context.watch<ProfileViewmodel>();
+
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -62,15 +79,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.blue.shade700,
-                      child: Text(
-                        name.initialName(),
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                    Shimmer(
+                      isLoading: vm.userResult.isLoading,
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.blue.shade700,
+                        child: Text(
+                          vm.userResult.dataOrNull?.user?.nama?.initialName() ??
+                              '-',
+                          style: TextStyle(
+                            fontSize: 24.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -80,61 +101,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            name,
+                            vm.userResult.dataOrNull?.user?.nama ?? '-',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const ListTile(
+                          ListTile(
                             minVerticalPadding: 0,
                             dense: true,
                             visualDensity:
                                 VisualDensity(horizontal: -4, vertical: -4),
                             contentPadding: EdgeInsets.all(0),
-                            leading: Icon(
+                            leading: const Icon(
                               Icons.person,
                               size: 20,
                             ),
                             title: Text(
-                              'Dwi Shelter Indonesia',
-                              style: TextStyle(
+                              vm.userResult.dataOrNull?.user?.username ?? '-',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.black87,
                               ),
                             ),
                           ),
-                          const ListTile(
+                          ListTile(
                             minVerticalPadding: 0,
                             dense: true,
                             visualDensity:
                                 VisualDensity(horizontal: -4, vertical: -4),
                             contentPadding: EdgeInsets.all(0),
-                            leading: Icon(
+                            leading: const Icon(
                               Icons.email,
                               size: 20,
                             ),
                             title: Text(
-                              'email@example.com',
-                              style: TextStyle(
+                              vm.userResult.dataOrNull?.user?.email ?? '-',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.black87,
                               ),
                             ),
                           ),
-                          const ListTile(
+                          ListTile(
                             minVerticalPadding: 0,
                             dense: true,
                             visualDensity:
                                 VisualDensity(horizontal: -4, vertical: -4),
                             contentPadding: EdgeInsets.all(0),
-                            leading: Icon(
+                            leading: const Icon(
                               Icons.location_on,
                               size: 20,
                             ),
                             title: Text(
-                              'PT. SHELTER NUSANTARA\nJL. Semampir Selatan V A NO.18\nSurabaya 60119',
-                              style: TextStyle(
+                              vm.userResult.dataOrNull?.user?.alamat ?? '-',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.black87,
                               ),
@@ -184,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         subtitle: Text('Perbarui Sekuritas Akun'),
                         onTap: () {
-                          context.pushNamed(HomepageRoutes.forgotPass.name!);
+                          context.pushNamed(HomepageRoutes.changePass.name!);
                         },
                       ),
                     ],
@@ -211,19 +232,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () async {
                   await LoadingDialog.runWithLoading(
                     context,
-                    () => authRepository.logout(endSession: true),
+                    () => vm.logout(),
                     width: 250,
                     message: "Memproses Logout",
                   ).then((value) {
                     if (!context.mounted) return;
-                    context.pushNamed(HomepageRoutes.login.name!);
+                    if (vm.logoutResult.isSuccess) {
+                      showDefaultSnackbar("Berhasil Logout",vm.logoutResult.isSuccess);
+                      context.pushNamed(HomepageRoutes.login.name!);
+                    } else if (vm.logoutResult.isError) {
+                      showDefaultSnackbar(vm.logoutResult.error,vm.logoutResult.isSuccess);
+                    }
                   });
                 },
               ),
             ),
           ),
 
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
@@ -235,9 +261,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icon(Icons.calendar_today,
                             size: 16, color: Colors.grey),
                         SizedBox(width: 8),
-                        Text(
-                          'User Sejak: 21-May-2021',
-                          style: TextStyle(color: Colors.black87, fontSize: 12),
+                        Shimmer(
+                          isLoading: vm.userResult.isLoading,
+                          child: Text(
+                            'User Sejak: ${vm.getUserCreatedDate()}',
+                            style: TextStyle(color: Colors.black87, fontSize: 12),
+                          ),
                         ),
                       ],
                     ),
@@ -251,7 +280,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icon(Icons.update, size: 16, color: Colors.grey),
                     SizedBox(width: 8),
                     Text(
-                      'Update Terakhir: 07-Jun-2023',
+                      'Update Terakhir: ${vm.getUserUpdatedDate()}',
                       style: TextStyle(color: Colors.black87, fontSize: 12),
                     ),
                   ],
@@ -260,6 +289,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void showDefaultSnackbar(String errorMessage, bool isSuccess) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: isSuccess ?Colors.green :Colors.red,
+        content: Text(errorMessage),
       ),
     );
   }

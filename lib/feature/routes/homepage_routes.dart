@@ -2,9 +2,10 @@ import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/routing/core/a_page.dart';
 import 'package:shelter_super_app/feature/home/home_screen.dart';
 import 'package:shelter_super_app/feature/login/login_screen.dart';
-import 'package:shelter_super_app/feature/password/forgot_password_screen.dart';
 import 'package:shelter_super_app/feature/password/reset_password_screen.dart';
 import 'package:shelter_super_app/feature/profile/edit_profile_screen.dart';
+
+import '../password/change_password_screen.dart';
 
 class HomepageRoutes {
   HomepageRoutes._();
@@ -14,7 +15,7 @@ class HomepageRoutes {
     login,
     resetPass,
     appMain,
-    forgotPass,
+    changePass,
     editProfile,
   ];
 
@@ -66,14 +67,14 @@ class HomepageRoutes {
     },
   );
 
-  static final forgotPass = GoRoute(
-    path: '/forgotPass',
-    name: 'forgotPasswordScreen',
+  static final changePass = GoRoute(
+    path: '/changePass',
+    name: 'changePasswordScreen',
     pageBuilder: (context, state) {
       return APage(
         key: state.pageKey,
         name: 'ForgotPasswordScreen',
-        child: const ForgotPasswordScreen(),
+        child: const ChangePasswordScreen(),
       );
     },
   );

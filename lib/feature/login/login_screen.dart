@@ -86,6 +86,8 @@ class _LoginViewState extends State<_LoginView> {
                             SizedBox(height: 48.h),
                             TextField(
                               controller: emailController,
+                              cursorColor:Colors.blue[800],
+
                               decoration: InputDecoration(
                                 labelText: 'Email',
                                 labelStyle: const TextStyle(color: Colors.black54),
@@ -105,6 +107,8 @@ class _LoginViewState extends State<_LoginView> {
                             TextField(
                               controller: passwordController,
                               obscureText: !_isPasswordVisible,
+                              cursorColor:Colors.blue[800],
+
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(),
                                 enabledBorder: OutlineInputBorder(

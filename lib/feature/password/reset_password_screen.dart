@@ -91,6 +91,7 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
               TextField(
                 controller: emailController,
                 onChanged: vm.onChangeEmail,
+                cursorColor: Colors.blue[800],
                 decoration: InputDecoration(
                   labelText: 'Email',
                   border: const OutlineInputBorder(),

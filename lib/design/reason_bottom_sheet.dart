@@ -54,6 +54,7 @@ class _ReasonBottomSheetState extends State<ReasonBottomSheet> {
             const SizedBox(height: 20.0),
             TextField(
               maxLines: 5,
+              cursorColor:Colors.blue[800],
               decoration: InputDecoration(
                 hintText: 'Tambahkan keterangan di sini',
                 border: const OutlineInputBorder(),

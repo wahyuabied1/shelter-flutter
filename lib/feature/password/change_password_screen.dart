@@ -1,16 +1,35 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
+import 'package:shelter_super_app/core/basic_extensions/result_extensions.dart';
+import 'package:shelter_super_app/core/utils/result/result.dart';
+import 'package:shelter_super_app/design/common_loading_dialog.dart';
 import 'package:shelter_super_app/design/success_bottom_sheet.dart';
+import 'package:shelter_super_app/feature/password/change_password_viewmodel.dart';
+import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
+import 'package:shelter_super_app/feature/routes/main_routes.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class ChangePasswordScreen extends StatelessWidget {
+  const ChangePasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ChangePasswordViewmodel>(
+      create: (context) => ChangePasswordViewmodel()..init(),
+      child: _ChangePasswordView(),
+    );
+  }
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ChangePasswordView extends StatefulWidget {
+  @override
+  State<_ChangePasswordView> createState() => _ChangePasswordViewState();
+}
+
+class _ChangePasswordViewState extends State<_ChangePasswordView> {
   bool _currentPasswordVisible = false;
   bool _newPasswordVisible = false;
   bool _confirmPasswordVisible = false;
@@ -23,6 +42,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var vm = context.watch<ChangePasswordViewmodel>();
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -81,6 +101,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       _buildPasswordField(
                         label: 'Password Sekarang',
                         controller: _currentPasswordController,
+                        onChanged: (data) {
+                          vm.onChangeOldPass(data);
+                        },
                         visible: _currentPasswordVisible,
                         onToggle: () {
                           setState(() {
@@ -110,6 +133,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       _buildPasswordField(
                         label: 'Password Baru',
                         controller: _newPasswordController,
+                        onChanged: (data) {
+                          vm.onChangeNewPass(data);
+                        },
                         visible: _newPasswordVisible,
                         onToggle: () {
                           setState(() {
@@ -121,6 +147,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       _buildPasswordField(
                         label: 'Ulangi Password Baru',
                         controller: _confirmPasswordController,
+                        onChanged: (data) {
+                          vm.onChangeConfirmPass(data);
+                        },
                         visible: _confirmPasswordVisible,
                         onToggle: () {
                           setState(() {
@@ -174,7 +203,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                             'Apakah anda yakin untuk menyimpan perubahan ?',
                                         buttonText: 'Kembali',
                                         actionTextPrimary: () {
-                                          context.pop();
+                                          changePassword(vm);
                                         },
                                         buttonTextPrimary: "Simpan",
                                       );
@@ -204,9 +233,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
+  void changePassword(ChangePasswordViewmodel vm) async {
+    await LoadingDialog.runWithLoading(
+      context,
+      () => vm.changePassword(),
+      width: 250,
+      message: "Memproses",
+    ).then((value) {
+      if(!mounted) return;
+      if (vm.changeResult.isSuccess) {
+        showDefaultSuccess("Berhasil mengubah password!");
+        context.pushNamed(HomepageRoutes.main.name!);
+      }
+    });
+  }
+
+
   Widget _buildPasswordField({
     required String label,
     required TextEditingController controller,
+    required Function(String) onChanged,
     required bool visible,
     required VoidCallback onToggle,
   }) {
@@ -218,6 +264,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         TextField(
           controller: controller,
           obscureText: !visible,
+          onChanged: (data) {
+            onChanged.call(data);
+          },
+          cursorColor:Colors.blue[800],
+
           decoration: InputDecoration(
             hintText: '*********',
             hintStyle: TextStyle(color: Colors.black12),
@@ -242,6 +293,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void showDefaultError(String errorMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(errorMessage),
+      ),
+    );
+  }
+
+  void showDefaultSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text(message),
+      ),
     );
   }
 }
