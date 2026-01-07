@@ -1,25 +1,100 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/core/utils/image_picker.dart';
+import 'package:shelter_super_app/core/utils/result/result.dart';
+import 'package:shelter_super_app/design/common_loading_dialog.dart';
+import 'package:shelter_super_app/design/default_snackbar.dart';
+import 'package:shelter_super_app/design/shimmer.dart';
 import 'package:shelter_super_app/design/success_bottom_sheet.dart';
+import 'package:shelter_super_app/feature/profile/view_model/edit_profile_viewmodel.dart';
+import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 
-class EditProfileScreen extends StatefulWidget {
-  @override
-  _EditProfileScreenState createState() => _EditProfileScreenState();
-}
-
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
-  String fullName = 'Dwisandi Arifin';
-  String username = '3515143289070001';
-  String email = 'email@example.com';
-  String address =
-      'PT. SHELTER NUSANTARA\nJL. Semampir Selatan V A NO.18\nSurabaya 60119';
+class EditProfileScreen extends StatelessWidget {
+  const EditProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider<EditProfileViewmodel>(
+      create: (context) => EditProfileViewmodel()..init(),
+      child: const _EditProfileView(),
+    );
+  }
+}
+
+class _EditProfileView extends StatefulWidget {
+  const _EditProfileView();
+
+  @override
+  State<_EditProfileView> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<_EditProfileView> {
+  late TextEditingController _nameController;
+  late TextEditingController _userNameController;
+  late TextEditingController _emailNameController;
+  late TextEditingController _addressNameController;
+  File? _imageFile;
+
+  Future<void> _updatePhoto() async {
+    final File? image = await showPickerOptions(context);
+    if (image != null) {
+      setState(() {
+        _imageFile = image;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    var vm = context.read<EditProfileViewmodel>();
+    _nameController = TextEditingController(
+      text: vm.userResult.dataOrNull?.user?.nama ?? "",
+    );
+    _userNameController = TextEditingController(
+      text: vm.userResult.dataOrNull?.user?.username ?? "",
+    );
+    _emailNameController = TextEditingController(
+      text: vm.userResult.dataOrNull?.user?.email ?? "",
+    );
+    _addressNameController = TextEditingController(
+      text: vm.userResult.dataOrNull?.user?.alamat ?? "",
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _userNameController.dispose();
+    _emailNameController.dispose();
+    _addressNameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var vm = context.watch<EditProfileViewmodel>();
+    final user = vm.userResult.dataOrNull?.user;
+    if (user != null) {
+      if (_nameController.text != (user.nama ?? "")) {
+        _nameController.text = user.nama ?? "";
+      }
+      if (_userNameController.text != (user.username ?? "")) {
+        _userNameController.text = user.username ?? "";
+      }
+      if (_emailNameController.text != (user.email ?? "")) {
+        _emailNameController.text = user.email ?? "";
+      }
+      if (_addressNameController.text != (user.alamat ?? "")) {
+        _addressNameController.text = user.alamat ?? "";
+      }
+    }
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -41,115 +116,119 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Stack(
             children: [
               Container(
-                margin: EdgeInsets.only(top:50),
+                margin: EdgeInsets.only(top: 50),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.only(
                     top: 80, left: 16, right: 16, bottom: 16),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text('Informasi Data Diri',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 16),
-                      _buildTextField(
-                        label: 'Nama Lengkap',
-                        initialValue: fullName,
-                        onSaved: (val) => fullName = val!,
-                      ),
-                      SizedBox(height: 12),
-                      _buildTextField(
-                        label: 'NIK/Username',
-                        initialValue: username,
-                        onSaved: (val) => username = val!,
-                      ),
-                      SizedBox(height: 12),
-                      _buildTextField(
-                        label: 'Email',
-                        initialValue: email,
-                        keyboardType: TextInputType.emailAddress,
-                        onSaved: (val) => email = val!,
-                      ),
-                      SizedBox(height: 12),
-                      _buildTextField(
-                        label: 'Alamat',
-                        initialValue: address,
-                        maxLines: 3,
-                        onSaved: (val) => address = val!,
-                      ),
-                      SizedBox(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(
-                                    width: 1.0,
-                                    color: Colors.blue.shade700,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text('Informasi Data Diri',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 16),
+                    _buildTextField(
+                      label: 'Nama Lengkap',
+                      controller: _nameController,
+                      onValueChanged: (val) => {
+                        vm.onChangeName(_nameController.text)
+                      },
+                    ),
+                    SizedBox(height: 12),
+                    _buildTextField(
+                      label: 'NIK/Username',
+                      controller: _userNameController,
+                      onValueChanged: (val) => {
+                        vm.onChangeUsername(_userNameController.text)
+                      },
+                    ),
+                    SizedBox(height: 12),
+                    _buildTextField(
+                      label: 'Email',
+                      controller: _emailNameController,
+                      keyboardType: TextInputType.emailAddress,
+                      onValueChanged: (val) => {
+                        vm.onChangeEmail(_emailNameController.text)
+                      },
+                    ),
+                    SizedBox(height: 12),
+                    _buildTextField(
+                      label: 'Alamat',
+                      controller: _addressNameController,
+                      maxLines: 3,
+                      onValueChanged: (val) => {
+                        vm.onChangeAddress(_addressNameController.text)
+                      },
+                    ),
+                    SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  width: 1.0,
+                                  color: Colors.blue.shade700,
+                                ),
+                              ),
+                              child: Text(
+                                "Kembali",
+                                style: TextStyle(color: Colors.blue.shade700),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Flexible(
+                          flex: 1,
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16)),
                                   ),
-                                ),
-                                child: Text(
-                                  "Kembali",
-                                  style: TextStyle(color: Colors.blue.shade700),
-                                ),
+                                  builder: (context) {
+                                    return SuccessBottomSheet(
+                                      title: "Konfirmasi Simpan",
+                                      image: AppAssets.ilEmail,
+                                      desc:
+                                          'Apakah anda yakin untuk menyimpan perubahan ?',
+                                      buttonText: 'Kembali',
+                                      actionTextPrimary: () {
+                                        _saveProfile(vm);
+                                      },
+                                      buttonTextPrimary: "Simpan",
+                                    );
+                                  },
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue.shade700,
+                              ),
+                              child: const Text(
+                                "Simpan",
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
                           ),
-                          SizedBox(width: 12),
-                          Flexible(
-                            flex: 1,
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(16)),
-                                    ),
-                                    builder: (context) {
-                                      return SuccessBottomSheet(
-                                        title: "Konfirmasi Simpan",
-                                        image: AppAssets.ilEmail,
-                                        desc:
-                                        'Apakah anda yakin untuk menyimpan perubahan ?',
-                                        buttonText: 'Kembali',
-                                        actionTextPrimary: () {
-                                          _saveProfile();
-                                          context.pop();
-                                        },
-                                        buttonTextPrimary: "Simpan",
-                                      );
-                                    },
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue.shade700,
-                                ),
-                                child: const Text(
-                                  "Simpan",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
               Positioned(
@@ -160,15 +239,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.blue.shade700,
-                        child: Text(
-                          fullName.initialName(),
-                          style: TextStyle(
-                            fontSize: 24.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                      Shimmer(
+                        isLoading: vm.userResult.isLoading,
+                        child:
+                        _imageFile != null ? CircleAvatar(
+                          radius: 50,
+                          backgroundImage: FileImage(_imageFile!),
+                        )
+                            :
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.blue.shade700,
+                          child: Text(
+                            (vm.userResult.dataOrNull?.user?.nama ?? "-")
+                                .initialName(),
+                            style: TextStyle(
+                              fontSize: 24.sp,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -178,14 +267,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: IconButton(
                           padding: EdgeInsets.zero,
                           icon: Icon(Icons.edit, size: 16, color: Colors.white),
-                          onPressed: () {},
+                          onPressed: () {
+                            _updatePhoto();
+                          },
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-
             ],
           ),
         ),
@@ -195,16 +285,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Widget _buildTextField({
     required String label,
-    required String initialValue,
+    required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
-    required FormFieldSetter<String> onSaved,
+    required Function(String) onValueChanged,
   }) {
-    return TextFormField(
-      initialValue: initialValue,
+    var vm = context.watch<EditProfileViewmodel>();
+
+    return TextField(
+      controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
-        cursorColor:Colors.blue[800],
+      cursorColor: Colors.blue[800],
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4.0),
@@ -220,16 +312,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      onSaved: onSaved,
+      onChanged:(value){
+        onValueChanged.call(value);
+      }
     );
   }
 
-  void _saveProfile() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profil disimpan')),
-      );
-    }
+  Future<void> _saveProfile(EditProfileViewmodel  vm) async {
+    await LoadingDialog.runWithLoading(
+      context,
+          () => vm.changeProfile(),
+      width: 250,
+      message: "Memproses",
+    ).then((value) {
+      if(!mounted) return;
+      if (vm.updateResult.isSuccess) {
+        showDefaultSuccess(context,"Berhasil mengubah profile!");
+        context.goNamed(HomepageRoutes.main.name!,queryParameters: {'page':'2'});
+      } else if(vm.updateResult.isError){
+        showDefaultError(context,vm.updateResult.error);
+      }
+    });
   }
 }

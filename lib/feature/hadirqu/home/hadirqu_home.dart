@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
+import 'package:shelter_super_app/core/utils/result/result.dart';
+import 'package:shelter_super_app/design/list_menu_bottom_sheet.dart';
+import 'package:shelter_super_app/design/shimmer.dart';
+import 'package:shelter_super_app/feature/hadirqu/home/hadirqu_home_viewmodel.dart';
+import 'package:shelter_super_app/feature/hadirqu/home/paid_leave/over_time_section.dart';
+import 'package:shelter_super_app/feature/hadirqu/home/paid_leave/paid_leave_section.dart';
+import 'package:shelter_super_app/feature/hadirqu/home/paid_leave/sick_leave_section.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
-class HadirQuHome extends StatefulWidget {
+
+class HadirQuHome extends StatelessWidget {
   const HadirQuHome({super.key});
 
   @override
-  State<HadirQuHome> createState() => _HadirQuHomeState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<HadirquHomeViewmodel>(
+      create: (context) => HadirquHomeViewmodel()..init(),
+      child: _HadirQuHomeView(),
+    );
+  }
 }
 
-class _HadirQuHomeState extends State<HadirQuHome>
+class _HadirQuHomeView extends StatefulWidget {
+  @override
+  State<_HadirQuHomeView> createState() => _HadirQuHomeState();
+}
+
+class _HadirQuHomeState extends State<_HadirQuHomeView>
     with SingleTickerProviderStateMixin {
   late int currentTab;
   late TabController tabController;
@@ -45,6 +64,8 @@ class _HadirQuHomeState extends State<HadirQuHome>
 
   @override
   Widget build(BuildContext context) {
+    var vm = context.watch<HadirquHomeViewmodel>();
+
     return Scaffold(
       backgroundColor: Colors.blue.shade700,
       appBar: AppBar(
@@ -82,7 +103,8 @@ class _HadirQuHomeState extends State<HadirQuHome>
                           ),
                         ),
                         const SizedBox(height: 8),
-                        _buildDateCard(DateTime.now().eeeedMMMyyyyHHmm(dateDelimiter:' ')),
+                        _buildDateCard(DateTime.now()
+                            .eeeedMMMyyyyHHmm(dateDelimiter: ' ')),
                         const SizedBox(height: 16),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -98,10 +120,30 @@ class _HadirQuHomeState extends State<HadirQuHome>
                               childAspectRatio: 4 / 2,
                             ),
                             children: [
-                              _buildStatisticCard('32 / 40', 'Karyawan Hadir'),
-                              _buildStatisticCard('10', 'Karyawan Lembur'),
-                              _buildStatisticCard('8', 'Karyawan Izin/Cuti'),
-                              _buildStatisticCard('2', 'Aktivitas Karyawan'),
+                              _buildStatisticCard(
+                                  vm.summaryResult.dataOrNull?.totalKaryawan
+                                          .toString() ??
+                                      '0',
+                                  'Total Karyawan',
+                                  vm.summaryResult.isInitialOrLoading),
+                              _buildStatisticCard(
+                                  vm.summaryResult.dataOrNull?.totalHadir
+                                          .toString() ??
+                                      '0',
+                                  'Total Karyawan Hadir',
+                                  vm.summaryResult.isInitialOrLoading),
+                              _buildStatisticCard(
+                                  vm.summaryResult.dataOrNull?.totalAlpha
+                                          .toString() ??
+                                      '0',
+                                  'Total Karyawan Absen',
+                                  vm.summaryResult.isInitialOrLoading),
+                              _buildStatisticCard(
+                                  vm.summaryResult.dataOrNull?.totalCutiIzin
+                                          .toString() ??
+                                      '0',
+                                  'Total Karyawan Cuti',
+                                  vm.summaryResult.isInitialOrLoading),
                             ],
                           ),
                         ),
@@ -116,10 +158,11 @@ class _HadirQuHomeState extends State<HadirQuHome>
                         child: Row(
                           children: [
                             _buildQuickActionButton(
-                                image: AppAssets.icListKaryawan,
-                                title: 'List Karyawan',
-                                onTap: () => context.pushNamed(
-                                    HadirQuRoutes.listEmployee.name!)),
+                              image: AppAssets.icListKaryawan,
+                              title: 'List Karyawan',
+                              onTap: () => context
+                                  .pushNamed(HadirQuRoutes.listEmployee.name!),
+                            ),
                             _buildQuickActionButton(
                               image: AppAssets.icReportDashboard,
                               title: 'Report Dashboard',
@@ -133,23 +176,77 @@ class _HadirQuHomeState extends State<HadirQuHome>
                                   HadirQuRoutes.reportPresence.name!),
                             ),
                             _buildQuickActionButton(
-                              image: AppAssets.icPresensiKaryawan,
-                              title: 'Log Presensi',
-                              onTap: () => context.pushNamed(
-                                  HadirQuRoutes.logPresence.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icIzinKaryawan,
-                              title: 'Izin Karyawan',
-                                onTap: () => context.pushNamed(
-                                    HadirQuRoutes.permission.name!)
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icLemburKaryawan,
-                              title: 'Lembur Karyawan',
-                              onTap: () => context.pushNamed(
-                                  HadirQuRoutes.overTimeSubmission.name!),
-                            ),
+                                image: AppAssets.icMore,
+                                title: 'Lainnya\n',
+                                onTap: () => {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(16)),
+                                        ),
+                                        builder: (context) {
+                                          return ListMenuBottomSheet(
+                                            title:'Fitur HadirQu',
+                                            listWidget: [
+                                              _buildQuickActionButton(
+                                                image: AppAssets.icListKaryawan,
+                                                title: 'List Karyawan',
+                                                onTap: () => context.pushNamed(
+                                                    HadirQuRoutes
+                                                        .listEmployee.name!),
+                                                isBottomSheet: true,
+                                              ),
+                                              _buildQuickActionButton(
+                                                image:
+                                                    AppAssets.icReportDashboard,
+                                                title: 'Report Dashboard',
+                                                onTap: () => context.pushNamed(
+                                                    HadirQuRoutes
+                                                        .reportDashboard.name!),
+                                                isBottomSheet: true,
+                                              ),
+                                              _buildQuickActionButton(
+                                                image: AppAssets
+                                                    .icPresensiKaryawan,
+                                                title: 'Presensi Karyawan',
+                                                onTap: () => context.pushNamed(
+                                                    HadirQuRoutes
+                                                        .reportPresence.name!),
+                                                isBottomSheet: true,
+                                              ),
+                                              _buildQuickActionButton(
+                                                image: AppAssets
+                                                    .icPresensiKaryawan,
+                                                title: 'Log Presensi',
+                                                onTap: () => context.pushNamed(
+                                                    HadirQuRoutes
+                                                        .logPresence.name!),
+                                                isBottomSheet: true,
+                                              ),
+                                              _buildQuickActionButton(
+                                                image: AppAssets.icIzinKaryawan,
+                                                title: 'Izin Karyawan',
+                                                onTap: () => context.pushNamed(
+                                                    HadirQuRoutes
+                                                        .permission.name!),
+                                                isBottomSheet: true,
+                                              ),
+                                              _buildQuickActionButton(
+                                                image:
+                                                    AppAssets.icLemburKaryawan,
+                                                title: 'Lembur Karyawan',
+                                                onTap: () => context.pushNamed(
+                                                    HadirQuRoutes
+                                                        .overTimeSubmission
+                                                        .name!),
+                                                isBottomSheet: true,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      )
+                                    }),
                           ],
                         ),
                       ),
@@ -187,7 +284,7 @@ class _HadirQuHomeState extends State<HadirQuHome>
                     labelColor: Colors.blue.shade700,
                     unselectedLabelColor: Colors.grey,
                     tabs: [
-                      Tab(text: 'Izin'),
+                      Tab(text: 'Sakit'),
                       Tab(text: 'Cuti'),
                       Tab(text: 'Lembur'),
                     ],
@@ -198,9 +295,9 @@ class _HadirQuHomeState extends State<HadirQuHome>
                     child: TabBarView(
                       controller: tabController,
                       children: [
-                        _buildTabContent('Izin', 2),
-                        _buildTabContent('Cuti', 1),
-                        _buildTabContent('Lembur', 1),
+                        const SickLeaveSection(),
+                        const PaidLeaveSection(),
+                        const OverTimeSection()
                       ],
                     ),
                   ),
@@ -258,7 +355,7 @@ class _HadirQuHomeState extends State<HadirQuHome>
     );
   }
 
-  Widget _buildStatisticCard(String value, String label) {
+  Widget _buildStatisticCard(String value, String label, bool isLoading) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -268,12 +365,15 @@ class _HadirQuHomeState extends State<HadirQuHome>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          Shimmer(
+            isLoading: isLoading,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
           ),
           Text(
@@ -288,23 +388,23 @@ class _HadirQuHomeState extends State<HadirQuHome>
     );
   }
 
-  Widget _buildQuickActionButton({
-    String image = '',
-    String title = '',
-    Function? onTap,
-  }) {
+  Widget _buildQuickActionButton(
+      {String image = '',
+      String title = '',
+      Function? onTap,
+      bool isBottomSheet = false}) {
     return Material(
-      color: Colors.blue.shade700,
-      child: InkWell(
-        onTap: () {
-          onTap?.call();
-        },
-        child: Container(
-          width: 85.w,
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-          child: Column(
-            children: [
-              CircleAvatar(
+      color: isBottomSheet ? Colors.white : Colors.blue.shade700,
+      child: Container(
+        width: 85.w,
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+        child: Column(
+          children: [
+            InkWell(
+              onTap: (){
+                onTap?.call();
+              },
+              child: CircleAvatar(
                   radius: 30,
                   backgroundColor: Color(0XFF2758A7),
                   child: SvgPicture.asset(
@@ -312,19 +412,19 @@ class _HadirQuHomeState extends State<HadirQuHome>
                     width: 24,
                     height: 24,
                   )),
-              SizedBox(height: 12.h),
-              Text(
-                textAlign: TextAlign.center,
-                title,
-                maxLines: 2,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              textAlign: TextAlign.center,
+              title,
+              maxLines: 2,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: isBottomSheet ? FontWeight.normal : FontWeight.bold,
+                color: isBottomSheet ? Colors.black : Colors.white,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

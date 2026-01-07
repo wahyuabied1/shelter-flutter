@@ -19,10 +19,10 @@ import 'package:shelter_super_app/core/dependency_injection/service_locator.dart
 import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service_extended.dart';
 import 'package:shelter_super_app/core/utils/common.dart';
 import 'package:shelter_super_app/data/repository/auth_repository.dart';
-import 'package:shelter_super_app/feature/profile/view_model/shared_user_model.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
 import 'package:shelter_super_app/feature/splash_screen.dart';
 import 'package:shelter_super_app/my_app.dart';
+import 'package:shelter_super_app/shared_user_viewmodel.dart';
 import 'package:upgrader/upgrader.dart';
 import 'core/firebase_config/firebase_remote_config_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

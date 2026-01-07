@@ -5,6 +5,7 @@ import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
+import 'package:shelter_super_app/design/list_menu_bottom_sheet.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
 import 'package:shelter_super_app/feature/routes/guard_routes.dart';
 
@@ -118,40 +119,87 @@ class GuardHome extends StatelessWidget {
                                   .pushNamed(GuardRoutes.guest.name!),
                             ),
                             _buildQuickActionButton(
-                              image: AppAssets.icMail,
-                              title: 'Surat\n',
-                              onTap: () => context
-                                  .pushNamed(GuardRoutes.mail.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icProyek,
-                              title: 'Proyek\n',
-                              onTap: () => context
-                                  .pushNamed(GuardRoutes.project.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icTelp,
-                              title: 'Pemakaian Telpon',
-                              onTap: () => context
-                                  .pushNamed(GuardRoutes.pemakaianTelp.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icNewspaper,
-                              title: 'Berita Acara',
-                              onTap: () => context
-                                  .pushNamed(GuardRoutes.news.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icJournal,
-                              title: 'Jurnal Harian',
-                              onTap: () => context
-                                  .pushNamed(GuardRoutes.dailyJournal.name!),
-                            ),
-                            _buildQuickActionButton(
-                              image: AppAssets.icCar,
-                              title: 'Kendaraan\n',
-                              onTap: () => context
-                                  .pushNamed(GuardRoutes.kendaraan.name!),
+                              image: AppAssets.icMore,
+                              title: 'Lainnya\n',
+                              onTap: () => {
+                                showModalBottomSheet(
+                                    context: context,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16)),
+                                    ),
+                                    builder: (context) {
+                                        return ListMenuBottomSheet(
+                                          title:'Fitur Shelter Guard',
+                                          listWidget: [
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icTransporter,
+                                              title: 'Trans\nporter',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.transporter.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icKey,
+                                              title: 'Pinjaman Kunci',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.pinjamanKunci.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icPresensiKaryawan,
+                                              title: 'Tamu\n',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.guest.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icMail,
+                                              title: 'Surat\n',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.mail.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icProyek,
+                                              title: 'Proyek\n',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.project.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icTelp,
+                                              title: 'Pemakaian Telpon',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.pemakaianTelp.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icNewspaper,
+                                              title: 'Berita Acara',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.news.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icJournal,
+                                              title: 'Jurnal Harian',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.dailyJournal.name!),
+                                            ),
+                                            _buildQuickActionButton(
+                                              image: AppAssets.icCar,
+                                              title: 'Kendaraan\n',
+                                              isBottomSheet: true,
+                                              onTap: () => context
+                                                  .pushNamed(GuardRoutes.kendaraan.name!),
+                                            ),
+                                          ],
+                                        );
+                                      }
+                                    )
+                              }
                             ),
                           ],
                         ),
@@ -283,9 +331,10 @@ class GuardHome extends StatelessWidget {
     String image = '',
     String title = '',
     Function? onTap,
+    bool isBottomSheet = false
   }) {
     return Material(
-      color: Colors.red.shade700,
+      color: isBottomSheet? Colors.white : Colors.red.shade700,
       child: InkWell(
         onTap: () {
           onTap?.call();
@@ -316,8 +365,8 @@ class GuardHome extends StatelessWidget {
                 maxLines: 2,
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  fontWeight: isBottomSheet ? FontWeight.normal : FontWeight.bold,
+                  color: isBottomSheet ? Colors.black : Colors.white,
                 ),
               ),
             ],

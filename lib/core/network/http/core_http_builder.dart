@@ -36,6 +36,21 @@ class CoreHttpBuilder {
     );
   }
 
+  CoreHttpClient hadirkuHttp({
+    required String path,
+    Json? query,
+    Map<String, String>? headers,
+  }) {
+    final url = apiEnv.then((value) => value.hadirqu);
+
+    return _buildClient(
+      url,
+      path,
+      query,
+      headers,
+    );
+  }
+
   CoreHttpClient _buildClient(
     Future<String> url,
     String path, [

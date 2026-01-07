@@ -14,6 +14,12 @@ class ApiEnv {
         prod: 'striveapp.id/api/v2/',
       );
 
+  String get hadirqu => env(
+    key: 'hadirku',
+    dev: 'hadirku.co.id/open-api/',
+    prod: 'hadirku.co.id/open-api/',
+  );
+
   String env({
     required String key,
     required String dev,

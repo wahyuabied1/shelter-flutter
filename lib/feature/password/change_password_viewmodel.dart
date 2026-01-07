@@ -61,21 +61,9 @@ class ChangePasswordViewmodel extends ABaseChangeNotifier {
           }
           changeResult = Result.success(result.dataOrNull);
         } else if (result.isError) {
-          showDefaultError(result.getErrorMessage());
           changeResult = Result.error(result.error);
         }
       },
-    );
-  }
-
-  void showDefaultError(String errorMessage) {
-    final aRouter = serviceLocator<ARouter>();
-    ScaffoldMessenger.of(aRouter.rootSheelNavigatorKey.currentContext!)
-        .showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(errorMessage),
-      ),
     );
   }
 }

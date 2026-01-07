@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+import 'package:shelter_super_app/app/di/core_di_module.dart';
 import 'package:shelter_super_app/app/env_define.dart';
 import 'package:shelter_super_app/core/env/api_env.dart';
 import 'package:shelter_super_app/core/platform/platform_information.dart';
@@ -8,13 +12,28 @@ class CoreHttpRepository {
   static const coreTokenKey = 'token';
   static const userKey = 'user';
   static const coreEnv = 'current_environment';
+  static const sha = 'sha';
 
   final CoreSecureStorage secureStorage;
 
   CoreHttpRepository(this.secureStorage);
 
-  Future<void> setToken(String token) =>
-      secureStorage.setString(coreTokenKey, token);
+  String sha256Encrypt({
+    required String token,
+    required String apiKey,
+    required String secretKey,
+  }) {
+    final message = token + apiKey;
+    final hmacSha256 = Hmac(sha256, utf8.encode(secretKey));
+    final digest = hmacSha256.convert(utf8.encode(message));
+    return digest.toString(); // hex string
+  }
+
+  Future<void> setToken(String token) {
+    String encryptedSha = sha256Encrypt(token: token, apiKey: CoreModule.apikey, secretKey: CoreModule.secretKey);
+    secureStorage.setString(sha, encryptedSha);
+    return secureStorage.setString(coreTokenKey, token);
+  }
 
   Future<void> setUser(UserResponse user)async {
     setToken(user.token ?? "");
@@ -28,6 +47,8 @@ class CoreHttpRepository {
 
   // can be empty
   Future<String> getToken() async =>  await secureStorage.getString(coreTokenKey);
+
+  Future<String> getSHA() async =>  await secureStorage.getString(sha);
 
   Future<ApiEnv> getEnv() async {
     final currentEnv = await secureStorage.getString(coreEnv);

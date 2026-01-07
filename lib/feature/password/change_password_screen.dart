@@ -7,6 +7,7 @@ import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:shelter_super_app/core/basic_extensions/result_extensions.dart';
 import 'package:shelter_super_app/core/utils/result/result.dart';
 import 'package:shelter_super_app/design/common_loading_dialog.dart';
+import 'package:shelter_super_app/design/default_snackbar.dart';
 import 'package:shelter_super_app/design/success_bottom_sheet.dart';
 import 'package:shelter_super_app/feature/password/change_password_viewmodel.dart';
 import 'package:shelter_super_app/feature/routes/homepage_routes.dart';
@@ -242,7 +243,7 @@ class _ChangePasswordViewState extends State<_ChangePasswordView> {
     ).then((value) {
       if(!mounted) return;
       if (vm.changeResult.isSuccess) {
-        showDefaultSuccess("Berhasil mengubah password!");
+        showDefaultSuccess(context,"Berhasil mengubah password!");
         context.pushNamed(HomepageRoutes.main.name!);
       }
     });
@@ -293,24 +294,6 @@ class _ChangePasswordViewState extends State<_ChangePasswordView> {
           ),
         ),
       ],
-    );
-  }
-
-  void showDefaultError(String errorMessage) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(errorMessage),
-      ),
-    );
-  }
-
-  void showDefaultSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green,
-        content: Text(message),
-      ),
     );
   }
 }

@@ -71,6 +71,10 @@ dependencies:
   package_info_plus: ^6.0.0
   carousel_slider: ^5.0.0
   pie_chart: ^5.4.0
+  image_picker: ^1.1.2
+  crypto: ^3.0.7
+  image_gallery_saver: ^2.0.3
+  dio: ^5.0.0
 
 dependency_overrides:
   web: ^0.5.1

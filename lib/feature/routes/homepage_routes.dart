@@ -29,7 +29,7 @@ class HomepageRoutes {
     routes: homeChildRoutes,
     pageBuilder: (context, state) {
       final queryParams = state.uri.queryParameters;
-      final page = int.tryParse(queryParams['page'] ?? '') ?? 0;
+      final page = int.tryParse(queryParams['page'] ?? '0') ?? 0;
       final showAlreadyLogin = queryParams['showAlreadyLogin'] == 'true';
 
       return APage(

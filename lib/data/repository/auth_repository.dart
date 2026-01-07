@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:shelter_super_app/core/network/repository/core_http_repository.dart';
 import 'package:shelter_super_app/core/network/response/api_response.dart';
@@ -60,5 +61,17 @@ class AuthRepository {
       password: password,
       passwordConfirmation: passwordConfirmation,
     );
+  }
+
+  Future<JsonResponse<User>> changeProfile({
+    required User user,
+  }) async {
+    return _authNetwork.changeProfile(user: user);
+  }
+
+  Future<JsonResponse<User>> changeAvatar({
+    required Image image,
+  }) async {
+    return _authNetwork.changeAvatar(image: image);
   }
 }

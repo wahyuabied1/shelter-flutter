@@ -26,4 +26,6 @@ class AppAssets {
   static const icProyek = '$imageDir/ic_proyek.png';
   static const icTelp = '$imageDir/ic_telp.png';
   static const icTransporter = '$imageDir/ic_transporter.png';
+  static const icMore = '$imageDir/ic_more.svg';
+  static const icEmptyList = '$imageDir/ic_empty_list.webp';
 }

@@ -51,12 +51,15 @@ class _MainHomeState extends State<_MainHomeView> {
   List<PromotionResponse> listData = [];
 
   @override
-  initState() {
+  initState(){
     super.initState();
-    String jsonString = _remoteConfig.getString(promotion);
-    final List<dynamic> jsonList = jsonDecode(jsonString);
-    listData =
-        jsonList.map((json) => PromotionResponse.fromJson(json)).toList();
+    _remoteConfig.streamString(promotion).listen((value) {
+      setState(() {
+        List<dynamic> jsonList = jsonDecode(value);
+        listData = jsonList.map((json) => PromotionResponse.fromJson(json)).toList();  // your variable
+      });
+    });
+
   }
 
   @override
