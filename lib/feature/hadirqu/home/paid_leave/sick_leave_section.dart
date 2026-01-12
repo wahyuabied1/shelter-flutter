@@ -28,7 +28,7 @@ class _SickLeaveSectionView extends StatelessWidget {
     if (vm.sickLeaveOff.isInitialOrLoading) return const LoadingListShimmer(count: 2);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal:16.w,vertical: 8.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

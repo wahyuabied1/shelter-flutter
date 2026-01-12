@@ -5,7 +5,7 @@ import 'package:shelter_super_app/data/model/hadirqu_summary_response.dart';
 import 'package:shelter_super_app/data/model/time_off_response.dart';
 
 class HadirquNetwork {
-  static const _summary = "dashboard/summary";
+  static const _summary = "/v2/dashboard/summary";
   static const _paidLeave = "/v2/dashboard/paid-leave";
   static const _sickLeave = "/v2/dashboard/sick-leave";
   static const _overtime = "v2/dashboard/overtime";

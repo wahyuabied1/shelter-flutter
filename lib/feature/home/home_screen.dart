@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: pageController,
           children: [
             MainHomeScreen(onNavigate: onNavigationTapped),
-            NotificationScreen(),
+            // NotificationScreen(),
             ProfileScreen(),
           ],
         ),
@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildNavItem(Icons.home, 'Home', 0),
-            _buildNavItem(Icons.notifications, 'Notifikasi', 1),
+            // _buildNavItem(Icons.notifications, 'Notifikasi', 1),
             _buildNavItem(Icons.person, 'Profile', 2),
           ],
         ),

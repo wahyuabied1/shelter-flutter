@@ -310,25 +310,6 @@ class _HadirQuHomeState extends State<_HadirQuHomeView>
     );
   }
 
-  Widget _buildTabContent(String type, int count) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Hari Ini',
-            style: TextStyle(fontSize: 12),
-          ),
-          SizedBox(height: 8),
-          _buildRequestCard(),
-          SizedBox(height: 8),
-          _buildRequestCard(),
-        ],
-      ),
-    );
-  }
-
   Widget _buildDateCard(String date) {
     return Container(
       decoration: BoxDecoration(

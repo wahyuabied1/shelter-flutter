@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shelter_super_app/core/basic_extensions/number_extensions.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/core/utils/common.dart';
 import 'package:shelter_super_app/data/model/time_off_response.dart';
 import 'package:shelter_super_app/design/default_snackbar.dart';
+import 'package:shelter_super_app/design/show_image.dart';
 
 class TimeOffCard extends StatelessWidget {
   final TimeOffResponse timeOffResponse;
@@ -12,23 +14,43 @@ class TimeOffCard extends StatelessWidget {
   const TimeOffCard(
       {super.key, required this.timeOffResponse, required this.title});
 
-  Color getStatusColor() {
-    if (timeOffResponse.status?.contains("Disetujui") ?? false) {
-      return Colors.green.shade700;
-    } else if (timeOffResponse.status?.contains("Menunggu") ?? false) {
+  Color getThemeColor() {
+    if (title.contains("Lembur") ?? false) {
+      return Colors.blue.shade700;
+    } else if (title.contains("Cuti") ?? false) {
       return Colors.amber.shade700;
     } else {
       return Colors.red.shade700;
     }
   }
 
+  Color getBgThemeColor() {
+    if (title.contains("Lembur") ?? false) {
+      return Colors.blue.shade50;
+    } else if (title.contains("Cuti") ?? false) {
+      return Colors.amber.shade50;
+    } else {
+      return Colors.red.shade50;
+    }
+  }
+
   Color getTextColor() {
     if (timeOffResponse.status?.contains("Disetujui") ?? false) {
-      return Colors.green;
+      return Colors.green.shade700;
     } else if (timeOffResponse.status?.contains("Menunggu") ?? false) {
-      return Colors.orange;
+      return Colors.orange.shade700;
     } else {
-      return Colors.red;
+      return Colors.red.shade700;
+    }
+  }
+
+  Color getBgColor() {
+    if (timeOffResponse.status?.contains("Disetujui") ?? false) {
+      return Colors.green.shade50;
+    } else if (timeOffResponse.status?.contains("Menunggu") ?? false) {
+      return Colors.orange.shade50;
+    } else {
+      return Colors.red.shade50;
     }
   }
 
@@ -59,11 +81,21 @@ class TimeOffCard extends StatelessWidget {
             child: Row(
               children: [
                 CircleAvatar(
+                  radius: 30,
                   backgroundColor: Colors.grey.shade300,
                   child: (timeOffResponse.pemohon?.foto == null ||
                           timeOffResponse.pemohon?.foto == "")
                       ? const Icon(Icons.person, color: Colors.grey)
-                      : Image.network(timeOffResponse.pemohon!.foto!),
+                      : Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image:
+                                  NetworkImage(timeOffResponse.pemohon!.foto!),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(width: 6),
                 Column(
@@ -88,7 +120,7 @@ class TimeOffCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade100,
+                    color: getBgColor(),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -96,7 +128,7 @@ class TimeOffCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.access_time,
-                        color: getStatusColor(),
+                        color: getTextColor(),
                         size: 14,
                       ),
                       SizedBox(width: 2),
@@ -122,7 +154,7 @@ class TimeOffCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.only(top: 16),
               decoration: BoxDecoration(
-                color: Colors.pink.shade50,
+                color: getBgThemeColor(),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: Colors.grey.shade200, // Border color
@@ -138,7 +170,7 @@ class TimeOffCard extends StatelessWidget {
                         width: 10,
                         height: 10,
                         decoration: BoxDecoration(
-                          color: getTextColor(),
+                          color: getThemeColor(),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -146,7 +178,7 @@ class TimeOffCard extends StatelessWidget {
                       Text(
                         'Pengajuan ${title}',
                         style: TextStyle(
-                            color: getStatusColor(),
+                            color: getThemeColor(),
                             fontWeight: FontWeight.w700),
                       )
                     ],
@@ -162,6 +194,7 @@ class TimeOffCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,7 +202,7 @@ class TimeOffCard extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(children: [
+                                  const Row(children: [
                                     Icon(Icons.calendar_today, size: 14),
                                     SizedBox(width: 4),
                                     Text(
@@ -178,11 +211,17 @@ class TimeOffCard extends StatelessWidget {
                                     ),
                                   ]),
                                   SizedBox(height: 4),
-                                  Text(
-                                    timeOffResponse.waktu ??"",
-                                    style: TextStyle(
+                                  Container(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 250,
+                                    ),
+                                    child: Text(
+                                      timeOffResponse.waktu ?? "",
+                                      style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -199,7 +238,7 @@ class TimeOffCard extends StatelessWidget {
                                   ]),
                                   SizedBox(height: 4),
                                   Text(
-                                    '${timeOffResponse.durasi} Hari',
+                                    '${timeOffResponse.durasi.orEmpty} Hari',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold),
@@ -225,7 +264,7 @@ class TimeOffCard extends StatelessWidget {
                           ]),
                           const SizedBox(height: 4),
                           Text(
-                            timeOffResponse.keterangan ??'',
+                            timeOffResponse.keterangan ?? '',
                             style: TextStyle(fontSize: 14),
                           ),
                           const SizedBox(height: 8),
@@ -255,13 +294,28 @@ class TimeOffCard extends StatelessWidget {
                               ),
                               const Spacer(),
                               IconButton(
-                                onPressed: () {
-                                  if(timeOffResponse.file?.path !=null && timeOffResponse.file?.path !=""){
-                                    saveToGallery(timeOffResponse.file!.path!);
-                                  }else if(timeOffResponse.berkas?.firstOrNull !=null && timeOffResponse.berkas?.firstOrNull !=""){
-                                    saveToGallery(timeOffResponse.berkas!.firstOrNull!);
-                                  }else{
-                                    showDefaultError(context, "Bukti download tidak ditemukan");
+                                onPressed: () async {
+                                  if (timeOffResponse.file?.path != null &&
+                                      timeOffResponse.file?.path != "") {
+                                    saveToGallery(timeOffResponse.file!.path!)
+                                        .then((data) {
+                                      print("Abid ${data['filePath']}");
+                                      showDefaultSuccessShowFile(
+                                          context, "Gambar berhasil disimpan",
+                                          () {
+                                        showImage(context, data['filePath']);
+                                      });
+                                    });
+                                  } else if (timeOffResponse
+                                              .berkas?.firstOrNull !=
+                                          null &&
+                                      timeOffResponse.berkas?.firstOrNull !=
+                                          "") {
+                                    saveToGallery(
+                                        timeOffResponse.berkas!.firstOrNull!);
+                                  } else {
+                                    showDefaultError(context,
+                                        "Bukti download tidak ditemukan");
                                   }
                                 },
                                 icon: const Icon(Icons.download,
