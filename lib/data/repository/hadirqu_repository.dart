@@ -4,6 +4,8 @@ import 'package:shelter_super_app/data/model/hadirqu_summary_response.dart';
 import 'package:shelter_super_app/data/model/time_off_response.dart';
 import 'package:shelter_super_app/data/network/hadirqu_network.dart';
 
+import '../model/hadirqu_report_response.dart';
+
 class HadirquRepository {
   final HadirquNetwork _hadirquNetwork;
 
@@ -29,4 +31,13 @@ class HadirquRepository {
     return _hadirquNetwork.getOverTime(date: date);
   }
 
+  Future<JsonResponse<HadirquReportResponse>> getReport({
+    required String date,
+    List<int>? departemenIds,
+  }) async {
+    return _hadirquNetwork.getReport(
+      date: date,
+      departemenIds: departemenIds,
+    );
+  }
 }

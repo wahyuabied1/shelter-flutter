@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RekapTile extends StatelessWidget {
   final String title;
@@ -13,7 +14,7 @@ class RekapTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
@@ -23,9 +24,9 @@ class RekapTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(title, style: TextStyle(fontSize: 12.sp, color: Colors.grey)),
           Text(value,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
         ],
       ),
     );

@@ -63,10 +63,8 @@ extension DateTimeFormatterExtension on DateTime {
     final d = dateDelimiter;
     final t = timeDelimiter;
     final dt = dateTimeDelimiter;
-    return DateFormat(
-        'EEEE, d${d}MMMM${d}yyyy${dt}HH${t}mm',
-        'id_ID'
-    ).format(this);
+    return DateFormat('EEEE, d${d}MMMM${d}yyyy${dt}HH${t}mm', 'id_ID')
+        .format(this);
   }
 
   /// 1-Okt-2023
@@ -195,4 +193,23 @@ bool currentDateIsOneDayAhead(String timeStamp) {
 
 extension _Formatter on int {
   String get twoDigits => toString().padLeft(2, '0');
+}
+
+extension StringDateTimeExtension on String? {
+  String toHourSafe() {
+    try {
+      final value = this;
+
+      if (value == null || value.isEmpty) return "-";
+
+      // Kalau bukan format waktu (misal "0m")
+      if (!value.contains(':') || value.endsWith('m')) {
+        return value;
+      }
+
+      return DateTime.parse(value.replaceAll(' ', 'T')).hHmm();
+    } catch (_) {
+      return "-";
+    }
+  }
 }

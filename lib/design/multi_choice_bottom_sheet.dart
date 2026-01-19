@@ -7,7 +7,7 @@ class MultiChoiceBottomSheet extends StatefulWidget {
   final Map<String, bool> choice;
   final ThemeWidget? theme;
 
-  MultiChoiceBottomSheet({
+  const MultiChoiceBottomSheet({
     super.key,
     required this.title,
     required this.choice,

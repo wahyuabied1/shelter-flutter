@@ -68,17 +68,11 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file("../debug.keystore")
-            storePassword "android"
-            keyAlias "androiddebugkey"
-            keyPassword "android"
+
         }
 
         release {
-            keyAlias localProperties['keyAlias']
-            keyPassword localProperties['keyPassword']
-            storeFile file(localProperties['storeFiles'])
-            storePassword localProperties['storePassword']
+
         }
     }
 
