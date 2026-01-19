@@ -171,20 +171,21 @@ class _MainHomeState extends State<_MainHomeView> {
             ),
             child: Column(
               children: [
-                _buildSectionHeader('Notifikasi', 'Lihat Semua', () {
-                  widget.onNavigate(1);
-                }),
-                _buildNotificationItem(
-                    'HadirQu',
-                    'Pengajuan Cuti dari Agus Hariyono',
-                    AppAssets.ilIconHadirqu),
-                _buildNotificationItem(
-                    'IssueQu',
-                    'Keluhan dijawab oleh tim ops Shelter',
-                    AppAssets.ilIconIssuequ),
+                // _buildSectionHeader('Notifikasi', 'Lihat Semua', () {
+                //   widget.onNavigate(1);
+                // }),
+                // _buildNotificationItem(
+                //     'HadirQu',
+                //     'Pengajuan Cuti dari Agus Hariyono',
+                //     AppAssets.ilIconHadirqu),
+                // _buildNotificationItem(
+                //     'IssueQu',
+                //     'Keluhan dijawab oleh tim ops Shelter',
+                //     AppAssets.ilIconIssuequ),
 
                 // Promotions Section
                 _buildSectionHeader('Promosi', null, null),
+                SizedBox(height: 8),
                 CarouselSlider(
                   items: listData.map((data) {
                     return Builder(

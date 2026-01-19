@@ -1,4 +1,5 @@
 import 'package:shelter_super_app/core/network/response/json_list_response.dart';
+import 'package:shelter_super_app/core/network/response/json_response.dart';
 import 'package:shelter_super_app/data/model/hadirqu_summary_response.dart';
 import 'package:shelter_super_app/data/model/time_off_response.dart';
 import 'package:shelter_super_app/data/network/hadirqu_network.dart';
@@ -8,7 +9,7 @@ class HadirquRepository {
 
   HadirquRepository(this._hadirquNetwork);
 
-  Future<JsonListResponse<HadirquSummaryResponse>> getSummary(
+  Future<JsonResponse<HadirquSummaryResponse>> getSummary(
       {required String date}) async {
     return _hadirquNetwork.getSummary(date: date);
   }

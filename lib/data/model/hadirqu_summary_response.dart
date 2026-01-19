@@ -6,34 +6,66 @@ part 'hadirqu_summary_response.g.dart';
 class HadirquSummaryResponse {
   @JsonKey(name: "total_karyawan")
   final int? totalKaryawan;
-  @JsonKey(name: "total_hadir")
-  final int? totalHadir;
-  @JsonKey(name: "total_alpha")
-  final int? totalAlpha;
-  @JsonKey(name: "total_cuti_izin")
-  final int? totalCutiIzin;
+  @JsonKey(name: "kehadiran")
+  final Kehadiran? kehadiran;
+  @JsonKey(name: "lembur")
+  final int? lembur;
+  @JsonKey(name: "aktifitas")
+  final int? aktifitas;
 
   HadirquSummaryResponse({
     this.totalKaryawan,
-    this.totalHadir,
-    this.totalAlpha,
-    this.totalCutiIzin,
+    this.kehadiran,
+    this.lembur,
+    this.aktifitas,
   });
 
   HadirquSummaryResponse copyWith({
     int? totalKaryawan,
-    int? totalHadir,
-    int? totalAlpha,
-    int? totalCutiIzin,
+    Kehadiran? kehadiran,
+    int? lembur,
+    int? aktifitas,
   }) =>
       HadirquSummaryResponse(
         totalKaryawan: totalKaryawan ?? this.totalKaryawan,
-        totalHadir: totalHadir ?? this.totalHadir,
-        totalAlpha: totalAlpha ?? this.totalAlpha,
-        totalCutiIzin: totalCutiIzin ?? this.totalCutiIzin,
+        kehadiran: kehadiran ?? this.kehadiran,
+        lembur: lembur ?? this.lembur,
+        aktifitas: aktifitas ?? this.aktifitas,
       );
 
   factory HadirquSummaryResponse.fromJson(Map<String, dynamic> json) => _$HadirquSummaryResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$HadirquSummaryResponseToJson(this);
 }
+
+@JsonSerializable()
+class Kehadiran {
+  @JsonKey(name: "hadir")
+  final int? hadir;
+  @JsonKey(name: "alpha")
+  final int? alpha;
+  @JsonKey(name: "cuti_izin")
+  final int? cutiIzin;
+
+  Kehadiran({
+    this.hadir,
+    this.alpha,
+    this.cutiIzin,
+  });
+
+  Kehadiran copyWith({
+    int? hadir,
+    int? alpha,
+    int? cutiIzin,
+  }) =>
+      Kehadiran(
+        hadir: hadir ?? this.hadir,
+        alpha: alpha ?? this.alpha,
+        cutiIzin: cutiIzin ?? this.cutiIzin,
+      );
+
+  factory Kehadiran.fromJson(Map<String, dynamic> json) => _$KehadiranFromJson(json);
+
+  Map<String, dynamic> toJson() => _$KehadiranToJson(this);
+}
+

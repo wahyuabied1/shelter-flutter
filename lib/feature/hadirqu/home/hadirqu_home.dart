@@ -127,19 +127,19 @@ class _HadirQuHomeState extends State<_HadirQuHomeView>
                                   'Total Karyawan',
                                   vm.summaryResult.isInitialOrLoading),
                               _buildStatisticCard(
-                                  vm.summaryResult.dataOrNull?.totalHadir
+                                  vm.summaryResult.dataOrNull?.kehadiran?.hadir
                                           .toString() ??
                                       '0',
                                   'Total Karyawan Hadir',
                                   vm.summaryResult.isInitialOrLoading),
                               _buildStatisticCard(
-                                  vm.summaryResult.dataOrNull?.totalAlpha
+                                  vm.summaryResult.dataOrNull?.kehadiran?.alpha
                                           .toString() ??
                                       '0',
                                   'Total Karyawan Absen',
                                   vm.summaryResult.isInitialOrLoading),
                               _buildStatisticCard(
-                                  vm.summaryResult.dataOrNull?.totalCutiIzin
+                                  vm.summaryResult.dataOrNull?.kehadiran?.cutiIzin
                                           .toString() ??
                                       '0',
                                   'Total Karyawan Cuti',

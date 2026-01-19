@@ -1,6 +1,7 @@
 import 'package:shelter_super_app/core/network/http/core_http_builder.dart';
 import 'package:shelter_super_app/core/network/repository/core_http_repository.dart';
 import 'package:shelter_super_app/core/network/response/json_list_response.dart';
+import 'package:shelter_super_app/core/network/response/json_response.dart';
 import 'package:shelter_super_app/data/model/hadirqu_summary_response.dart';
 import 'package:shelter_super_app/data/model/time_off_response.dart';
 
@@ -15,7 +16,7 @@ class HadirquNetwork {
 
   HadirquNetwork(this._http,this._coreHttpRepository);
 
-  Future<JsonListResponse<HadirquSummaryResponse>> getSummary({
+  Future<JsonResponse<HadirquSummaryResponse>> getSummary({
     required String date,
   }) async{
     final map = <String, dynamic>{};
@@ -25,7 +26,7 @@ class HadirquNetwork {
       'sha': await _coreHttpRepository.getSHA(),
       'salt': await _coreHttpRepository.getToken()
     },path: _summary, query: map).get();
-    return JsonListResponse(response, HadirquSummaryResponse.fromJson);
+    return JsonResponse(response, HadirquSummaryResponse.fromJson);
   }
 
   Future<JsonListResponse<TimeOffResponse>> getPaidLeave({
