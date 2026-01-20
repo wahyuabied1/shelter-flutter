@@ -6,6 +6,8 @@ import 'package:shelter_super_app/core/utils/result/result.dart';
 import 'package:shelter_super_app/data/model/hadirqu_report_response.dart';
 import 'package:shelter_super_app/data/repository/hadirqu_repository.dart';
 
+import '../../../../data/model/hadirqu_departement_filter_response.dart';
+
 class ReportDashboardViewmodel extends ABaseChangeNotifier {
   final _hadirquRepository = serviceLocator.get<HadirquRepository>();
 

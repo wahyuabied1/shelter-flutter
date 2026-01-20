@@ -77,16 +77,3 @@ Map<String, dynamic> _$HadirquFilterToJson(HadirquFilter instance) =>
     <String, dynamic>{
       'departemen': instance.departemen,
     };
-
-Departemen _$DepartemenFromJson(Map<String, dynamic> json) => Departemen(
-      id: (json['id'] as num?)?.toInt(),
-      nama: json['nama'] as String?,
-      totalPegawai: (json['total_pegawai'] as num?)?.toInt(),
-    );
-
-Map<String, dynamic> _$DepartemenToJson(Departemen instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'nama': instance.nama,
-      'total_pegawai': instance.totalPegawai,
-    };

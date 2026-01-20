@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'hadirqu_departement_filter_response.dart';
+
 part 'hadirqu_report_response.g.dart';
 
 // Main wrapper response - mirip HadirquSummaryResponse
@@ -170,38 +172,4 @@ class HadirquFilter {
       _$HadirquFilterFromJson(json);
 
   Map<String, dynamic> toJson() => _$HadirquFilterToJson(this);
-}
-
-@JsonSerializable()
-class Departemen {
-  @JsonKey(name: 'id')
-  final int? id;
-
-  @JsonKey(name: 'nama')
-  final String? nama;
-
-  @JsonKey(name: 'total_pegawai')
-  final int? totalPegawai;
-
-  Departemen({
-    this.id,
-    this.nama,
-    this.totalPegawai,
-  });
-
-  Departemen copyWith({
-    int? id,
-    String? nama,
-    int? totalPegawai,
-  }) =>
-      Departemen(
-        id: id ?? this.id,
-        nama: nama ?? this.nama,
-        totalPegawai: totalPegawai ?? this.totalPegawai,
-      );
-
-  factory Departemen.fromJson(Map<String, dynamic> json) =>
-      _$DepartemenFromJson(json);
-
-  Map<String, dynamic> toJson() => _$DepartemenToJson(this);
 }

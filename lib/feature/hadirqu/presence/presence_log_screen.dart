@@ -13,6 +13,7 @@ import 'package:shelter_super_app/data/model/hadirqu_presence_list_response.dart
 import 'package:intl/intl.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/widget/employee_card.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/widget/presence_loading_card.dart';
+import '../../../data/model/hadirqu_departement_filter_response.dart';
 import '../../../design/shimmer.dart';
 
 class PresenceLogScreen extends StatelessWidget {

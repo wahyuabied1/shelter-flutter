@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'hadirqu_departement_filter_response.dart';
+
 part 'hadirqu_presence_list_response.g.dart';
 
 @JsonSerializable()
@@ -95,23 +97,4 @@ class StatusAbsensi {
       _$StatusAbsensiFromJson(json);
 
   Map<String, dynamic> toJson() => _$StatusAbsensiToJson(this);
-}
-
-@JsonSerializable()
-class Departemen {
-  final int id;
-  final String nama;
-  @JsonKey(name: 'total_pegawai')
-  final int totalPegawai;
-
-  Departemen({
-    required this.id,
-    required this.nama,
-    required this.totalPegawai,
-  });
-
-  factory Departemen.fromJson(Map<String, dynamic> json) =>
-      _$DepartemenFromJson(json);
-
-  Map<String, dynamic> toJson() => _$DepartemenToJson(this);
 }

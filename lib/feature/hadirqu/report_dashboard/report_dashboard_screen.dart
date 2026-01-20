@@ -10,6 +10,7 @@ import 'package:shelter_super_app/feature/hadirqu/report_dashboard/widget/report
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/widget/chart_loading_card.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
+import '../../../data/model/hadirqu_departement_filter_response.dart';
 import '../../../data/model/hadirqu_report_response.dart';
 import '../../../design/multi_choice_bottom_sheet.dart';
 
@@ -111,13 +112,11 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                           },
                         );
 
-                        // 3. Kalau user pencet simpan
                         if (result != null) {
                           final selectedIds = <int>[];
 
                           result.forEach((key, isSelected) {
                             if (isSelected) {
-                              // ambil nama asli sebelum "(total)"
                               final name = key.split(' (')[0];
 
                               final dept = vm.departemenList.firstWhere(
@@ -132,7 +131,6 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                             }
                           });
 
-                          // 4. Update ke viewmodel → otomatis hit API
                           vm.updateDepartemenFilter(selectedIds);
                         }
                       },

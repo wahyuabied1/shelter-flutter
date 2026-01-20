@@ -6,6 +6,7 @@ import 'package:shelter_super_app/core/utils/result/result.dart';
 import 'package:shelter_super_app/data/model/hadirqu_presence_list_response.dart';
 import 'package:shelter_super_app/data/repository/hadirqu_repository.dart';
 
+import '../../../../data/model/hadirqu_departement_filter_response.dart';
 import '../../../../data/model/hadirqu_presence_detail_response.dart';
 import 'contract/presence_detail_contract.dart';
 

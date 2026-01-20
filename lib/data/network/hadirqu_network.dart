@@ -8,6 +8,7 @@ import 'package:shelter_super_app/data/model/hadirqu_summary_response.dart';
 import 'package:shelter_super_app/data/model/time_off_response.dart';
 import 'package:shelter_super_app/data/model/hadirqu_report_response.dart';
 
+import '../model/hadirqu_attendance_detail_response.dart';
 import '../model/hadirqu_presence_detail_response.dart';
 import '../model/hadirqu_presence_list_response.dart';
 
@@ -17,6 +18,7 @@ class HadirquNetwork {
   static const _sickLeave = "/v2/dashboard/sick-leave";
   static const _overtime = "v2/dashboard/overtime";
   static const _report = "v2/attedance/summary";
+  static const _attendanceDetail = "/open-api/v2/attedance/detail";
   static const _presenceList = "v2/attedance/presence/list";
   static const _presenceLogList = "v2/attedance/log-presence/list";
   static const _presenceDetail = "v2/attedance/presence/detail";
@@ -103,6 +105,52 @@ class HadirquNetwork {
     final data = HadirquReportResponse.fromJson(json);
 
     return JsonResponse(response, (_) => data);
+  }
+
+  Future<JsonResponse<HadirquAttendanceDetailResponse>> getAttendanceDetail({
+    required int kehadiran, // 1 = hadir, 0 = tidak hadir
+    String? tanggal,
+    List<int>? idDepartemen,
+    List<String>? jabatan,
+    String? karyawan,
+  }) async {
+    final map = <String, dynamic>{
+      'kehadiran': kehadiran.toString(),
+    };
+
+    if (tanggal != null) {
+      map['tanggal'] = tanggal;
+    }
+
+    if (idDepartemen != null && idDepartemen.isNotEmpty) {
+      map['id_departemen'] = idDepartemen.join(',');
+    }
+
+    if (jabatan != null && jabatan.isNotEmpty) {
+      map['jabatan'] = jabatan.join(',');
+    }
+
+    if (karyawan != null && karyawan.isNotEmpty) {
+      map['karyawan'] = karyawan;
+    }
+
+    final response = await _http.hadirkuHttp(
+      headers: {
+        'sha': await _coreHttpRepository.getSHA(),
+        'salt': await _coreHttpRepository.getToken()
+      },
+      path: _attendanceDetail,
+      query: map,
+    ).get();
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = HadirquAttendanceDetailResponse.fromJson(json);
+
+    return JsonResponse(
+      response,
+      (_) => data,
+      source: () => json,
+    );
   }
 
   Future<JsonResponse<HadirquPresenceListResponse>> getPresenceList({
