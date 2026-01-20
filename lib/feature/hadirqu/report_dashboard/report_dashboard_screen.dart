@@ -7,7 +7,7 @@ import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_exte
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/rekap_tile.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_dashboard_viewmodel.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_status_chip.dart';
-import 'package:shelter_super_app/feature/hadirqu/report_dashboard/widget/shimer_loading_chart.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/widget/chart_loading_card.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
 import '../../../design/multi_choice_bottom_sheet.dart';
@@ -249,7 +249,7 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
 
             // Content sections with loading states
             vm.isLoading
-                ? const ShimerLoadingChart()
+                ? const ChartLoadingCard()
                 : Column(
                     children: [
                       _buildPresentSection(context, vm),

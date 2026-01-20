@@ -1,16 +1,17 @@
+import 'package:alice/utils/alice_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../design/shimmer.dart';
 
-class ShimerLoadingChart extends StatefulWidget {
-  const ShimerLoadingChart({super.key});
+class ChartLoadingCard extends StatefulWidget {
+  const ChartLoadingCard({super.key});
 
   @override
-  State<ShimerLoadingChart> createState() => _ShimerLoadingChartState();
+  State<ChartLoadingCard> createState() => _ChartLoadingCardState();
 }
 
-class _ShimerLoadingChartState extends State<ShimerLoadingChart> {
+class _ChartLoadingCardState extends State<ChartLoadingCard> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -19,7 +20,7 @@ class _ShimerLoadingChartState extends State<ShimerLoadingChart> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
           child: Card(
-            color: Colors.white,
+            color: AliceConstants.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

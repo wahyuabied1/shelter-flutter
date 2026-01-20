@@ -1,199 +1,320 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
+
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/export_bottom_sheet.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
-import 'package:shelter_super_app/feature/hadirqu/presence/attendance_sheet.dart';
+import 'package:shelter_super_app/feature/hadirqu/presence/viewmodel/presence_report_viewmodel.dart';
+import 'package:shelter_super_app/design/selection_filter_bottom_sheet.dart';
+import 'package:shelter_super_app/data/model/hadirqu_presence_list_response.dart';
+import 'package:intl/intl.dart';
+import 'package:shelter_super_app/feature/hadirqu/presence/widget/employee_card.dart';
+import 'package:shelter_super_app/feature/hadirqu/presence/widget/presence_loading_card.dart';
+import '../../../design/shimmer.dart';
 
-class PresenceReportScreen extends StatefulWidget{
-  @override
-  State<PresenceReportScreen> createState() => _PresenceReportScreenState();
-}
-
-class _PresenceReportScreenState extends State<PresenceReportScreen> {
-  String _startDate = '01/11/2024';
-  String _endDate = '27/11/2024';
-  final actualData = [
-    {'day': 1, 'statuses': [{'type': 'T'}], 'desc': 'Terlambat'},
-    {'day': 2, 'statuses': [{'type': 'T'}], 'desc': 'Terlambat'},
-    {'day': 4, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
-    {'day': 5, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
-    {'day': 6, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
-    {
-      'day': 7,
-      'statuses': [
-        {'type': '?'},
-        {'type': 'T'}
-      ],
-      'desc': 'Terlambat & Di luar wilayah'
-    },
-    {'day': 8, 'statuses': [{'type': 'H'}], 'desc': 'Hadir'},
-  ];
-
+class PresenceReportScreen extends StatelessWidget {
+  const PresenceReportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => PresenceReportViewmodel()..init(),
+      child: const _PresenceReportView(),
+    );
+  }
+}
+
+class _PresenceReportView extends StatefulWidget {
+  const _PresenceReportView();
+
+  @override
+  State<_PresenceReportView> createState() => _PresenceReportScreenState();
+}
+
+class _PresenceReportScreenState extends State<_PresenceReportView> {
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.watch<PresenceReportViewmodel>();
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
-          _header(context),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
-                      ),
-                      builder: (context) {
-                        return MultiChoiceBottomSheet(
-                            title: "Departemen",
-                            choice: {
-                              "Dept. Keamanan": false,
-                              "Dept. Kebersihan": false,
-                              "Dept. Quality Control": false,
-                              "Dept. Produksi": false,
-                              "Dept. Sales": false,
-                            });
-                      },
-                    );
-                  },
-                  customBorder: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                        // Rounded corners
-                        border: Border.all(
-                            color: Colors.grey.shade300), // Light grey border
-                      ),
-                      child: const Row(
-                        children: [
-                          Text('Departemen'),
-                          SizedBox(width: 4),
-                          Icon(Icons.keyboard_arrow_down_sharp,
-                              color: Colors.black)
-                        ],
-                      )),
+          _header(context, vm),
+          _buildFilters(context, vm),
+          const SizedBox(height: 12.0),
+
+          // Employee Cards Count
+          if (vm.isLoading)
+            Shimmer(
+              isLoading: true,
+              child: Container(
+                height: 16,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 12),
-                  child: InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                        ),
-                        builder: (context) {
-                          return MultiChoiceBottomSheet(
-                              title: "Jabatan",
-                              choice: {
-                                "Staff": false,
-                                "Staff Senior": false,
-                                "Supervisor": false,
-                              });
-                        },
-                      );
-                    },
-                    customBorder: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+              ),
+            )
+          else
+            Text(
+              'Menampilkan ${vm.totalKaryawan} Karyawan',
+              style: TextStyle(color: Colors.black54, fontSize: 12.sp),
+            ),
+          const SizedBox(height: 4.0),
+
+          // Loading State
+          if (vm.isLoading)
+            const PresenceLoadingCard()
+          // Error State
+          else if (vm.isError)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Gagal memuat data',
+                      style: TextStyle(color: Colors.red),
                     ),
-                    child: Container(
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                          // Rounded corners
-                          border: Border.all(
-                              color: Colors.grey.shade300), // Light grey border
-                        ),
-                        child: const Row(
-                          children: [
-                            Text('Jabatan'),
-                            SizedBox(width: 4),
-                            Icon(Icons.keyboard_arrow_down_sharp,
-                                color: Colors.black)
-                          ],
-                        )),
-                  ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => vm.getPresenceList(),
+                      child: const Text('Coba Lagi'),
+                    ),
+                  ],
                 ),
-                InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
-                      ),
-                      builder: (context) {
-                        return MultiChoiceBottomSheet(
-                            title: "Jumlah Kehadiran",
-                            choice: {
-                              "Group 1": false,
-                              "Group 2": false,
-                            });
-                      },
+              ),
+            )
+          // Success - Show List
+          else if (vm.presenceList.isNotEmpty)
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: vm.presenceList.length,
+              itemBuilder: (context, index) {
+                return EmployeeCard(employee: vm.presenceList[index], vm: vm);
+              },
+            )
+          // Empty State
+          else
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32.0),
+                child: Text('Tidak ada data karyawan'),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilters(BuildContext context, PresenceReportViewmodel vm) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Filter Departemen
+          InkWell(
+            onTap: () async {
+              if (vm.availableDepartemen.isEmpty) return;
+
+              // Buat map dari data API
+              final Map<String, bool> departemenChoice = {};
+              for (var dept in vm.availableDepartemen) {
+                final key = '${dept.nama} (${dept.totalPegawai})';
+                departemenChoice[key] =
+                    vm.selectedDepartemenIds.contains(dept.id);
+              }
+
+              final result = await showModalBottomSheet<Map<String, bool>>(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (context) {
+                  return MultiChoiceBottomSheet(
+                    title: "Departemen",
+                    choice: departemenChoice,
+                  );
+                },
+              );
+
+              if (result != null) {
+                // Convert selected names back to IDs
+                final selectedIds = <int>[];
+                result.forEach((key, isSelected) {
+                  if (isSelected) {
+                    final deptName =
+                        key.split(' (')[0]; // Extract name before count
+                    final dept = vm.availableDepartemen.firstWhere(
+                      (d) => d.nama == deptName,
+                      orElse: () =>
+                          Departemen(id: 0, nama: '', totalPegawai: 0),
                     );
-                  },
-                  customBorder: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Container(
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                        // Rounded corners
-                        border: Border.all(
-                            color: Colors.grey.shade300), // Light grey border
-                      ),
-                      child: Row(
-                        children: [
-                          Text('Jumlah Kehadiran'),
-                          SizedBox(width: 4),
-                          Icon(Icons.keyboard_arrow_down_sharp,
-                              color: Colors.black)
-                        ],
-                      )),
+                    if (dept.id != 0) selectedIds.add(dept.id);
+                  }
+                });
+                vm.updateDepartemenFilter(selectedIds);
+              }
+            },
+            customBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: vm.selectedDepartemenIds.isEmpty
+                    ? Colors.transparent
+                    : Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: vm.selectedDepartemenIds.isEmpty
+                      ? Colors.grey.shade300
+                      : Colors.blue,
                 ),
-              ],
+              ),
+              child: Row(
+                children: [
+                  Text(vm.selectedDepartemenText),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.keyboard_arrow_down_sharp,
+                      color: Colors.black)
+                ],
+              ),
             ),
           ),
-          SizedBox(height: 12.0),
-          // Employee Cards
-          Text(
-            'Menampilkan 2 Karyawan',
-            style: TextStyle(color: Colors.black54,fontSize: 12),
+
+          // Filter Jabatan
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+            child: InkWell(
+              onTap: () async {
+                if (vm.availableJabatan.isEmpty) return;
+
+                // Buat map dari data API
+                final Map<String, bool> jabatanChoice = {};
+                for (var jabatan in vm.availableJabatan) {
+                  jabatanChoice[jabatan] = vm.selectedJabatan.contains(jabatan);
+                }
+
+                final result = await showModalBottomSheet<Map<String, bool>>(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  builder: (context) {
+                    return MultiChoiceBottomSheet(
+                      title: "Jabatan",
+                      choice: jabatanChoice,
+                    );
+                  },
+                );
+
+                if (result != null) {
+                  // Get selected jabatan
+                  final selectedJabatan = result.entries
+                      .where((entry) => entry.value)
+                      .map((entry) => entry.key)
+                      .toList();
+                  vm.updateJabatanFilter(selectedJabatan);
+                }
+              },
+              customBorder: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: vm.selectedJabatan.isEmpty
+                      ? Colors.transparent
+                      : Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: vm.selectedJabatan.isEmpty
+                        ? Colors.grey.shade300
+                        : Colors.blue,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Text(vm.selectedJabatanText),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.keyboard_arrow_down_sharp,
+                        color: Colors.black)
+                  ],
+                ),
+              ),
+            ),
           ),
-          SizedBox(height: 4.0),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: 2,
-            itemBuilder: (context, index) {
-              return _cardEmployee();
+
+          // Filter Kehadiran
+          InkWell(
+            onTap: () async {
+              final result = await showModalBottomSheet<Map<String, dynamic>>(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (context) {
+                  return PresensiFilterBottomSheet(
+                    title: "Jumlah Kehadiran",
+                    initialFilter: vm.filterKehadiran != null
+                        ? {
+                            'operator': vm.filterKehadiranPersamaan,
+                            'statusCode': vm.filterKehadiran,
+                            'jumlah': vm.filterKehadiranNilai,
+                          }
+                        : null,
+                  );
+                },
+              );
+
+              if (result != null) {
+                vm.updateKehadiranFilter(
+                  statusCode: result['statusCode'],
+                  operator: result['operator'],
+                  nilai: result['jumlah'],
+                );
+              }
             },
+            customBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: vm.hasKehadiranFilter
+                    ? Colors.blue.shade50
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: vm.hasKehadiranFilter
+                      ? Colors.blue
+                      : Colors.grey.shade300,
+                ),
+              ),
+              child: const Row(
+                children: [
+                  Text('Jumlah Kehadiran'),
+                  SizedBox(width: 4),
+                  Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black)
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _header(BuildContext context) {
+  Widget _header(BuildContext context, PresenceReportViewmodel vm) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -201,13 +322,15 @@ class _PresenceReportScreenState extends State<PresenceReportScreen> {
         children: [
           // Date Input Fields
           DoubleDateWidget(
-            startDate: _startDate,
-            endDate: _endDate,
-            onChangeStartDate: (date){
-
+            startDate: vm.startDate.ddMMyyyy('/'),
+            endDate: vm.endDate.ddMMyyyy('/'),
+            onChangeStartDate: (date) {
+              final parsed = DateFormat('dd/MM/yyyy').parse(date);
+              vm.updateDateRange(parsed, vm.endDate);
             },
-            onChangeEndDate: (date){
-
+            onChangeEndDate: (date) {
+              final parsed = DateFormat('dd/MM/yyyy').parse(date);
+              vm.updateDateRange(vm.startDate, parsed);
             },
           ),
           const SizedBox(height: 12.0),
@@ -240,148 +363,9 @@ class _PresenceReportScreenState extends State<PresenceReportScreen> {
                       color: Colors.blue.shade700,
                     ),
                   ),
-                  SizedBox(width: 8.0),
-                  Icon(Icons.arrow_drop_down),
+                  const SizedBox(width: 8.0),
+                  const Icon(Icons.arrow_drop_down),
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _cardEmployee() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8.0,
-            offset: Offset(0, 4),
-          )
-        ],
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Profile Information
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.blue.shade700,
-                child: Text(
-                  "Disma Ramadani".initialName(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                // Add your image
-                radius: 20.0,
-              ),
-              const SizedBox(width: 12.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Disma Ramadani',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    width: 150,
-                    child: Text(
-                      'abdulrahmanh • Staff Keamanan',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Text(
-                  'KRY-002',
-                  style: TextStyle(fontSize: 12),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16.0),
-
-          // Presence Summary
-          const Text('Rangkuman Presensi',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8.0),
-
-          Row(
-            children: [
-              // Hadir
-              Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                  color: Colors.green[100],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: const Text('16'),
-              ),
-              const SizedBox(width: 4.0),
-              const Text('Hadir'),
-
-              const SizedBox(width: 16.0),
-
-              // Di luar batas wilayah
-              Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                  color: Colors.orange[100],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: const Text('4'),
-              ),
-              const SizedBox(width: 4.0),
-              const Text('Di luar batas wilayah'),
-            ],
-          ),
-
-          const SizedBox(height: 16.0),
-          // Detail Link
-          Center(
-            child: TextButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => AttendanceSheet(
-                    name: 'Abdul Rahman Hakim',
-                    role: 'Staff Keamanan',
-                    id: 'KRY-002',
-                    imageUrl: 'https://randomuser.me/api/portraits/men/2.jpg',
-                    attendanceData: actualData,
-                  ),
-                );
-              },
-              child: Text(
-                'Lihat Detail ▼',
-                style: TextStyle(
-                  color: Colors.blue.shade700,
-                  fontWeight: FontWeight.w500,
-                ),
               ),
             ),
           ),

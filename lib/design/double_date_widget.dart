@@ -4,8 +4,10 @@ import 'package:shelter_super_app/design/theme_widget.dart';
 class DoubleDateWidget extends StatefulWidget {
   String startDate;
   String endDate;
+
   final Function(String) onChangeStartDate;
   final Function(String) onChangeEndDate;
+
   ThemeWidget? theme;
 
   DoubleDateWidget({
@@ -14,15 +16,22 @@ class DoubleDateWidget extends StatefulWidget {
     required this.startDate,
     required this.onChangeStartDate,
     required this.onChangeEndDate,
-    this.theme = ThemeWidget.blue
+    this.theme = ThemeWidget.blue,
   });
 
   @override
   State<DoubleDateWidget> createState() => _DoubleDateWidgetState();
 }
 
-
 class _DoubleDateWidgetState extends State<DoubleDateWidget> {
+  String _formatDate(DateTime date) {
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final year = date.year.toString();
+
+    return '$day/$month/$year';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -46,7 +55,7 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
                     children: [
                       const Icon(Icons.calendar_today, color: Colors.grey),
                       const SizedBox(width: 8.0),
-                      Flexible(child: Text(widget.startDate ?? '')),
+                      Flexible(child: Text(widget.startDate)),
                     ],
                   ),
                 ),
@@ -74,7 +83,7 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
                     children: [
                       const Icon(Icons.calendar_today, color: Colors.grey),
                       const SizedBox(width: 8.0),
-                      Flexible(child: Text(widget.endDate ?? '')),
+                      Flexible(child: Text(widget.endDate)),
                     ],
                   ),
                 ),
@@ -86,42 +95,40 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
     );
   }
 
-  Future<void> _selectDate(
-    BuildContext context,
-    bool isStartDate,
-  ) async {
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1500),
-        lastDate: DateTime(2500),
-        builder: (context, child) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              colorScheme: ColorScheme.light(
-                primary: widget.theme.colorTheme(),
-                onPrimary: Colors.white,
-                onSurface: Colors.black,
-              ),
-              dialogBackgroundColor: Colors.white,
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: widget.theme?.colorTheme() ?? Colors.blue,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
             ),
-            child: child!,
-          );
-        });
+          ),
+          child: child!,
+        );
+      },
+    );
 
     if (pickedDate != null) {
+      final formatted = _formatDate(pickedDate);
+
       setState(() {
         if (isStartDate) {
-          widget.startDate =
-              '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
-          widget.onChangeEndDate.call(widget.startDate ?? '');
+          widget.startDate = formatted;
+
+          widget.onChangeStartDate.call(formatted);
         } else {
-          widget.endDate =
-              '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
-          widget.onChangeEndDate.call(widget.endDate ?? '');
+          widget.endDate = formatted;
+
+          widget.onChangeEndDate.call(formatted);
         }
       });
     }
   }
 }
-

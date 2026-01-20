@@ -6,12 +6,15 @@ class MultiChoiceBottomSheet extends StatefulWidget {
   final String title;
   final Map<String, bool> choice;
   final ThemeWidget? theme;
+  final Function(Map<String, bool>)?
+      onApply; // Callback untuk mengembalikan hasil
 
-  const MultiChoiceBottomSheet({
+  MultiChoiceBottomSheet({
     super.key,
     required this.title,
     required this.choice,
     this.theme = ThemeWidget.blue,
+    this.onApply,
   });
 
   @override
@@ -25,8 +28,7 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        // Rounded corners
-        border: Border.all(color: Colors.grey.shade300), // Light grey border
+        border: Border.all(color: Colors.grey.shade300),
       ),
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -38,9 +40,7 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
               borderRadius: BorderRadius.circular(2),
-              // Rounded corners
-              border:
-                  Border.all(color: Colors.grey.shade300), // Light grey border
+              border: Border.all(color: Colors.grey.shade300),
             ),
             width: 100,
           ),
@@ -93,25 +93,24 @@ class _MultiChoiceBottomSheetState extends State<MultiChoiceBottomSheet> {
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
                     width: 1.0,
-                    color: widget.theme.colorTheme(),
+                    color: widget.theme!.colorTheme(),
                   ),
                 ),
                 child: Text(
                   "Reset",
-                  style: TextStyle(color: widget.theme.colorTheme()),
+                  style: TextStyle(color: widget.theme!.colorTheme()),
                 ),
               ),
-              const SizedBox(
-                width: 12,
-              ),
+              const SizedBox(width: 12),
               SizedBox(
                 width: 220.w,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    // Return hasil selection
+                    Navigator.pop(context, widget.choice);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: widget.theme.colorTheme(),
+                    backgroundColor: widget.theme!.colorTheme(),
                   ),
                   child: const Text(
                     "Terapkan",
