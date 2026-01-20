@@ -4,12 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
-import 'package:shelter_super_app/feature/hadirqu/report_dashboard/rekap_tile.dart';
-import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_dashboard_viewmodel.dart';
-import 'package:shelter_super_app/feature/hadirqu/report_dashboard/report_status_chip.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/widget/rekap_tile.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/viewmodel/report_dashboard_viewmodel.dart';
+import 'package:shelter_super_app/feature/hadirqu/report_dashboard/widget/report_status_chip.dart';
 import 'package:shelter_super_app/feature/hadirqu/report_dashboard/widget/chart_loading_card.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
+import '../../../data/model/hadirqu_report_response.dart';
 import '../../../design/multi_choice_bottom_sheet.dart';
 
 class ReportDashboardScreen extends StatelessWidget {
@@ -86,14 +87,17 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                   Material(
                     color: Colors.white,
                     child: InkWell(
-                      onTap: () {
-                        final mapChoice = {
+                      onTap: () async {
+                        // 1. Buat map pilihan dari data API
+                        final Map<String, bool> mapChoice = {
                           for (var d in vm.departemenList)
-                            d.nama ?? 'Unknown':
+                            '${d.nama} (${d.totalPegawai})':
                                 vm.isDepartemenSelected(d.id ?? 0)
                         };
 
-                        showModalBottomSheet(
+                        // 2. Buka bottom sheet & tunggu hasil
+                        final result =
+                            await showModalBottomSheet<Map<String, bool>>(
                           context: context,
                           shape: const RoundedRectangleBorder(
                             borderRadius:
@@ -105,18 +109,32 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                               choice: mapChoice,
                             );
                           },
-                        ).then((_) {
-                          for (var d in vm.departemenList) {
-                            final selected = mapChoice[d.nama] ?? false;
+                        );
 
-                            final isNowSelected =
-                                vm.isDepartemenSelected(d.id!);
+                        // 3. Kalau user pencet simpan
+                        if (result != null) {
+                          final selectedIds = <int>[];
 
-                            if (selected != isNowSelected) {
-                              vm.toggleDepartemen(d.id!);
+                          result.forEach((key, isSelected) {
+                            if (isSelected) {
+                              // ambil nama asli sebelum "(total)"
+                              final name = key.split(' (')[0];
+
+                              final dept = vm.departemenList.firstWhere(
+                                (d) => d.nama == name,
+                                orElse: () => Departemen(
+                                    id: 0, nama: '', totalPegawai: 0),
+                              );
+
+                              if (dept.id != 0) {
+                                selectedIds.add(dept.id!);
+                              }
                             }
-                          }
-                        });
+                          });
+
+                          // 4. Update ke viewmodel → otomatis hit API
+                          vm.updateDepartemenFilter(selectedIds);
+                        }
                       },
                       customBorder: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -125,9 +143,15 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          color: Colors.transparent,
+                          color: vm.selectedDepartemenIds.isEmpty
+                              ? Colors.transparent
+                              : Colors.blue.shade50,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300),
+                          border: Border.all(
+                            color: vm.selectedDepartemenIds.isEmpty
+                                ? Colors.grey.shade300
+                                : Colors.blue,
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -87,7 +87,7 @@ class HadirquNetwork {
     map['tanggal'] = date;
 
     if (departemenIds != null && departemenIds.isNotEmpty) {
-      map['id_departemen'] = departemenIds.join(',');
+      map['id_departemen'] = departemenIds.map((e) => e.toString()).toList();
     }
 
     final response = await _http.hadirkuHttp(
@@ -99,7 +99,6 @@ class HadirquNetwork {
       query: map,
     ).get();
 
-    // Manual parse
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     final data = HadirquReportResponse.fromJson(json);
 
@@ -166,7 +165,7 @@ class HadirquNetwork {
 
     return JsonResponse(
       response,
-          (_) => data,
+      (_) => data,
       source: () => json,
     );
   }
@@ -231,7 +230,7 @@ class HadirquNetwork {
 
     return JsonResponse(
       response,
-          (_) => data,
+      (_) => data,
       source: () => json,
     );
   }
@@ -262,7 +261,7 @@ class HadirquNetwork {
 
     return JsonResponse(
       response,
-          (_) => data,
+      (_) => data,
       source: () => json,
     );
   }
@@ -293,7 +292,7 @@ class HadirquNetwork {
 
     return JsonResponse(
       response,
-          (_) => data,
+      (_) => data,
       source: () => json,
     );
   }

@@ -13,21 +13,30 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
 
   DateTime selectedDate = DateTime.now();
 
-  // Filter departemen yang dipilih
+  // =======================
+  // FILTER STATE
+  // =======================
   List<int> selectedDepartemenIds = [];
 
+  // =======================
+  // INIT
+  // =======================
   void init() {
     getReport();
   }
 
+  // =======================
+  // MAIN API
+  // =======================
   Future<bool> getReport() {
-    // Set loading state before fetching
     reportResult = const Result.loading();
     notifyListeners();
 
     return Result.callApi<JsonResponse<HadirquReportResponse>>(
       future: _hadirquRepository.getReport(
         date: selectedDate.yyyyMMdd('-'),
+
+        // ✅ FIX: kirim null kalau kosong biar API tidak ke-filter
         departemenIds:
             selectedDepartemenIds.isEmpty ? null : selectedDepartemenIds,
       ),
@@ -38,10 +47,15 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
         } else if (result.isError) {
           reportResult = Result.error(result.error);
         }
+
         notifyListeners();
       },
     );
   }
+
+  // =======================
+  // ACTIONS
+  // =======================
 
   void changeDate(DateTime date) {
     selectedDate = date;
@@ -49,37 +63,50 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
     getReport();
   }
 
-  // Toggle departemen selection
+  /// Toggle satu departemen
   void toggleDepartemen(int departemenId) {
     if (selectedDepartemenIds.contains(departemenId)) {
       selectedDepartemenIds.remove(departemenId);
     } else {
       selectedDepartemenIds.add(departemenId);
     }
-    notifyListeners();
-    getReport(); // Reload data dengan filter baru
-  }
 
-  // Clear semua filter departemen
-  void clearDepartemenFilter() {
-    selectedDepartemenIds.clear();
     notifyListeners();
     getReport();
   }
 
-  // Check apakah departemen selected
+  /// Update langsung dari MultiChoice
+  void updateDepartemenFilter(List<int> ids) {
+    selectedDepartemenIds = ids;
+
+    notifyListeners();
+    getReport();
+  }
+
+  void clearDepartemenFilter() {
+    selectedDepartemenIds.clear();
+
+    notifyListeners();
+    getReport();
+  }
+
   bool isDepartemenSelected(int departemenId) {
     return selectedDepartemenIds.contains(departemenId);
   }
 
   // =======================
-  // Helper untuk UI
+  // GETTER DATA
   // =======================
 
   HadirquReportData? get data => reportResult.dataOrNull?.data;
 
-  // Loading state
   bool get isLoading => reportResult.isInitialOrLoading;
+
+  bool get isError => reportResult.isError;
+
+  // =======================
+  // CHART MAPPING
+  // =======================
 
   Map<String, double> get presentChart {
     if (data == null) return {};
@@ -103,6 +130,10 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
     };
   }
 
+  // =======================
+  // TEXT HELPER
+  // =======================
+
   String get centerPresentText {
     if (data == null) return "0/0";
     return "${data!.kehadiran ?? 0}/${data!.jumlahKaryawan ?? 0}";
@@ -125,21 +156,31 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
 
   String get durasiIstirahatAvg => data?.durasiIstirahatAvg ?? "-";
 
+  // =======================
+  // FILTER DATA
+  // =======================
+
   List<Departemen> get departemenList =>
       reportResult.dataOrNull?.filter?.departemen ?? [];
 
-  // Text untuk button filter departemen
   String get selectedDepartemenText {
     if (selectedDepartemenIds.isEmpty) {
       return 'Semua Departemen';
-    } else if (selectedDepartemenIds.length == 1) {
+    }
+
+    if (selectedDepartemenIds.length == 1) {
       final dept = departemenList.firstWhere(
         (d) => d.id == selectedDepartemenIds.first,
-        orElse: () => Departemen(nama: 'Unknown'),
+        orElse: () => Departemen(
+          id: 0,
+          nama: 'Unknown',
+          totalPegawai: 0,
+        ),
       );
+
       return dept.nama ?? 'Unknown';
-    } else {
-      return '${selectedDepartemenIds.length} Departemen Dipilih';
     }
+
+    return '${selectedDepartemenIds.length} Departemen Dipilih';
   }
 }
