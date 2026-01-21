@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shelter_super_app/core/routing/core/a_page.dart';
 
 class ReasonBottomSheet extends StatefulWidget {
   const ReasonBottomSheet({super.key});
@@ -49,12 +48,12 @@ class _ReasonBottomSheetState extends State<ReasonBottomSheet> {
             const Text(
               'Tambahkan keterangan untuk karyawan agar mengerti dengan keputusanmu',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey,fontSize: 12),
+              style: TextStyle(color: Colors.grey, fontSize: 12),
             ),
             const SizedBox(height: 20.0),
             TextField(
               maxLines: 5,
-              cursorColor:Colors.blue[800],
+              cursorColor: Colors.blue[800],
               decoration: InputDecoration(
                 hintText: 'Tambahkan keterangan di sini',
                 border: const OutlineInputBorder(),

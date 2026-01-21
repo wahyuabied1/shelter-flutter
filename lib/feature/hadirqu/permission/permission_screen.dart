@@ -5,7 +5,7 @@ import 'package:shelter_super_app/design/reason_bottom_sheet.dart';
 
 import '../../../design/multi_choice_bottom_sheet.dart';
 
-class PermissionScreen extends StatefulWidget{
+class PermissionScreen extends StatefulWidget {
   const PermissionScreen({super.key});
 
   @override
@@ -57,7 +57,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
     );
   }
 
-  Widget _calendarHeader(){
+  Widget _calendarHeader() {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(16.0),
@@ -73,8 +73,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 child: InkWell(
                   onTap: () {
                     setState(() {
-                      selectedDate =
-                          selectedDate.add(const Duration(days: -1));
+                      selectedDate = selectedDate.add(const Duration(days: -1));
                     });
                   },
                   child: Container(
@@ -84,8 +83,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                       borderRadius: BorderRadius.circular(6),
                       // Rounded corners
                       border: Border.all(
-                          color:
-                          Colors.grey.shade300), // Light grey border
+                          color: Colors.grey.shade300), // Light grey border
                     ),
                     child: const Icon(
                       Icons.arrow_back_ios_new_outlined,
@@ -113,12 +111,10 @@ class _PermissionScreenState extends State<PermissionScreen> {
                         borderRadius: BorderRadius.circular(12),
                         // Rounded corners
                         border: Border.all(
-                            color: Colors
-                                .grey.shade300), // Light grey border
+                            color: Colors.grey.shade300), // Light grey border
                       ),
                       child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
@@ -137,8 +133,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 child: InkWell(
                   onTap: () {
                     setState(() {
-                      selectedDate =
-                          selectedDate.add(const Duration(days: 1));
+                      selectedDate = selectedDate.add(const Duration(days: 1));
                     });
                   },
                   child: Container(
@@ -149,8 +144,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                       borderRadius: BorderRadius.circular(6),
                       // Rounded corners
                       border: Border.all(
-                          color:
-                          Colors.grey.shade300), // Light grey border
+                          color: Colors.grey.shade300), // Light grey border
                     ),
                     child: const Icon(
                       Icons.arrow_forward_ios_outlined,
@@ -181,7 +175,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                   context: context,
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(16)),
+                        BorderRadius.vertical(top: Radius.circular(16)),
                   ),
                   builder: (context) {
                     return MultiChoiceBottomSheet(title: "Departemen", choice: {
@@ -199,13 +193,13 @@ class _PermissionScreenState extends State<PermissionScreen> {
               ),
               child: Container(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
                     // Rounded corners
-                    border: Border.all(
-                        color: Colors.black38), // Light grey border
+                    border:
+                        Border.all(color: Colors.black38), // Light grey border
                   ),
                   child: const Row(
                     children: [
@@ -224,7 +218,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                   context: context,
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(16)),
+                        BorderRadius.vertical(top: Radius.circular(16)),
                   ),
                   builder: (context) {
                     return MultiChoiceBottomSheet(title: "Status", choice: {
@@ -241,13 +235,13 @@ class _PermissionScreenState extends State<PermissionScreen> {
               ),
               child: Container(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
                     // Rounded corners
-                    border: Border.all(
-                        color: Colors.black38), // Light grey border
+                    border:
+                        Border.all(color: Colors.black38), // Light grey border
                   ),
                   child: const Row(
                     children: [
@@ -263,10 +257,10 @@ class _PermissionScreenState extends State<PermissionScreen> {
     );
   }
 
-  Widget _card(){
+  Widget _card() {
     return Card(
       elevation: 4,
-      margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -301,7 +295,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                     Text(
                       'Justinus William',
                       style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'justinuswilliam • KRY-001',
@@ -385,7 +379,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                   ),
                   Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
@@ -478,7 +472,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                               const Text(
                                 'image-232123.jpg',
                                 style:
-                                TextStyle(fontSize: 16, color: Colors.blue),
+                                    TextStyle(fontSize: 16, color: Colors.blue),
                               ),
                               const Spacer(),
                               IconButton(
@@ -488,50 +482,6 @@ class _PermissionScreenState extends State<PermissionScreen> {
                               ),
                             ],
                           ),
-                          const Divider(),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: SizedBox(
-                                  width:double.infinity,
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        onClickButton();
-                                      });
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(width: 1.0, color: Colors.blue.shade700),
-                                    ),
-                                    child: Text(
-                                      "Tolak",
-                                      style: TextStyle(color: Colors.blue.shade700),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Flexible(
-                                child: SizedBox(
-                                  width:double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      onClickButton();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue.shade700,
-                                    ),
-                                    child: const Text(
-                                      "Setujui",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
                         ],
                       )),
                 ],
@@ -544,12 +494,11 @@ class _PermissionScreenState extends State<PermissionScreen> {
     );
   }
 
-  void onClickButton(){
+  void onClickButton() {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
         return ReasonBottomSheet();

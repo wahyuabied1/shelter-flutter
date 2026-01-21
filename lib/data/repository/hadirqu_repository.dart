@@ -5,6 +5,7 @@ import 'package:shelter_super_app/data/model/time_off_response.dart';
 import 'package:shelter_super_app/data/network/hadirqu_network.dart';
 
 import '../model/hadirqu_attendance_detail_response.dart';
+import '../model/hadirqu_employee_list_response.dart';
 import '../model/hadirqu_presence_detail_response.dart';
 import '../model/hadirqu_presence_list_response.dart';
 import '../model/hadirqu_report_response.dart';
@@ -121,6 +122,18 @@ class HadirquRepository {
       tanggalMulai: tanggalMulai,
       tanggalSelesai: tanggalSelesai,
       idKaryawan: idKaryawan,
+    );
+  }
+
+  Future<JsonResponse<HadirquEmployeeListResponse>> getEmployeeList({
+    List<int>? idDepartemen,
+    List<String>? jabatan,
+    List<int>? grupId,
+  }) async {
+    return _hadirquNetwork.getEmployeeList(
+      idDepartemen: idDepartemen,
+      jabatan: jabatan,
+      grupId: grupId,
     );
   }
 }

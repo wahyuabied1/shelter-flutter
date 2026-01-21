@@ -13,6 +13,7 @@ import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 import '../../../data/model/hadirqu_departement_filter_response.dart';
 import '../../../data/model/hadirqu_report_response.dart';
 import '../../../design/multi_choice_bottom_sheet.dart';
+import 'detail/employee_present_detail_screen.dart';
 
 class ReportDashboardScreen extends StatelessWidget {
   const ReportDashboardScreen({super.key});
@@ -89,14 +90,12 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () async {
-                        // 1. Buat map pilihan dari data API
                         final Map<String, bool> mapChoice = {
                           for (var d in vm.departemenList)
                             '${d.nama} (${d.totalPegawai})':
                                 vm.isDepartemenSelected(d.id ?? 0)
                         };
 
-                        // 2. Buka bottom sheet & tunggu hasil
                         final result =
                             await showModalBottomSheet<Map<String, bool>>(
                           context: context,
@@ -140,6 +139,7 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
+                        margin: EdgeInsets.only(top: 16.sp),
                         decoration: BoxDecoration(
                           color: vm.selectedDepartemenIds.isEmpty
                               ? Colors.transparent
@@ -305,8 +305,16 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                   const Text("Karyawan Hadir"),
                   TextButton(
                     onPressed: () {
-                      context
-                          .pushNamed(HadirQuRoutes.employeePresentDetail.name!);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider.value(
+                            value: vm,
+                            child: const EmployeePresentDetailScreen(
+                                isPresent: true),
+                          ),
+                        ),
+                      );
                     },
                     child: Text(
                       "Lihat Semua",
@@ -403,7 +411,18 @@ class _ReportDashboardScreenState extends State<_ReportDashboardView> {
                 children: [
                   const Text("Karyawan Tidak Hadir"),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ChangeNotifierProvider.value(
+                            value: vm,
+                            child: const EmployeePresentDetailScreen(
+                                isPresent: false),
+                          ),
+                        ),
+                      );
+                    },
                     child: Text(
                       "Lihat Semua",
                       style: TextStyle(color: Colors.blue.shade700),

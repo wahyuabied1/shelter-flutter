@@ -9,6 +9,7 @@ import 'package:shelter_super_app/data/model/time_off_response.dart';
 import 'package:shelter_super_app/data/model/hadirqu_report_response.dart';
 
 import '../model/hadirqu_attendance_detail_response.dart';
+import '../model/hadirqu_employee_list_response.dart';
 import '../model/hadirqu_presence_detail_response.dart';
 import '../model/hadirqu_presence_list_response.dart';
 
@@ -18,11 +19,12 @@ class HadirquNetwork {
   static const _sickLeave = "/v2/dashboard/sick-leave";
   static const _overtime = "v2/dashboard/overtime";
   static const _report = "v2/attedance/summary";
-  static const _attendanceDetail = "/open-api/v2/attedance/detail";
+  static const _attendanceDetail = "v2/attedance/detail";
   static const _presenceList = "v2/attedance/presence/list";
   static const _presenceLogList = "v2/attedance/log-presence/list";
   static const _presenceDetail = "v2/attedance/presence/detail";
   static const _presenceLogDetail = "v2/attedance/log-presence/detail";
+  static const _employeeList = "employee/list";
 
   final CoreHttpBuilder _http;
   final CoreHttpRepository _coreHttpRepository;
@@ -114,20 +116,20 @@ class HadirquNetwork {
     List<String>? jabatan,
     String? karyawan,
   }) async {
-    final map = <String, dynamic>{
-      'kehadiran': kehadiran.toString(),
-    };
+    final map = <String, dynamic>{};
+
+    map['kehadiran'] = kehadiran.toString();
 
     if (tanggal != null) {
       map['tanggal'] = tanggal;
     }
 
     if (idDepartemen != null && idDepartemen.isNotEmpty) {
-      map['id_departemen'] = idDepartemen.join(',');
+      map['id_departemen'] = idDepartemen.map((e) => e.toString()).toList();
     }
 
     if (jabatan != null && jabatan.isNotEmpty) {
-      map['jabatan'] = jabatan.join(',');
+      map['jabatan'] = jabatan;
     }
 
     if (karyawan != null && karyawan.isNotEmpty) {
@@ -337,6 +339,50 @@ class HadirquNetwork {
     // Manual parse
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     final data = HadirquPresenceDetailResponse.fromJson(json);
+
+    return JsonResponse(
+      response,
+      (_) => data,
+      source: () => json,
+    );
+  }
+
+  Future<JsonResponse<HadirquEmployeeListResponse>> getEmployeeList({
+    List<int>? idDepartemen,
+    List<String>? jabatan,
+    List<int>? grupId,
+  }) async {
+    final map = <String, dynamic>{};
+
+    if (idDepartemen != null && idDepartemen.isNotEmpty) {
+      for (int i = 0; i < idDepartemen.length; i++) {
+        map['id_departemen[$i]'] = idDepartemen[i].toString();
+      }
+    }
+
+    if (jabatan != null && jabatan.isNotEmpty) {
+      for (int i = 0; i < jabatan.length; i++) {
+        map['jabatan[$i]'] = jabatan[i];
+      }
+    }
+
+    if (grupId != null && grupId.isNotEmpty) {
+      for (int i = 0; i < grupId.length; i++) {
+        map['grup_id[$i]'] = grupId[i].toString();
+      }
+    }
+
+    final response = await _http.hadirkuHttp(
+      headers: {
+        'sha': await _coreHttpRepository.getSHA(),
+        'salt': await _coreHttpRepository.getToken()
+      },
+      path: _employeeList,
+      query: map,
+    ).get();
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = HadirquEmployeeListResponse.fromJson(json);
 
     return JsonResponse(
       response,

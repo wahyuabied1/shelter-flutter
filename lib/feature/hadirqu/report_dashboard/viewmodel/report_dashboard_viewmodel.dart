@@ -6,12 +6,17 @@ import 'package:shelter_super_app/core/utils/result/result.dart';
 import 'package:shelter_super_app/data/model/hadirqu_report_response.dart';
 import 'package:shelter_super_app/data/repository/hadirqu_repository.dart';
 
+import '../../../../data/model/hadirqu_attendance_detail_response.dart';
 import '../../../../data/model/hadirqu_departement_filter_response.dart';
 
 class ReportDashboardViewmodel extends ABaseChangeNotifier {
   final _hadirquRepository = serviceLocator.get<HadirquRepository>();
 
   Result<HadirquReportResponse?> reportResult = const Result.initial();
+  Result<HadirquAttendanceDetailResponse?> presentDetailResult =
+      const Result.initial();
+  Result<HadirquAttendanceDetailResponse?> absentDetailResult =
+      const Result.initial();
 
   DateTime selectedDate = DateTime.now();
 
@@ -50,6 +55,52 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
           reportResult = Result.error(result.error);
         }
 
+        notifyListeners();
+      },
+    );
+  }
+
+  // Method untuk fetch present detail
+  Future<bool> getPresentDetail() {
+    presentDetailResult = const Result.loading();
+    notifyListeners();
+
+    return Result.callApi<JsonResponse<HadirquAttendanceDetailResponse>>(
+      future: _hadirquRepository.getAttendanceDetail(
+        kehadiran: 1, // Hadir
+        tanggal: selectedDate.yyyyMMdd('-'),
+        idDepartemen:
+            selectedDepartemenIds.isEmpty ? null : selectedDepartemenIds,
+      ),
+      onResult: (result) {
+        if (result.isSuccess) {
+          presentDetailResult = Result.success(result.dataOrNull?.data);
+        } else if (result.isError) {
+          presentDetailResult = Result.error(result.error);
+        }
+        notifyListeners();
+      },
+    );
+  }
+
+// Method untuk fetch absent detail
+  Future<bool> getAbsentDetail() {
+    absentDetailResult = const Result.loading();
+    notifyListeners();
+
+    return Result.callApi<JsonResponse<HadirquAttendanceDetailResponse>>(
+      future: _hadirquRepository.getAttendanceDetail(
+        kehadiran: 0, // Tidak hadir
+        tanggal: selectedDate.yyyyMMdd('-'),
+        idDepartemen:
+            selectedDepartemenIds.isEmpty ? null : selectedDepartemenIds,
+      ),
+      onResult: (result) {
+        if (result.isSuccess) {
+          absentDetailResult = Result.success(result.dataOrNull?.data);
+        } else if (result.isError) {
+          absentDetailResult = Result.error(result.error);
+        }
         notifyListeners();
       },
     );
@@ -107,7 +158,7 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
   bool get isError => reportResult.isError;
 
   // =======================
-  // CHART MAPPING
+  // MAPPING
   // =======================
 
   Map<String, double> get presentChart {
@@ -131,6 +182,12 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
       "Alpha": data!.alpha?.toDouble() ?? 0,
     };
   }
+
+  List<AttendanceDetail> get presentList =>
+      presentDetailResult.dataOrNull?.data ?? [];
+
+  List<AttendanceDetail> get absentList =>
+      absentDetailResult.dataOrNull?.data ?? [];
 
   // =======================
   // TEXT HELPER
