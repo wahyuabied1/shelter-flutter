@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/core/routing/core/bottom_sheet_page.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/overtime_header.dart';
 
-class OverTimeSubmissionScreen extends StatefulWidget{
+class OverTimeSubmissionScreen extends StatefulWidget {
   @override
-  State<OverTimeSubmissionScreen> createState() => _OverTimeSubmissionScreenState();
+  State<OverTimeSubmissionScreen> createState() =>
+      _OverTimeSubmissionScreenState();
 }
 
 class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
@@ -16,7 +19,7 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      color: Colors.grey.shade200,
       child: ListView(
         children: [
           OverTimeHeader(
@@ -27,12 +30,16 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
             onChangeSearch: (searchKey) {},
           ),
           _filter(),
-          const Text(
-            'Menampilkan 2 Data',
-            style: TextStyle(color: Colors.black54,fontSize: 12),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.sp),
+            child: Text(
+              'Menampilkan 2 Data',
+              style: TextStyle(color: Colors.black54, fontSize: 12.sp),
+            ),
           ),
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
             shrinkWrap: true,
             itemCount: 2,
             itemBuilder: (context, index) {
@@ -44,11 +51,11 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
     );
   }
 
-  Widget _filter(){
+  Widget _filter() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -58,18 +65,16 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                   context: context,
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(16)),
+                        BorderRadius.vertical(top: Radius.circular(16)),
                   ),
                   builder: (context) {
-                    return MultiChoiceBottomSheet(
-                        title: "Departemen",
-                        choice: {
-                          "Dept. Keamanan": false,
-                          "Dept. Kebersihan": false,
-                          "Dept. Quality Control": false,
-                          "Dept. Produksi": false,
-                          "Dept. Sales": false,
-                        });
+                    return MultiChoiceBottomSheet(title: "Departemen", choice: {
+                      "Dept. Keamanan": false,
+                      "Dept. Kebersihan": false,
+                      "Dept. Quality Control": false,
+                      "Dept. Produksi": false,
+                      "Dept. Sales": false,
+                    });
                   },
                 );
               },
@@ -77,8 +82,8 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
@@ -90,29 +95,28 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                     children: [
                       Text('Departemen'),
                       SizedBox(width: 4),
-                      Icon(Icons.keyboard_arrow_down_sharp,
-                          color: Colors.black)
+                      Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black)
                     ],
                   )),
             ),
-            SizedBox(width: 4,),
+            SizedBox(
+              width: 4,
+            ),
             InkWell(
               onTap: () {
                 showModalBottomSheet(
                   context: context,
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(16)),
+                        BorderRadius.vertical(top: Radius.circular(16)),
                   ),
                   builder: (context) {
-                    return MultiChoiceBottomSheet(
-                        title: "Status",
-                        choice: {
-                          "Berjalan": false,
-                          "Menunggu": false,
-                          "Disetujui": false,
-                          "Ditolak": false,
-                        });
+                    return MultiChoiceBottomSheet(title: "Status", choice: {
+                      "Berjalan": false,
+                      "Menunggu": false,
+                      "Disetujui": false,
+                      "Ditolak": false,
+                    });
                   },
                 );
               },
@@ -120,8 +124,8 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
@@ -133,8 +137,7 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                     children: [
                       Text('Status'),
                       SizedBox(width: 4),
-                      Icon(Icons.keyboard_arrow_down_sharp,
-                          color: Colors.black)
+                      Icon(Icons.keyboard_arrow_down_sharp, color: Colors.black)
                     ],
                   )),
             ),
@@ -144,7 +147,7 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
     );
   }
 
-  Widget _card(){
+  Widget _card() {
     return Card(
       elevation: 4,
       color: Colors.white,
@@ -181,7 +184,7 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                     Text(
                       'Justinus William',
                       style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'justinuswilliam • KRY-001',
@@ -265,7 +268,7 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                   ),
                   Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
@@ -340,7 +343,7 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
                               const Text(
                                 'image-232123.jpg',
                                 style:
-                                TextStyle(fontSize: 16, color: Colors.blue),
+                                    TextStyle(fontSize: 16, color: Colors.blue),
                               ),
                               const Spacer(),
                               IconButton(
@@ -382,6 +385,4 @@ class _OverTimeSubmissionScreenState extends State<OverTimeSubmissionScreen> {
       ),
     );
   }
-
-
 }

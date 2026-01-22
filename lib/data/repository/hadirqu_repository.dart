@@ -6,6 +6,8 @@ import 'package:shelter_super_app/data/network/hadirqu_network.dart';
 
 import '../model/hadirqu_attendance_detail_response.dart';
 import '../model/hadirqu_employee_list_response.dart';
+import '../model/hadirqu_leave_report_response.dart';
+import '../model/hadirqu_overtime_report_response.dart';
 import '../model/hadirqu_presence_detail_response.dart';
 import '../model/hadirqu_presence_list_response.dart';
 import '../model/hadirqu_report_response.dart';
@@ -134,6 +136,34 @@ class HadirquRepository {
       idDepartemen: idDepartemen,
       jabatan: jabatan,
       grupId: grupId,
+    );
+  }
+
+  Future<JsonResponse<HadirquLeaveReportResponse>> getLeaveReport({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? idDepartemen,
+    List<int>? status,
+  }) async {
+    return _hadirquNetwork.getLeaveReport(
+      tanggalMulai: tanggalMulai,
+      tanggalSelesai: tanggalSelesai,
+      idDepartemen: idDepartemen,
+      status: status,
+    );
+  }
+
+  Future<JsonResponse<HadirquOvertimeReportResponse>> getOvertimeReport({
+    required String tanggalMulai,
+    required String tanggalAkhir,
+    List<int>? idDepartemen,
+    List<int>? status,
+  }) async {
+    return _hadirquNetwork.getOvertimeReport(
+      tanggalMulai: tanggalMulai,
+      tanggalAkhir: tanggalAkhir,
+      idDepartemen: idDepartemen,
+      status: status,
     );
   }
 }

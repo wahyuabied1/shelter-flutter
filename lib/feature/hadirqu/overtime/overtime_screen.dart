@@ -46,7 +46,7 @@ class _OverTimeScreenState extends State<OverTimeScreen>
         title: Text(
           "Lembur Karyawan",
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 20.sp,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
