@@ -1,22 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/double_list_tile.dart';
+import 'package:shelter_super_app/design/loading_line_shimmer.dart';
+import 'package:shelter_super_app/design/loading_list_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/search_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
+import 'package:intl/intl.dart';
+import '../../../data/model/guard_mail_response.dart';
+import 'viewmodel/mail_viewmodel.dart';
 
-class MailScreen extends StatefulWidget {
+class MailScreen extends StatelessWidget {
   const MailScreen({super.key});
 
   @override
-  State<MailScreen> createState() => _MailScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => MailViewmodel()..init(),
+      child: const _MailView(),
+    );
+  }
 }
 
-class _MailScreenState extends State<MailScreen> {
+class _MailView extends StatefulWidget {
+  const _MailView();
+
+  @override
+  State<_MailView> createState() => _MailViewState();
+}
+
+class _MailViewState extends State<_MailView> {
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<MailViewmodel>();
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
@@ -43,10 +63,18 @@ class _MailScreenState extends State<MailScreen> {
         child: ListView(
           children: [
             DoubleDateWidget(
-              endDate: DateTime.now().ddMMyyyy('/'),
-              startDate: DateTime.now().ddMMyyyy('/'),
-              onChangeStartDate: (date) {},
-              onChangeEndDate: (date) {},
+              endDate: vm.endDate.ddMMyyyy('/'),
+              startDate: vm.startDate.ddMMyyyy('/'),
+              onChangeStartDate: (date) {
+                final parsed = DateFormat('dd/MM/yyyy').parse(date);
+
+                vm.updateStartDate(parsed);
+              },
+              onChangeEndDate: (date) {
+                final parsed = DateFormat('dd/MM/yyyy').parse(date);
+
+                vm.updateEndDate(parsed);
+              },
               theme: ThemeWidget.red,
             ),
             Container(
@@ -54,7 +82,7 @@ class _MailScreenState extends State<MailScreen> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  // Button action here
+                  // TODO: Export to Excel
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -83,118 +111,103 @@ class _MailScreenState extends State<MailScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                        ),
-                        builder: (context) {
-                          return MultiChoiceBottomSheet(
-                            title: "Shift",
-                            choice: {
-                              "Pagi": false,
-                              "Siang": false,
-                              "Sore": false,
-                              "Malam": false,
-                            },
-                            theme: ThemeWidget.red,
-                          );
-                        },
-                      );
-                    },
-                    customBorder: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                          // Rounded corners
-                          border: Border.all(
-                              color: Colors.grey.shade300), // Light grey border
-                        ),
-                        child: const Row(
-                          children: [
-                            Text('Shift'),
-                            SizedBox(width: 4),
-                            Icon(Icons.keyboard_arrow_down_sharp,
-                                color: Colors.black)
-                          ],
-                        )),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    child: InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16)),
-                          ),
-                          builder: (context) {
-                            return MultiChoiceBottomSheet(
-                              title: "Petugas",
-                              choice: {
-                                "Petugas Pos Bayar Rungkut": false,
-                              },
-                              theme: ThemeWidget.red,
-                            );
-                          },
-                        );
-                      },
-                      customBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                            // Rounded corners
-                            border: Border.all(
-                                color:
-                                Colors.grey.shade300), // Light grey border
-                          ),
-                          child: const Row(
-                            children: [
-                              Text('Petugas'),
-                              SizedBox(width: 4),
-                              Icon(Icons.keyboard_arrow_down_sharp,
-                                  color: Colors.black)
-                            ],
-                          )),
-                    ),
-                  ),
+                  _buildShiftFilter(vm),
+                  const SizedBox(width: 12),
+                  _buildPetugasFilter(vm),
                 ],
               ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
               child: SearchWidget(
-                hint: 'Cari Peminjam',
-                onSearch: (search) {},
+                hint: 'Cari Surat',
+                onSearch: (search) => vm.updateSearchQuery(search),
                 theme: ThemeWidget.red,
               ),
             ),
-            const Text(
-              'Menampilkan 2 Data',
-              style: TextStyle(color: Colors.black54, fontSize: 12),
-            ),
+            if (vm.isLoading)
+              const LoadingLineShimmer()
+            else
+              Text(
+                vm.totalDataText,
+                style: const TextStyle(color: Colors.black54, fontSize: 12),
+              ),
             const SizedBox(height: 8),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 2,
-              itemBuilder: (context, index) {
-                return _card();
-              },
+            _buildContent(vm),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShiftFilter(MailViewmodel vm) {
+    return InkWell(
+      onTap: () async {
+        if (vm.availableShifts.isEmpty) return;
+
+        final Map<String, bool> shiftChoice = {};
+        for (var shift in vm.availableShifts) {
+          shiftChoice['Shift $shift'] = vm.selectedShift.contains(shift);
+        }
+
+        final result = await showModalBottomSheet<Map<String, bool>>(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          builder: (context) {
+            return MultiChoiceBottomSheet(
+              title: "Shift",
+              choice: shiftChoice,
+              theme: ThemeWidget.red,
+            );
+          },
+        );
+
+        if (result != null) {
+          final selectedShifts = <int>[];
+          result.forEach((key, isSelected) {
+            if (isSelected) {
+              final shiftNumber = int.tryParse(key.split(' ')[1]);
+              if (shiftNumber != null) selectedShifts.add(shiftNumber);
+            }
+          });
+          vm.updateShiftFilter(selectedShifts);
+        }
+      },
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: vm.selectedShift.isEmpty
+              ? Colors.transparent
+              : Colors.red.shade50,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: vm.selectedShift.isEmpty ? Colors.grey.shade300 : Colors.red,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              vm.selectedShiftText,
+              style: TextStyle(
+                color: vm.selectedShift.isNotEmpty
+                    ? Colors.red.shade700
+                    : Colors.black,
+                fontWeight: vm.selectedShift.isNotEmpty
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.keyboard_arrow_down_sharp,
+              color: vm.selectedShift.isNotEmpty
+                  ? Colors.red.shade700
+                  : Colors.black,
             ),
           ],
         ),
@@ -202,7 +215,138 @@ class _MailScreenState extends State<MailScreen> {
     );
   }
 
-  Widget _card() {
+  Widget _buildPetugasFilter(MailViewmodel vm) {
+    return InkWell(
+      onTap: () async {
+        if (vm.availablePetugas.isEmpty) return;
+
+        final Map<String, bool> petugasChoice = {};
+        for (var petugas in vm.availablePetugas) {
+          petugasChoice[petugas.nama] =
+              vm.selectedPetugasIds.contains(petugas.id);
+        }
+
+        final result = await showModalBottomSheet<Map<String, bool>>(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          builder: (context) {
+            return MultiChoiceBottomSheet(
+              title: "Petugas",
+              choice: petugasChoice,
+              theme: ThemeWidget.red,
+            );
+          },
+        );
+
+        if (result != null) {
+          final selectedIds = <int>[];
+          result.forEach((key, isSelected) {
+            if (isSelected) {
+              final petugas = vm.availablePetugas.firstWhere(
+                (p) => p.nama == key,
+                orElse: () => GuardMailFilterPetugas(id: 0, nama: ''),
+              );
+              if (petugas.id != 0) selectedIds.add(petugas.id);
+            }
+          });
+          vm.updatePetugasFilter(selectedIds);
+        }
+      },
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: vm.selectedPetugasIds.isEmpty
+              ? Colors.transparent
+              : Colors.red.shade50,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: vm.selectedPetugasIds.isEmpty
+                ? Colors.grey.shade300
+                : Colors.red,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              vm.selectedPetugasText,
+              style: TextStyle(
+                color: vm.selectedPetugasIds.isNotEmpty
+                    ? Colors.red.shade700
+                    : Colors.black,
+                fontWeight: vm.selectedPetugasIds.isNotEmpty
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.keyboard_arrow_down_sharp,
+              color: vm.selectedPetugasIds.isNotEmpty
+                  ? Colors.red.shade700
+                  : Colors.black,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(MailViewmodel vm) {
+    if (vm.isLoading) {
+      return const LoadingListShimmer();
+    }
+
+    if (vm.isError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Gagal memuat data'),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () => vm.getMail(),
+                child: const Text('Coba Lagi'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (vm.mailList.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Text(
+            vm.searchQuery.isNotEmpty ||
+                    vm.selectedShift.isNotEmpty ||
+                    vm.selectedPetugasIds.isNotEmpty
+                ? 'Tidak ada data yang sesuai filter'
+                : 'Tidak ada data',
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: vm.mailList.length,
+      itemBuilder: (context, index) {
+        final item = vm.mailList[index];
+        return _card(item);
+      },
+    );
+  }
+
+  Widget _card(dynamic mail) {
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -214,59 +358,93 @@ class _MailScreenState extends State<MailScreen> {
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.red.shade700,
-                child: Text(
-                  'Dedi'.initialName(),
+              leading:
+                  mail.petugas.photo != null && mail.petugas.photo!.isNotEmpty
+                      ? CircleAvatar(
+                          radius: 24,
+                          backgroundImage: NetworkImage(mail.petugas.photo!),
+                        )
+                      : CircleAvatar(
+                          radius: 24,
+                          backgroundColor: Colors.red.shade700,
+                          child: Text(
+                            mail.petugas.nama.initialName(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+              title: Text(mail.petugas.nama,
                   style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              title: const Text('Dedi',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              subtitle: const Text('Petugas Pos Bayer Rungkut'),
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              subtitle: Text(mail.petugas.site.nama),
             ),
             DoubleListTile(
               firstIcon: Icons.calendar_today,
               firstTitle: 'Tanggal',
-              firstSubtitle: DateTime.now().ddMMMyyyy(' '),
+              firstSubtitle: DateTime.parse(mail.tanggal).ddMMMyyyy(' '),
               secondIcon: Icons.access_time_rounded,
               secondTitle: 'Shift',
-              secondSubtitle: 'Pagi',
+              secondSubtitle: mail.shift,
             ),
-            const DoubleListTile(
+            DoubleListTile(
               firstIcon: Icons.people_outline_sharp,
               firstTitle: 'Nama Pengirim',
-              firstSubtitle: 'CV Media Fokus Rebani',
+              firstSubtitle: mail.namaPengirim ?? '-',
               secondIcon: Icons.location_on_outlined,
               secondTitle: 'Alamat Pengirim',
-              secondSubtitle: 'Jakarta',
+              secondSubtitle: mail.alamatPengirim ?? '-',
             ),
-            const DoubleListTile(
+            DoubleListTile(
               firstIcon: Icons.people_outline_sharp,
               firstTitle: 'Nama Penerima',
-              firstSubtitle: 'Diani',
+              firstSubtitle: mail.namaPenerima ?? '-',
               secondIcon: Icons.credit_card_outlined,
               secondTitle: 'Jenis Surat',
-              secondSubtitle: 'Paket',
+              secondSubtitle: mail.jenisSurat ?? '-',
             ),
-            const ListTile(
-              visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Keterangan',
-                style: TextStyle(fontSize: 11,color: Colors.black54),
-              ),
-              subtitle: Text(
-                'Masuk sudah diterima',
-                style: TextStyle(fontSize: 12,color: Colors.black),
-              ),
-              leading: Icon(Icons.description_rounded),
+            DoubleListTile(
+              firstIcon: Icons.local_shipping_outlined,
+              firstTitle: 'Kurir',
+              firstSubtitle: mail.kurir ?? '-',
+              secondIcon: Icons.confirmation_number_outlined,
+              secondTitle: 'No Resi',
+              secondSubtitle: mail.noResi ?? '-',
             ),
+            if (mail.jumlah != null) ...[
+              ListTile(
+                visualDensity:
+                    const VisualDensity(horizontal: -4, vertical: -4),
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.numbers),
+                title: const Text(
+                  'Jumlah',
+                  style: TextStyle(fontSize: 11, color: Colors.black54),
+                ),
+                subtitle: Text(
+                  '${mail.jumlah}',
+                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                ),
+              ),
+            ],
+            if (mail.keterangan != null && mail.keterangan!.isNotEmpty) ...[
+              ListTile(
+                visualDensity:
+                    const VisualDensity(horizontal: -4, vertical: -4),
+                contentPadding: EdgeInsets.zero,
+                title: const Text(
+                  'Keterangan',
+                  style: TextStyle(fontSize: 11, color: Colors.black54),
+                ),
+                subtitle: Text(
+                  mail.keterangan!,
+                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                ),
+                leading: const Icon(Icons.description_rounded),
+              ),
+            ],
           ],
         ),
       ),
