@@ -9,7 +9,8 @@ import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/list_menu_bottom_sheet.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
 import 'package:shelter_super_app/feature/routes/guard_routes.dart';
-
+import 'package:intl/intl.dart';
+import '../../../design/loading_grid_shimmer.dart';
 import 'viewmodel/guard_home_viewmodel.dart';
 
 class GuardHome extends StatefulWidget {
@@ -262,10 +263,16 @@ class _GuardHomeState extends State<GuardHome> {
                                     endDate: vm.endDate.ddMMyyyy('/'),
                                     startDate: vm.startDate.ddMMyyyy('/'),
                                     onChangeStartDate: (date) {
-                                      vm.updateStartDate(date as DateTime);
+                                      final parsed =
+                                          DateFormat('dd/MM/yyyy').parse(date);
+
+                                      vm.updateStartDate(parsed);
                                     },
                                     onChangeEndDate: (date) {
-                                      vm.updateEndDate(date as DateTime);
+                                      final parsed =
+                                          DateFormat('dd/MM/yyyy').parse(date);
+
+                                      vm.updateEndDate(parsed);
                                     },
                                   ),
                                 );
@@ -274,10 +281,12 @@ class _GuardHomeState extends State<GuardHome> {
                             Consumer<GuardHomeViewmodel>(
                               builder: (context, vm, _) {
                                 if (vm.isLoading) {
-                                  return const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(32.0),
-                                      child: CircularProgressIndicator(),
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: LoadingGridShimmer(
+                                      itemCount: 4,
+                                      crossAxisCount: 2,
+                                      itemBuilder: SummaryShimmerCard.new,
                                     ),
                                   );
                                 }

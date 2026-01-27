@@ -29,8 +29,11 @@ class GuardHomeViewmodel extends ABaseChangeNotifier {
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          summaryResult =
-              Result.success(result.dataOrNull as GuardSummaryResponse?);
+          final jsonResponse = result.dataOrNull;
+
+          summaryResult = Result.success(
+            jsonResponse?.data,
+          );
         } else if (result.isError) {
           summaryResult = Result.error(result.error);
         }

@@ -51,6 +51,21 @@ class CoreHttpBuilder {
     );
   }
 
+  CoreHttpClient guardHttp({
+    required String path,
+    Json? query,
+    Map<String, String>? headers,
+  }) {
+    final url = apiEnv.then((value) => value.posko);
+
+    return _buildClient(
+      url,
+      path,
+      query,
+      headers,
+    );
+  }
+
   CoreHttpClient _buildClient(
     Future<String> url,
     String path, [
@@ -72,10 +87,6 @@ class CoreHttpBuilder {
       return uri;
     });
 
-    return CoreHttpClient(
-      uri,
-      finalHeaders,
-      coreClient
-    );
+    return CoreHttpClient(uri, finalHeaders, coreClient);
   }
 }

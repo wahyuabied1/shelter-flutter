@@ -43,9 +43,6 @@ class HadirquNetwork {
     final map = <String, dynamic>{};
     map['tanggal'] = date;
 
-    final sha = await _coreHttpRepository.getSHA();
-    final salt = await _coreHttpRepository.getToken();
-
     final response = await _http.hadirkuHttp(headers: {
       'sha': await _coreHttpRepository.getSHA(),
       'salt': await _coreHttpRepository.getToken()
@@ -518,10 +515,6 @@ class HadirquNetwork {
       path: _overtimeSubmission,
       query: map,
     ).get();
-
-    print('=== OVERTIME SUBMISSION REQUEST ===');
-    print('Query params: $map');
-    print('===================================');
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     final data = HadirquOvertimeSubmissionResponse.fromJson(json);

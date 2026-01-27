@@ -15,10 +15,16 @@ class ApiEnv {
       );
 
   String get hadirqu => env(
-    key: 'hadirku',
-    dev: 'hadirku.co.id/open-api/',
-    prod: 'hadirku.co.id/open-api/',
-  );
+        key: 'hadirku',
+        dev: 'hadirku.co.id/open-api/',
+        prod: 'hadirku.co.id/open-api/',
+      );
+
+  String get posko => env(
+        key: 'posko',
+        dev: 'posko.shelterapp.co.id/open-api/v1/',
+        prod: 'posko.shelterapp.co.id/open-api/v1/',
+      );
 
   String env({
     required String key,

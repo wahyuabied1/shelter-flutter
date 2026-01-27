@@ -14,15 +14,18 @@ import 'package:shelter_super_app/core/network/repository/core_http_repository.d
 import 'package:shelter_super_app/core/routing/core/a_router.dart';
 import 'package:shelter_super_app/core/storage/core_secure_storage.dart';
 import 'package:shelter_super_app/data/network/auth_network.dart';
+import 'package:shelter_super_app/data/network/guard_network.dart';
 import 'package:shelter_super_app/data/network/hadirqu_network.dart';
 import 'package:shelter_super_app/data/repository/auth_repository.dart';
+import 'package:shelter_super_app/data/repository/guard_repository.dart';
 import 'package:shelter_super_app/data/repository/hadirqu_repository.dart';
 
 // DI module where core dependencies is being put in one place
 // If the module become huge, we need to split this into several DI modules
 class CoreModule {
   static const apikey = 'pub_72497f7768a5ac7d484c5f03856154fa';
-  static const secretKey = '1edfd35b4581f102ef9a7bde012fd5445e3351fbe087315d402384ed6b3db6b';
+  static const secretKey =
+      '1edfd35b4581f102ef9a7bde012fd5445e3351fbe087315d402384ed6b3db6b';
 
   GlobalKey<NavigatorState> navigatorKey() => GlobalKey();
 
@@ -122,7 +125,16 @@ class CoreModule {
       () => HadirquRepository(serviceLocator<HadirquNetwork>()),
     );
 
-    serviceLocator.registerFactory<HadirquNetwork>(
-        () => HadirquNetwork(serviceLocator<CoreHttpBuilder>(),serviceLocator<CoreHttpRepository>()));
+    serviceLocator.registerFactory<HadirquNetwork>(() => HadirquNetwork(
+        serviceLocator<CoreHttpBuilder>(),
+        serviceLocator<CoreHttpRepository>()));
+
+    serviceLocator.registerFactory<GuardRepository>(
+      () => GuardRepository(serviceLocator<GuardNetwork>()),
+    );
+
+    serviceLocator.registerFactory<GuardNetwork>(() => GuardNetwork(
+        serviceLocator<CoreHttpBuilder>(),
+        serviceLocator<CoreHttpRepository>()));
   }
 }
