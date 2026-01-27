@@ -4,6 +4,8 @@ import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_exte
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/double_info_widget.dart';
 import 'package:shelter_super_app/design/double_list_tile.dart';
+import 'package:shelter_super_app/design/loading_line_shimmer.dart';
+import 'package:shelter_super_app/design/loading_list_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/search_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
@@ -125,10 +127,13 @@ class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
                 theme: ThemeWidget.red,
               ),
             ),
-            Text(
-              vm.totalDataText,
-              style: const TextStyle(color: Colors.black54, fontSize: 12),
-            ),
+            if (vm.isLoading)
+              const LoadingLineShimmer()
+            else
+              Text(
+                vm.totalDataText,
+                style: const TextStyle(color: Colors.black54, fontSize: 12),
+              ),
             const SizedBox(height: 8),
             _buildContent(vm),
           ],
@@ -375,9 +380,8 @@ class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
   Widget _buildContent(PinjamanKunciViewmodel vm) {
     if (vm.isLoading) {
       return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(32.0),
-          child: CircularProgressIndicator(),
+        child: LoadingListShimmer(
+          marginHorizontal: false,
         ),
       );
     }
@@ -458,10 +462,10 @@ class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
                         ),
                       ),
                     ),
-              title: Text(keyLoan.petugas.nama,
+              title: Text(keyLoan.peminjam,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 18)),
-              subtitle: Text(keyLoan.petugas.site.nama),
+              subtitle: Text(keyLoan.petugas.nama),
             ),
             DoubleListTile(
               firstIcon: Icons.calendar_today,
@@ -484,19 +488,6 @@ class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
               secondValue: keyLoan.jamKembali ?? '-',
               theme: ThemeWidget.red,
             ),
-            if (keyLoan.peminjam != null) ...[
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.person, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Peminjam: ${keyLoan.peminjam}',
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ],
             if (keyLoan.pengembali != null) ...[
               const SizedBox(height: 4),
               Row(
