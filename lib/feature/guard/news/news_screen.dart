@@ -393,17 +393,30 @@ class _NewsViewState extends State<_NewsView> {
               ),
               leading: const Icon(Icons.date_range),
             ),
-            if (news.namaPelapor != null && news.namaDanru!.isNotEmpty) ...[
+            ListTile(
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                'Shift',
+                style: TextStyle(fontSize: 11, color: Colors.black54),
+              ),
+              subtitle: Text(
+                news.shift,
+                style: const TextStyle(fontSize: 12, color: Colors.black),
+              ),
+              leading: const Icon(Icons.access_time_rounded),
+            ),
+            if (news.namaPelapor != null && news.namaPelapor!.isNotEmpty) ...[
               ListTile(
                 visualDensity:
                     const VisualDensity(horizontal: -4, vertical: -4),
                 contentPadding: EdgeInsets.zero,
                 title: const Text(
-                  'Nama Danru',
+                  'Nama Pelapor',
                   style: TextStyle(fontSize: 11, color: Colors.black54),
                 ),
                 subtitle: Text(
-                  news.namaDanru!,
+                  news.namaPelapor!,
                   style: const TextStyle(fontSize: 12, color: Colors.black),
                 ),
                 leading: const Icon(Icons.person),
