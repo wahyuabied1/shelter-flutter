@@ -6,7 +6,8 @@ import 'package:shelter_super_app/data/model/hadirqu_employee_list_response.dart
 import 'package:shelter_super_app/feature/hadirqu/employee/viewmodel/list_employee_viewmodel.dart';
 import 'package:shelter_super_app/feature/hadirqu/employee/widget/profile_card.dart';
 
-import 'widget/profile_card_loading.dart';
+import '../../../design/loading_line_shimmer.dart';
+import '../../../design/loading_list_shimmer.dart';
 
 class ListEmployeeScreen extends StatelessWidget {
   const ListEmployeeScreen({super.key});
@@ -108,16 +109,19 @@ class _ListEmployeeScreenState extends State<_ListEmployeeView> {
             const SizedBox(height: 10),
 
             // Employee Count
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Menampilkan ${vm.totalEmployees} Karyawan',
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 12,
+            if (vm.isLoading)
+              const LoadingLineShimmer()
+            else
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Menampilkan ${vm.totalEmployees} Karyawan',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                  ),
                 ),
               ),
-            ),
             const SizedBox(height: 8),
 
             // Employee List
@@ -369,7 +373,9 @@ class _ListEmployeeScreenState extends State<_ListEmployeeView> {
     if (vm.isLoading) {
       return ListView.builder(
         itemCount: 5,
-        itemBuilder: (_, __) => const ProfileCardLoading(),
+        itemBuilder: (_, __) => const LoadingListShimmer(
+          marginHorizontal: false,
+        ),
       );
     }
 

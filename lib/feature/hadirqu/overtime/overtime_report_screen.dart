@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/design/loading_employee_activity.dart';
+import 'package:shelter_super_app/design/loading_line_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/overtime_header.dart';
 import 'package:shelter_super_app/data/model/hadirqu_overtime_report_response.dart';
-import 'viewmodel/overtime_report_viewmodel.dart';
+import 'package:shelter_super_app/feature/hadirqu/overtime/viewmodel/overtime_report_viewmodel.dart';
+
+import '../../../design/loading_list_shimmer.dart';
+import '../../../design/theme_widget.dart';
 
 class OverTimeReportScreen extends StatelessWidget {
   const OverTimeReportScreen({super.key});
@@ -32,8 +37,8 @@ class _OverTimeReportScreenState extends State<_OverTimeReportView> {
     final vm = context.watch<OvertimeReportViewmodel>();
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      child: ListView(
+      color: ThemeWidget.greyBackground.colorTheme(),
+      child: Column(
         children: [
           OverTimeHeader(
             startDate: vm.startDate.ddMMyyyy('/'),
@@ -48,62 +53,76 @@ class _OverTimeReportScreenState extends State<_OverTimeReportView> {
               vm.updateSearchQuery(searchKey);
             },
           ),
-          _filter(vm),
-          Text(
-            'Menampilkan ${vm.totalData} Data',
-            style: const TextStyle(color: Colors.black54, fontSize: 12),
-          ),
-          const SizedBox(height: 8),
-
-          // Loading State
-          if (vm.isLoading)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32.0),
-                child: CircularProgressIndicator(),
-              ),
-            )
-          // Error State
-          else if (vm.isError)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  children: [
-                    const Text('Gagal memuat data'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => vm.getOvertimeReport(),
-                      child: const Text('Coba Lagi'),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _filter(vm),
+                  if (vm.isLoading)
+                    const LoadingLineShimmer()
+                  else
+                    Text(
+                      'Menampilkan ${vm.totalData} Data',
+                      style:
+                          const TextStyle(color: Colors.black54, fontSize: 12),
                     ),
-                  ],
-                ),
+                  const SizedBox(height: 8),
+
+                  // Loading State
+                  if (vm.isLoading)
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: 5,
+                        itemBuilder: (_, __) => const LoadingEmployeeActivity(),
+                      ),
+                    )
+                  // Error State
+                  else if (vm.isError)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          children: [
+                            const Text('Gagal memuat data'),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () => vm.getOvertimeReport(),
+                              child: const Text('Coba Lagi'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  // Empty State
+                  else if (vm.overtimeList.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Text(
+                          vm.searchQuery.isNotEmpty ||
+                                  vm.selectedDepartemenIds.isNotEmpty ||
+                                  vm.selectedStatus.isNotEmpty
+                              ? 'Tidak ada data yang sesuai filter'
+                              : 'Tidak ada data lembur',
+                        ),
+                      ),
+                    )
+                  // Success - Show List
+                  else
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: vm.overtimeList.length,
+                        itemBuilder: (context, index) {
+                          return _card(vm.overtimeList[index], index);
+                        },
+                      ),
+                    ),
+                ],
               ),
-            )
-          // Empty State
-          else if (vm.overtimeList.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Text(
-                  vm.searchQuery.isNotEmpty ||
-                          vm.selectedDepartemenIds.isNotEmpty ||
-                          vm.selectedStatus.isNotEmpty
-                      ? 'Tidak ada data yang sesuai filter'
-                      : 'Tidak ada data lembur',
-                ),
-              ),
-            )
-          // Success - Show List
-          else
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: vm.overtimeList.length,
-              itemBuilder: (context, index) {
-                return _card(vm.overtimeList[index], index);
-              },
             ),
+          ),
         ],
       ),
     );
@@ -343,7 +362,6 @@ class _OverTimeReportScreenState extends State<_OverTimeReportView> {
                     ],
                   ),
                 ),
-                const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10.0,

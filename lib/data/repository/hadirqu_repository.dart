@@ -8,6 +8,7 @@ import '../model/hadirqu_attendance_detail_response.dart';
 import '../model/hadirqu_employee_list_response.dart';
 import '../model/hadirqu_leave_report_response.dart';
 import '../model/hadirqu_overtime_report_response.dart';
+import '../model/hadirqu_overtime_submission_response.dart';
 import '../model/hadirqu_presence_detail_response.dart';
 import '../model/hadirqu_presence_list_response.dart';
 import '../model/hadirqu_report_response.dart';
@@ -160,6 +161,21 @@ class HadirquRepository {
     List<int>? status,
   }) async {
     return _hadirquNetwork.getOvertimeReport(
+      tanggalMulai: tanggalMulai,
+      tanggalAkhir: tanggalAkhir,
+      idDepartemen: idDepartemen,
+      status: status,
+    );
+  }
+
+  Future<JsonResponse<HadirquOvertimeSubmissionResponse>>
+      getOvertimeSubmission({
+    required String tanggalMulai,
+    required String tanggalAkhir,
+    List<int>? idDepartemen,
+    List<int>? status,
+  }) async {
+    return _hadirquNetwork.getOvertimeSubmission(
       tanggalMulai: tanggalMulai,
       tanggalAkhir: tanggalAkhir,
       idDepartemen: idDepartemen,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shelter_super_app/core/routing/core/bottom_sheet_page.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 
 class OverTimeHeader extends StatefulWidget {
@@ -43,8 +42,12 @@ class _OverTimeHeaderState extends State<OverTimeHeader> {
           DoubleDateWidget(
             startDate: widget.startDate,
             endDate: widget.endDate,
-            onChangeStartDate: (date) {},
-            onChangeEndDate: (date) {},
+            onChangeStartDate: (date) {
+              widget.onChangeStartDate(date);
+            },
+            onChangeEndDate: (date) {
+              widget.onChangeEndDate(date); // ✅ Panggil callback dari parent
+            },
           ),
           const SizedBox(height: 12.0),
           SizedBox(

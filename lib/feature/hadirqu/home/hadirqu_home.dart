@@ -14,7 +14,6 @@ import 'package:shelter_super_app/feature/hadirqu/home/paid_leave/paid_leave_sec
 import 'package:shelter_super_app/feature/hadirqu/home/paid_leave/sick_leave_section.dart';
 import 'package:shelter_super_app/feature/routes/hadirqu_routes.dart';
 
-
 class HadirQuHome extends StatelessWidget {
   const HadirQuHome({super.key});
 
@@ -139,7 +138,8 @@ class _HadirQuHomeState extends State<_HadirQuHomeView>
                                   'Total Karyawan Absen',
                                   vm.summaryResult.isInitialOrLoading),
                               _buildStatisticCard(
-                                  vm.summaryResult.dataOrNull?.kehadiran?.cutiIzin
+                                  vm.summaryResult.dataOrNull?.kehadiran
+                                          ?.cutiIzin
                                           .toString() ??
                                       '0',
                                   'Total Karyawan Cuti',
@@ -187,7 +187,7 @@ class _HadirQuHomeState extends State<_HadirQuHomeView>
                                         ),
                                         builder: (context) {
                                           return ListMenuBottomSheet(
-                                            title:'Fitur HadirQu',
+                                            title: 'Fitur HadirQu',
                                             listWidget: [
                                               _buildQuickActionButton(
                                                 image: AppAssets.icListKaryawan,
@@ -321,7 +321,10 @@ class _HadirQuHomeState extends State<_HadirQuHomeView>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.calendar_today, color: Color(0Xff04297A)),
+          Icon(
+            Icons.calendar_today,
+            color: Color(0Xff04297A),
+          ),
           SizedBox(width: 8),
           Text(
             date,
@@ -382,7 +385,7 @@ class _HadirQuHomeState extends State<_HadirQuHomeView>
         child: Column(
           children: [
             InkWell(
-              onTap: (){
+              onTap: () {
                 onTap?.call();
               },
               child: CircleAvatar(

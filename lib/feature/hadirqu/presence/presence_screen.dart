@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shelter_super_app/core/routing/core/bottom_sheet_page.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_log_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_report_screen.dart';
 
 class PresenceScreen extends StatefulWidget {
   final int tab;
+
   const PresenceScreen({super.key, required this.tab});
 
   @override
@@ -13,13 +16,14 @@ class PresenceScreen extends StatefulWidget {
 class _PresenceScreenState extends State<PresenceScreen>
     with SingleTickerProviderStateMixin {
   late int tab;
+
   _PresenceScreenState({required this.tab});
+
   late TabController tabController;
 
   @override
   void initState() {
-    tabController =
-        TabController(length: 2, vsync: this, initialIndex: tab);
+    tabController = TabController(length: 2, vsync: this, initialIndex: tab);
     tabController.animation!.addListener(() {
       final value = tabController.animation!.value.round();
       if (value != tab && mounted) {
@@ -66,16 +70,16 @@ class _PresenceScreenState extends State<PresenceScreen>
               indicatorColor: Colors.blue,
               labelColor: Colors.blue.shade700,
               unselectedLabelColor: Colors.grey,
-              tabs: [
+              tabs: const [
                 Tab(text: 'Laporan Presensi'),
                 Tab(text: 'Log Presensi'),
               ],
             ),
             Container(
-              constraints: const BoxConstraints(minHeight: 200, maxHeight: 700),
+              constraints: BoxConstraints(minHeight: 200.h, maxHeight: 700.h),
               child: TabBarView(
                 controller: tabController,
-                children: [PresenceReportScreen(), PresenceLogScreen()],
+                children: const [PresenceReportScreen(), PresenceLogScreen()],
               ),
             )
           ],

@@ -52,9 +52,9 @@ class _OverTimeScreenState extends State<OverTimeScreen>
           ),
         ),
         backgroundColor: Colors.blue.shade700,
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(24),
+            bottom: Radius.circular(24.r),
           ),
         ),
       ),
@@ -66,17 +66,17 @@ class _OverTimeScreenState extends State<OverTimeScreen>
               indicatorColor: Colors.blue,
               labelColor: Colors.blue.shade700,
               unselectedLabelColor: Colors.grey,
-              tabs: [
+              tabs: const [
                 Tab(text: 'Pengajuan Lembur'),
                 Tab(text: 'Laporan Lembur'),
               ],
             ),
             Container(
-              constraints: const BoxConstraints(minHeight: 200, maxHeight: 700),
+              constraints: BoxConstraints(minHeight: 200.h, maxHeight: 700.h),
               child: TabBarView(
                 controller: tabController,
                 children: [
-                  OverTimeSubmissionScreen(),
+                  const OverTimeSubmissionScreen(),
                   OverTimeReportScreen(),
                 ],
               ),

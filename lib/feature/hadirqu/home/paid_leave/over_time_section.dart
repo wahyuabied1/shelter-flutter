@@ -24,7 +24,12 @@ class _OverTimeSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<TimeOffViewmodel>();
     final data = vm.overtime.dataOrNull;
-    if (vm.overtime.isInitialOrLoading) return const LoadingListShimmer(count: 2);
+    if (vm.overtime.isInitialOrLoading) {
+      return ListView.builder(
+        itemCount: 5,
+        itemBuilder: (_, __) => const LoadingListShimmer(),
+      );
+    }
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
@@ -34,8 +39,7 @@ class _OverTimeSectionView extends StatelessWidget {
           if (data?.isEmpty ?? false)
             const EmptyListWidget(
               title: "Belum Ada Pengajuan",
-              subtitle:
-              "Belum ada yang mengajukan lembur untuk hari ini.",
+              subtitle: "Belum ada yang mengajukan lembur untuk hari ini.",
             ),
           if (data?.isNotEmpty ?? false)
             const Text(
@@ -46,7 +50,8 @@ class _OverTimeSectionView extends StatelessWidget {
           if (data?.isNotEmpty ?? false)
             Column(
               children: (data ?? [])
-                  .map((item) => TimeOffCard(timeOffResponse: item,title:"Lembur"))
+                  .map((item) =>
+                      TimeOffCard(timeOffResponse: item, title: "Lembur"))
                   .toList(),
             ),
         ],

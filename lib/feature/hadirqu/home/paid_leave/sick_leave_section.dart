@@ -25,18 +25,22 @@ class _SickLeaveSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<TimeOffViewmodel>();
     final data = vm.sickLeaveOff.dataOrNull;
-    if (vm.sickLeaveOff.isInitialOrLoading) return const LoadingListShimmer(count: 2);
+    if (vm.sickLeaveOff.isInitialOrLoading) {
+      return ListView.builder(
+        itemCount: 5,
+        itemBuilder: (_, __) => const LoadingListShimmer(),
+      );
+    }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal:16.w,vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (data?.isEmpty ?? false)
             const EmptyListWidget(
               title: "Belum Ada Pengajuan",
-              subtitle:
-              "Belum ada yang mengajukan cuti sakit untuk hari ini.",
+              subtitle: "Belum ada yang mengajukan cuti sakit untuk hari ini.",
             ),
           if (data?.isNotEmpty ?? false)
             const Text(
@@ -47,7 +51,8 @@ class _SickLeaveSectionView extends StatelessWidget {
           if (data?.isNotEmpty ?? false)
             Column(
               children: (data ?? [])
-                  .map((item) => TimeOffCard(timeOffResponse: item, title:"Sakit"))
+                  .map((item) =>
+                      TimeOffCard(timeOffResponse: item, title: "Sakit"))
                   .toList(),
             ),
         ],

@@ -12,6 +12,7 @@ import '../model/hadirqu_attendance_detail_response.dart';
 import '../model/hadirqu_employee_list_response.dart';
 import '../model/hadirqu_leave_report_response.dart';
 import '../model/hadirqu_overtime_report_response.dart';
+import '../model/hadirqu_overtime_submission_response.dart';
 import '../model/hadirqu_presence_detail_response.dart';
 import '../model/hadirqu_presence_list_response.dart';
 
@@ -29,6 +30,7 @@ class HadirquNetwork {
   static const _employeeList = "employee/list";
   static const _leaveReport = "leave/report";
   static const _overtimeReport = "lembur/laporan";
+  static const _overtimeSubmission = "lembur/pengajuan";
 
   final CoreHttpBuilder _http;
   final CoreHttpRepository _coreHttpRepository;
@@ -417,8 +419,6 @@ class HadirquNetwork {
       }
     }
 
-    // ✅ Format array dengan bracket []
-    // Hasil: status[]=0&status[]=1
     if (status != null && status.isNotEmpty) {
       for (int i = 0; i < status.length; i++) {
         map['status[$i]'] = status[i].toString();
@@ -455,16 +455,12 @@ class HadirquNetwork {
       'tanggal_akhir': tanggalAkhir,
     };
 
-    // ✅ Format array dengan bracket []
-    // Hasil: departemen[]=1&departemen[]=199
     if (idDepartemen != null && idDepartemen.isNotEmpty) {
       for (int i = 0; i < idDepartemen.length; i++) {
         map['departemen[$i]'] = idDepartemen[i].toString();
       }
     }
 
-    // ✅ Format array dengan bracket []
-    // Hasil: status[]=0&status[]=1
     if (status != null && status.isNotEmpty) {
       for (int i = 0; i < status.length; i++) {
         map['status[$i]'] = status[i].toString();
@@ -480,12 +476,55 @@ class HadirquNetwork {
       query: map,
     ).get();
 
-    print('=== OVERTIME REPORT REQUEST ===');
-    print('Query params: $map');
-    print('===============================');
-
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     final data = HadirquOvertimeReportResponse.fromJson(json);
+
+    return JsonResponse(
+      response,
+      (_) => data,
+      source: () => json,
+    );
+  }
+
+  Future<JsonResponse<HadirquOvertimeSubmissionResponse>>
+      getOvertimeSubmission({
+    required String tanggalMulai,
+    required String tanggalAkhir,
+    List<int>? idDepartemen,
+    List<int>? status,
+  }) async {
+    final map = <String, dynamic>{
+      'tanggal_mulai': tanggalMulai,
+      'tanggal_akhir': tanggalAkhir,
+    };
+
+    if (idDepartemen != null && idDepartemen.isNotEmpty) {
+      for (int i = 0; i < idDepartemen.length; i++) {
+        map['departemen[$i]'] = idDepartemen[i].toString();
+      }
+    }
+
+    if (status != null && status.isNotEmpty) {
+      for (int i = 0; i < status.length; i++) {
+        map['status[$i]'] = status[i].toString();
+      }
+    }
+
+    final response = await _http.hadirkuHttp(
+      headers: {
+        'sha': await _coreHttpRepository.getSHA(),
+        'salt': await _coreHttpRepository.getToken()
+      },
+      path: _overtimeSubmission,
+      query: map,
+    ).get();
+
+    print('=== OVERTIME SUBMISSION REQUEST ===');
+    print('Query params: $map');
+    print('===================================');
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = HadirquOvertimeSubmissionResponse.fromJson(json);
 
     return JsonResponse(
       response,

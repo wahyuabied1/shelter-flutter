@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/design/loading_list_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/data/model/hadirqu_leave_report_response.dart';
-import '../../../core/platform/download/image_download_service_impl.dart';
 import '../../../core/platform/permission/permission_service.dart';
+import '../../../core/utils/common.dart';
+import '../../../design/default_snackbar.dart';
+import '../../../design/show_image.dart';
 import 'viewmodel/permission_viewmodel.dart';
 
 class PermissionScreen extends StatelessWidget {
@@ -29,7 +32,6 @@ class _PermissionView extends StatefulWidget {
 
 class _PermissionScreenState extends State<_PermissionView> {
   final permissionService = PermissionServiceImpl();
-  final imageDownloadService = ImageDownloadServiceImpl();
 
   @override
   Widget build(BuildContext context) {
@@ -57,57 +59,39 @@ class _PermissionScreenState extends State<_PermissionView> {
       ),
       body: Container(
         color: Colors.grey.shade200,
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _calendarHeader(vm),
             _filter(vm),
-
-            // Loading State
-            if (vm.isLoading)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            // Error State
-            else if (vm.isError)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    children: [
-                      const Text('Gagal memuat data'),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => vm.getLeaveReport(),
-                        child: const Text('Coba Lagi'),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            // Empty State
-            else if (vm.leaveList.isEmpty)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: Text('Tidak ada data izin'),
-                ),
-              )
-            // Success - Show List
-            else
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: vm.leaveList.length,
-                itemBuilder: (context, index) {
-                  return _card(vm.leaveList[index]);
-                },
-              ),
+            Expanded(
+              child: _buildContent(vm),
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildContent(PermissionViewmodel vm) {
+    if (vm.isLoading) {
+      return ListView.builder(
+        itemCount: 5,
+        itemBuilder: (_, __) => const LoadingListShimmer(),
+      );
+    }
+
+    if (vm.isError) {
+      return const Center(child: Text('Gagal memuat data'));
+    }
+
+    if (vm.leaveList.isEmpty) {
+      return const Center(child: Text('Tidak ada data izin'));
+    }
+
+    return ListView.builder(
+      itemCount: vm.leaveList.length,
+      itemBuilder: (_, index) => _card(vm.leaveList[index]),
     );
   }
 
@@ -595,10 +579,22 @@ class _PermissionScreenState extends State<_PermissionView> {
                                 ),
                               ),
                               IconButton(
-                                onPressed: () => onDownloadImage(
-                                  context,
-                                  leave.file.path,
-                                ),
+                                onPressed: () async {
+                                  if (leave.file.path != "") {
+                                    saveToGallery(leave.file.path).then((data) {
+                                      showDefaultSuccessShowFile(
+                                          context, "Gambar berhasil disimpan",
+                                          () {
+                                        showImage(context, data['filePath']);
+                                      });
+                                    });
+                                  } else if (leave.file != "") {
+                                    saveToGallery(leave.file.toString());
+                                  } else {
+                                    showDefaultError(context,
+                                        "Bukti download tidak ditemukan");
+                                  }
+                                },
                                 icon: const Icon(
                                   Icons.download,
                                   color: Colors.blue,
@@ -715,33 +711,6 @@ class _PermissionScreenState extends State<_PermissionView> {
         return 'Pengajuan Sakit';
       default:
         return 'Pengajuan Lainnya';
-    }
-  }
-
-  Future<void> onDownloadImage(BuildContext context, String imageUrl) async {
-    final granted = await permissionService.requestStorage();
-    if (!granted) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Izin penyimpanan ditolak')),
-        );
-      }
-      return;
-    }
-
-    final success = await imageDownloadService.saveToGallery(
-      imageUrl,
-      fileName: 'leave_attachment',
-    );
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            success ? 'Lampiran berhasil disimpan' : 'Gagal menyimpan lampiran',
-          ),
-        ),
-      );
     }
   }
 

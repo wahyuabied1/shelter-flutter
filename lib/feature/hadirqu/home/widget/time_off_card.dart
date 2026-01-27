@@ -103,12 +103,12 @@ class TimeOffCard extends StatelessWidget {
                   children: [
                     Text(
                       timeOffResponse.pemohon?.nama ?? "",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "${timeOffResponse.pemohon?.nama.initialName()}-${timeOffResponse.pemohon?.idPegawai}",
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),
@@ -131,7 +131,7 @@ class TimeOffCard extends StatelessWidget {
                         color: getTextColor(),
                         size: 14,
                       ),
-                      SizedBox(width: 2),
+                      const SizedBox(width: 2),
                       Flexible(
                         child: Text(
                           getStatus(),
@@ -152,7 +152,7 @@ class TimeOffCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              padding: EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.only(top: 16),
               decoration: BoxDecoration(
                 color: getBgThemeColor(),
                 borderRadius: BorderRadius.circular(16),
@@ -174,7 +174,7 @@ class TimeOffCard extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(
                         'Pengajuan ${title}',
                         style: TextStyle(
@@ -183,12 +183,12 @@ class TimeOffCard extends StatelessWidget {
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
@@ -210,14 +210,14 @@ class TimeOffCard extends StatelessWidget {
                                       style: TextStyle(color: Colors.grey),
                                     ),
                                   ]),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Container(
                                     constraints: const BoxConstraints(
-                                      maxWidth: 250,
+                                      maxWidth: 150,
                                     ),
                                     child: Text(
                                       timeOffResponse.waktu ?? "",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -228,7 +228,7 @@ class TimeOffCard extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(children: [
+                                  const Row(children: [
                                     Icon(Icons.access_time, size: 14),
                                     SizedBox(width: 4),
                                     Text(
@@ -236,10 +236,10 @@ class TimeOffCard extends StatelessWidget {
                                       style: TextStyle(color: Colors.grey),
                                     ),
                                   ]),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     '${timeOffResponse.durasi.orEmpty} Hari',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -251,7 +251,7 @@ class TimeOffCard extends StatelessWidget {
                           const Divider(),
                           const SizedBox(height: 8),
                           // Description
-                          Row(children: [
+                          const Row(children: [
                             Icon(
                               Icons.density_medium,
                               size: 14,
@@ -265,13 +265,13 @@ class TimeOffCard extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             timeOffResponse.keterangan ?? '',
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                           ),
                           const SizedBox(height: 8),
                           const Divider(),
                           const SizedBox(height: 8),
                           // Attachment
-                          Row(children: [
+                          const Row(children: [
                             Icon(
                               Icons.description_rounded,
                               size: 14,
@@ -299,7 +299,6 @@ class TimeOffCard extends StatelessWidget {
                                       timeOffResponse.file?.path != "") {
                                     saveToGallery(timeOffResponse.file!.path!)
                                         .then((data) {
-                                      print("Abid ${data['filePath']}");
                                       showDefaultSuccessShowFile(
                                           context, "Gambar berhasil disimpan",
                                           () {

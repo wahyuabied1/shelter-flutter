@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/design/shimmer.dart';
 
-class ContentDetailLoadingCard extends StatelessWidget {
-  const ContentDetailLoadingCard({super.key});
+class LoadingEmployeeActivity extends StatelessWidget {
+  const LoadingEmployeeActivity({super.key});
 
   @override
   Widget build(BuildContext context) {

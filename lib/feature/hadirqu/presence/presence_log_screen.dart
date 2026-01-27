@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/widget/employee_card.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/widget/presence_loading_card.dart';
 import '../../../data/model/hadirqu_departement_filter_response.dart';
+import '../../../design/loading_line_shimmer.dart';
 import '../../../design/shimmer.dart';
 
 class PresenceLogScreen extends StatelessWidget {
@@ -50,17 +51,7 @@ class _PresenceLogScreenState extends State<_PresenceLogView> {
 
           // Employee Cards Count
           if (vm.isLoading)
-            Shimmer(
-              isLoading: true,
-              child: Container(
-                height: 16,
-                width: 150,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            )
+            const LoadingLineShimmer()
           else
             Text(
               'Menampilkan ${vm.totalKaryawan} Karyawan',

@@ -24,7 +24,12 @@ class _PaidLeaveSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<TimeOffViewmodel>();
     final data = vm.timeOffResult.dataOrNull;
-    if (vm.timeOffResult.isInitialOrLoading) return const LoadingListShimmer(count: 2);
+    if (vm.timeOffResult.isInitialOrLoading) {
+      return ListView.builder(
+        itemCount: 5,
+        itemBuilder: (_, __) => const LoadingListShimmer(),
+      );
+    }
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
@@ -34,8 +39,7 @@ class _PaidLeaveSectionView extends StatelessWidget {
           if (data?.isEmpty ?? false)
             const EmptyListWidget(
               title: "Belum Ada Pengajuan",
-              subtitle:
-                  "Belum ada yang mengajukan cuti untuk hari ini.",
+              subtitle: "Belum ada yang mengajukan cuti untuk hari ini.",
             ),
           if (data?.isNotEmpty ?? false)
             const Text(
@@ -46,7 +50,8 @@ class _PaidLeaveSectionView extends StatelessWidget {
           if (data?.isNotEmpty ?? false)
             Column(
               children: (data ?? [])
-                  .map((item) => TimeOffCard(timeOffResponse: item,title:"Cuti"))
+                  .map((item) =>
+                      TimeOffCard(timeOffResponse: item, title: "Cuti"))
                   .toList(),
             ),
         ],

@@ -5,6 +5,7 @@ import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_exte
 
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/export_bottom_sheet.dart';
+import 'package:shelter_super_app/design/loading_line_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/viewmodel/presence_report_viewmodel.dart';
 import 'package:shelter_super_app/design/selection_filter_bottom_sheet.dart';
@@ -49,17 +50,7 @@ class _PresenceReportScreenState extends State<_PresenceReportView> {
 
           // Employee Cards Count
           if (vm.isLoading)
-            Shimmer(
-              isLoading: true,
-              child: Container(
-                height: 16,
-                width: 150,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            )
+            const LoadingLineShimmer()
           else
             Text(
               'Menampilkan ${vm.totalKaryawan} Karyawan',

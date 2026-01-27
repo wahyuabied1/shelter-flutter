@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/core/utils/result/result.dart';
+import 'package:shelter_super_app/design/loading_employee_activity.dart';
 
 import '../../../../../data/model/hadirqu_attendance_detail_response.dart';
 import '../../../../../data/model/hadirqu_departement_filter_response.dart';
@@ -11,7 +12,6 @@ import '../../../../../design/multi_choice_bottom_sheet.dart';
 import '../../../../../design/search_widget.dart';
 import '../../../../../design/theme_widget.dart';
 import '../../viewmodel/report_dashboard_viewmodel.dart';
-import '../../widget/content_detail_loading_card.dart';
 
 class EmployeePresentDetailCard extends StatefulWidget {
   final bool isPresent;
@@ -392,7 +392,7 @@ class _EmployeePresentDetailViewState extends State<EmployeePresentDetailCard> {
       return ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: 5,
-        itemBuilder: (_, __) => const ContentDetailLoadingCard(),
+        itemBuilder: (_, __) => const LoadingEmployeeActivity(),
       );
     }
 
