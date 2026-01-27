@@ -26,7 +26,7 @@ class DoubleListTile extends StatelessWidget {
           child: ListTile(
             contentPadding: EdgeInsets.zero,
             dense: true,
-            visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+            visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
             leading: Icon(
               firstIcon,
             ),
@@ -60,7 +60,7 @@ class DoubleListTile extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              secondSubtitle??'',
+              secondSubtitle ?? '',
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black87,
