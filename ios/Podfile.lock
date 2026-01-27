@@ -158,6 +158,8 @@ PODS:
     - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - geocoding_ios (1.0.5):
+    - Flutter
   - GoogleAppMeasurement (11.6.0):
     - GoogleAppMeasurement/AdIdSupport (= 11.6.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
@@ -274,6 +276,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - GoogleUtilities
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -342,6 +345,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  geocoding_ios:
+    :path: ".symlinks/plugins/geocoding_ios/ios"
   image_gallery_saver:
     :path: ".symlinks/plugins/image_gallery_saver/ios"
   image_picker_ios:
@@ -397,6 +402,7 @@ SPEC CHECKSUMS:
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  geocoding_ios: eafacae6ad11a1eb56681f7d11df602a5fd49416
   GoogleAppMeasurement: 6a9e6317b6a6d810ad03d4a66564ca6c4c5818a3
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/app/assets/app_assets.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import 'package:shelter_super_app/app/di/service_locator.dart';
 import 'package:shelter_super_app/core/firebase_config/firebase_remote_config_service.dart';
 import 'package:shelter_super_app/core/firebase_config/remote_config_key.dart';
 import 'package:shelter_super_app/core/utils/result/result.dart';
+import 'package:shelter_super_app/data/model/enable_list_feature.dart';
 import 'package:shelter_super_app/data/model/promotion_response.dart';
 import 'package:shelter_super_app/design/shimmer.dart';
 import 'package:shelter_super_app/feature/routes/cleaningqu_routes.dart';
@@ -49,6 +51,7 @@ class _MainHomeState extends State<_MainHomeView> {
   int _currentIndex = 0;
   final _remoteConfig = serviceLocator.get<FirebaseRemoteConfigService>();
   List<PromotionResponse> listData = [];
+  EnableListFeature? enableFeature;
 
   @override
   initState(){
@@ -57,6 +60,12 @@ class _MainHomeState extends State<_MainHomeView> {
       setState(() {
         List<dynamic> jsonList = jsonDecode(value);
         listData = jsonList.map((json) => PromotionResponse.fromJson(json)).toList();  // your variable
+      });
+    });
+
+    _remoteConfig.streamString(enableListFeature).listen((value) {
+      setState(() {
+        enableFeature = EnableListFeature.fromJson(jsonDecode(value));
       });
     });
 
@@ -125,32 +134,32 @@ class _MainHomeState extends State<_MainHomeView> {
                 children: [
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      vm.userResult.dataOrNull?.menus?.hadirKu ?? false,
-                      AppAssets.ilIconHadirqu,
+                      (vm.userResult.dataOrNull?.menus?.hadirKu ?? false) && (enableFeature?.hadirqu ?? false),
+                      AppAssets.icIconHadirqu,
                       'HadirQu',
                       '(Kehadiran)', () {
                     context.pushNamed(HadirQuRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      vm.userResult.dataOrNull?.menus?.cleaningQu ?? false,
-                      AppAssets.ilIconCleaningqu,
+                      (vm.userResult.dataOrNull?.menus?.cleaningQu ?? false)  && (enableFeature?.cleaningqu ?? false),
+                      AppAssets.icIconCleaningqu,
                       'CleaningQu',
                       '(Kebersihan)', () {
                     context.pushNamed(CleaningquRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      vm.userResult.dataOrNull?.menus?.issueQu ?? false,
-                      AppAssets.ilIconIssuequ,
+                      (vm.userResult.dataOrNull?.menus?.issueQu ?? false) && (enableFeature?.issuequ ?? false),
+                      AppAssets.icIconIssuequ,
                       'IssueQu',
                       '(Keluhan)', () {
                     context.pushNamed(IssueQuRoutes.home.name!);
                   }),
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      vm.userResult.dataOrNull?.menus?.poskoPatrol ?? false,
-                      AppAssets.ilIconGuard,
+                      (vm.userResult.dataOrNull?.menus?.poskoPatrol ?? false) && (enableFeature?.guard ?? false),
+                      AppAssets.icIconGuard,
                       'Guard',
                       '(Keamanan)', () {
                     context.pushNamed(GuardRoutes.home.name!);
@@ -305,7 +314,7 @@ class _MainHomeState extends State<_MainHomeView> {
                 child: CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.white,
-                  child: Image.asset(
+                  child: SvgPicture.asset(
                     image,
                     width: 30.w,
                     height: 30.h,

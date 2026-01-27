@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
 
 class SearchWidget extends StatefulWidget {
@@ -19,6 +20,7 @@ class SearchWidget extends StatefulWidget {
 
 class _SearchWidgetState extends State<SearchWidget> {
   TextEditingController employeeController = TextEditingController();
+  final _debouncer = Debouncer(milliseconds: 800);
 
   @override
   void dispose() {
@@ -52,7 +54,9 @@ class _SearchWidgetState extends State<SearchWidget> {
       ),
       keyboardType: TextInputType.emailAddress,
       onChanged: (data) {
-        widget.onSearch.call(data);
+        _debouncer.run((){
+          widget.onSearch.call(data);
+        });
       },
     );
   }

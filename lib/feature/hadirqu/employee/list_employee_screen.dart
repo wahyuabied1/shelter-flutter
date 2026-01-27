@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/data/model/hadirqu_employee_list_response.dart';
 import 'package:shelter_super_app/feature/hadirqu/employee/viewmodel/list_employee_viewmodel.dart';
@@ -29,6 +30,8 @@ class _ListEmployeeView extends StatefulWidget {
 }
 
 class _ListEmployeeScreenState extends State<_ListEmployeeView> {
+  final _debouncer = Debouncer(milliseconds: 800);
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ListEmployeeViewmodel>();
@@ -60,7 +63,11 @@ class _ListEmployeeScreenState extends State<_ListEmployeeView> {
           children: [
             // Search Field
             TextField(
-              onChanged: (value) => vm.updateSearchQuery(value),
+              onChanged: (value) {
+                _debouncer.run(() {
+                  vm.updateSearchQuery(value);
+                });
+              },
               cursorColor: Colors.blue[800],
               decoration: InputDecoration(
                 hintText: 'Cari karyawan',

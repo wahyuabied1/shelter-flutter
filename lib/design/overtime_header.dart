@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 
 class OverTimeHeader extends StatefulWidget {
@@ -23,6 +24,7 @@ class OverTimeHeader extends StatefulWidget {
 
 class _OverTimeHeaderState extends State<OverTimeHeader> {
   TextEditingController employeeController = TextEditingController();
+  final _debouncer = Debouncer(milliseconds: 800);
 
   @override
   void dispose() {
@@ -75,7 +77,9 @@ class _OverTimeHeaderState extends State<OverTimeHeader> {
               ),
               keyboardType: TextInputType.emailAddress,
               onChanged: (data) {
-                widget.onChangeSearch.call(data);
+                _debouncer.run((){
+                  widget.onChangeSearch.call(data);
+                });
               },
             ),
           ),
