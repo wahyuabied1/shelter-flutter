@@ -298,7 +298,9 @@ class _MailViewState extends State<_MailView> {
 
   Widget _buildContent(MailViewmodel vm) {
     if (vm.isLoading) {
-      return const LoadingListShimmer();
+      return const LoadingListShimmer(
+        marginHorizontal: false,
+      );
     }
 
     if (vm.isError) {
