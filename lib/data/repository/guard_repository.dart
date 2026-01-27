@@ -6,6 +6,7 @@ import '../model/guard_guest_response.dart';
 import '../model/guard_key_loan_response.dart';
 import '../model/guard_phone_response.dart';
 import '../model/guard_project_response.dart';
+import '../model/guard_transporter_response.dart';
 
 class GuardRepository {
   final GuardNetwork _guardNetwork;
@@ -79,6 +80,20 @@ class GuardRepository {
     String? search,
   }) async {
     return _guardNetwork.getProject(
+      tanggalMulai: tanggalMulai,
+      tanggalSelesai: tanggalSelesai,
+      idPetugas: idPetugas,
+      search: search,
+    );
+  }
+
+  Future<JsonResponse<GuardTransporterResponse>> getTransporter({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? idPetugas,
+    String? search,
+  }) async {
+    return _guardNetwork.getTransporter(
       tanggalMulai: tanggalMulai,
       tanggalSelesai: tanggalSelesai,
       idPetugas: idPetugas,

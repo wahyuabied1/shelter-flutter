@@ -9,6 +9,7 @@ import '../model/guard_guest_response.dart';
 import '../model/guard_key_loan_response.dart';
 import '../model/guard_phone_response.dart';
 import '../model/guard_project_response.dart';
+import '../model/guard_transporter_response.dart';
 
 class GuardNetwork {
   static const _summary = "rekap";
@@ -16,6 +17,7 @@ class GuardNetwork {
   static const _phone = "posko/telepon";
   static const _guest = "posko/tamu";
   static const _project = "posko/proyek";
+  static const _transporter = "posko/transporter";
 
   final CoreHttpBuilder _http;
   final CoreHttpRepository _coreHttpRepository;
@@ -252,6 +254,50 @@ class GuardNetwork {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     final data = GuardProjectResponse.fromJson(json);
+
+    return JsonResponse(
+      response,
+      (_) => data,
+      source: () => json,
+    );
+  }
+
+  Future<JsonResponse<GuardTransporterResponse>> getTransporter({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? idPetugas,
+    String? search,
+  }) async {
+    final map = <String, dynamic>{
+      'tanggal_mulai': tanggalMulai,
+      'tanggal_selesai': tanggalSelesai,
+    };
+
+    // MULTIPLE id_petugas: Duplicate parameter
+    // id_petugas=492&id_petugas=5152
+    if (idPetugas != null && idPetugas.isNotEmpty) {
+      map['id_petugas'] = idPetugas.map((e) => e.toString()).toList();
+    }
+
+    if (search != null && search.isNotEmpty) {
+      map['search'] = search;
+    }
+
+    final headers = {
+      'sha': await _coreHttpRepository.getSHA(),
+      'salt': await _coreHttpRepository.getToken(),
+    };
+
+    final response = await _http
+        .guardHttp(
+          headers: headers,
+          path: _transporter,
+          query: map,
+        )
+        .get();
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = GuardTransporterResponse.fromJson(json);
 
     return JsonResponse(
       response,
