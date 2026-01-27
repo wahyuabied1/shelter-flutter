@@ -1,22 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/double_list_tile.dart';
+import 'package:shelter_super_app/design/loading_line_shimmer.dart';
+import 'package:shelter_super_app/design/loading_list_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/search_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
+import 'package:intl/intl.dart';
+import '../../../data/model/guard_project_response.dart';
+import 'viewmodel/project_viewmodel.dart';
 
-class ProjectScreen extends StatefulWidget {
+class ProjectScreen extends StatelessWidget {
   const ProjectScreen({super.key});
 
   @override
-  State<ProjectScreen> createState() => _ProjectScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ProjectViewmodel()..init(),
+      child: const _ProjectView(),
+    );
+  }
 }
 
-class _ProjectScreenState extends State<ProjectScreen> {
+class _ProjectView extends StatefulWidget {
+  const _ProjectView();
+
+  @override
+  State<_ProjectView> createState() => _ProjectViewState();
+}
+
+class _ProjectViewState extends State<_ProjectView> {
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<ProjectViewmodel>();
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
@@ -43,10 +63,18 @@ class _ProjectScreenState extends State<ProjectScreen> {
         child: ListView(
           children: [
             DoubleDateWidget(
-              endDate: DateTime.now().ddMMyyyy('/'),
-              startDate: DateTime.now().ddMMyyyy('/'),
-              onChangeStartDate: (date) {},
-              onChangeEndDate: (date) {},
+              endDate: vm.endDate.ddMMyyyy('/'),
+              startDate: vm.startDate.ddMMyyyy('/'),
+              onChangeStartDate: (date) {
+                final parsed = DateFormat('dd/MM/yyyy').parse(date);
+
+                vm.updateStartDate(parsed);
+              },
+              onChangeEndDate: (date) {
+                final parsed = DateFormat('dd/MM/yyyy').parse(date);
+
+                vm.updateEndDate(parsed);
+              },
               theme: ThemeWidget.red,
             ),
             Container(
@@ -54,7 +82,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  // Button action here
+                  // TODO: Export to Excel
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -83,119 +111,107 @@ class _ProjectScreenState extends State<ProjectScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                        ),
-                        builder: (context) {
-                          return MultiChoiceBottomSheet(
-                            title: "No Plat",
-                            choice: const {
-                              "A": false,
-                              "B": false,
-                              "C": false,
-                              "W": false,
-                              "M": false,
-                            },
-                            theme: ThemeWidget.red,
-                          );
-                        },
-                      );
-                    },
-                    customBorder: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                          // Rounded corners
-                          border: Border.all(
-                              color: Colors.grey.shade300), // Light grey border
-                        ),
-                        child: const Row(
-                          children: [
-                            Text('No Plat'),
-                            SizedBox(width: 4),
-                            Icon(Icons.keyboard_arrow_down_sharp,
-                                color: Colors.black)
-                          ],
-                        )),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    child: InkWell(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16)),
-                          ),
-                          builder: (context) {
-                            return MultiChoiceBottomSheet(
-                              title: "Petugas",
-                              choice: const {
-                                "Petugas Pos Bayar Rungkut": false,
-                              },
-                              theme: ThemeWidget.red,
-                            );
-                          },
-                        );
-                      },
-                      customBorder: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                            // Rounded corners
-                            border: Border.all(
-                                color:
-                                Colors.grey.shade300), // Light grey border
-                          ),
-                          child: const Row(
-                            children: [
-                              Text('Petugas'),
-                              SizedBox(width: 4),
-                              Icon(Icons.keyboard_arrow_down_sharp,
-                                  color: Colors.black)
-                            ],
-                          )),
-                    ),
-                  ),
+                  _buildPetugasFilter(vm),
                 ],
               ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
               child: SearchWidget(
-                hint: 'Cari Peminjam',
-                onSearch: (search) {},
+                hint: 'Cari Proyek',
+                onSearch: (search) => vm.updateSearchQuery(search),
                 theme: ThemeWidget.red,
               ),
             ),
-            const Text(
-              'Menampilkan 2 Data',
-              style: TextStyle(color: Colors.black54, fontSize: 12),
-            ),
+            if (vm.isLoading)
+              const LoadingLineShimmer()
+            else
+              Text(
+                vm.totalDataText,
+                style: const TextStyle(color: Colors.black54, fontSize: 12),
+              ),
             const SizedBox(height: 8),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 2,
-              itemBuilder: (context, index) {
-                return _card();
-              },
+            _buildContent(vm),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPetugasFilter(ProjectViewmodel vm) {
+    return InkWell(
+      onTap: () async {
+        if (vm.availablePetugas.isEmpty) return;
+
+        final Map<String, bool> petugasChoice = {};
+        for (var petugas in vm.availablePetugas) {
+          petugasChoice[petugas.nama] =
+              vm.selectedPetugasIds.contains(petugas.id);
+        }
+
+        final result = await showModalBottomSheet<Map<String, bool>>(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          builder: (context) {
+            return MultiChoiceBottomSheet(
+              title: "Petugas",
+              choice: petugasChoice,
+              theme: ThemeWidget.red,
+            );
+          },
+        );
+
+        if (result != null) {
+          final selectedIds = <int>[];
+          result.forEach((key, isSelected) {
+            if (isSelected) {
+              final petugas = vm.availablePetugas.firstWhere(
+                (p) => p.nama == key,
+                orElse: () => GuardProjectFilterPetugas(id: 0, nama: ''),
+              );
+              if (petugas.id != 0) selectedIds.add(petugas.id);
+            }
+          });
+          vm.updatePetugasFilter(selectedIds);
+        }
+      },
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: vm.selectedPetugasIds.isEmpty
+              ? Colors.transparent
+              : Colors.red.shade50,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: vm.selectedPetugasIds.isEmpty
+                ? Colors.grey.shade300
+                : Colors.red,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              vm.selectedPetugasText,
+              style: TextStyle(
+                color: vm.selectedPetugasIds.isNotEmpty
+                    ? Colors.red.shade700
+                    : Colors.black,
+                fontWeight: vm.selectedPetugasIds.isNotEmpty
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.keyboard_arrow_down_sharp,
+              color: vm.selectedPetugasIds.isNotEmpty
+                  ? Colors.red.shade700
+                  : Colors.black,
             ),
           ],
         ),
@@ -203,7 +219,57 @@ class _ProjectScreenState extends State<ProjectScreen> {
     );
   }
 
-  Widget _card() {
+  Widget _buildContent(ProjectViewmodel vm) {
+    if (vm.isLoading) {
+      return const LoadingListShimmer(
+        marginHorizontal: false,
+      );
+    }
+
+    if (vm.isError) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Gagal memuat data'),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () => vm.getProject(),
+                child: const Text('Coba Lagi'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (vm.projectList.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Text(
+            vm.searchQuery.isNotEmpty || vm.selectedPetugasIds.isNotEmpty
+                ? 'Tidak ada data yang sesuai filter'
+                : 'Tidak ada data',
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: vm.projectList.length,
+      itemBuilder: (context, index) {
+        final item = vm.projectList[index];
+        return _card(item);
+      },
+    );
+  }
+
+  Widget _card(dynamic project) {
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -215,78 +281,85 @@ class _ProjectScreenState extends State<ProjectScreen> {
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                radius: 24,
-                backgroundColor: Colors.red.shade700,
-                child: Text(
-                  'Dedi'.initialName(),
+              leading: project.petugas.photo != null &&
+                      project.petugas.photo!.isNotEmpty
+                  ? CircleAvatar(
+                      radius: 24,
+                      backgroundImage: NetworkImage(project.petugas.photo!),
+                    )
+                  : CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.red.shade700,
+                      child: Text(
+                        project.petugas.nama.initialName(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+              title: Text(project.petugas.nama,
                   style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              title: const Text('Dedi',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              subtitle: const Text('Petugas Pos Bayer Rungkut'),
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              subtitle: Text(project.petugas.site.nama),
             ),
             DoubleListTile(
               firstIcon: Icons.calendar_today,
               firstTitle: 'Tanggal',
-              firstSubtitle: DateTime.now().ddMMMyyyy(' '),
-              secondIcon: Icons.access_time_outlined,
-              secondTitle: 'Shift',
-              secondSubtitle: 'Pagi',
+              firstSubtitle: DateTime.parse(project.tanggal).ddMMMyyyy(' '),
+              secondIcon: Icons.location_on_outlined,
+              secondTitle: 'Area Pekerjaan',
+              secondSubtitle: project.areaPekerjaan ?? '-',
             ),
-            const DoubleListTile(
+            DoubleListTile(
               firstIcon: Icons.factory_outlined,
-              firstTitle: 'Nama Proyek',
-              firstSubtitle: 'Vaksin TBC',
-              secondIcon: Icons.factory_outlined,
-              secondTitle: 'No Perusahaan',
-              secondSubtitle: 'PT. Kalbe Farma',
+              firstTitle: 'Nama Pekerjaan',
+              firstSubtitle: project.namaPekerjaan ?? '-',
+              secondIcon: Icons.apartment,
+              secondTitle: 'Nama Perusahaan',
+              secondSubtitle: project.namaPerusahaan ?? '-',
             ),
-            const DoubleListTile(
+            DoubleListTile(
               firstIcon: Icons.person_2_outlined,
               firstTitle: 'Nama Pekerja',
-              firstSubtitle: 'Suryadi',
-              secondIcon: Icons.credit_card,
-              secondTitle: 'Nomor Identitas',
-              secondSubtitle: '37627xxxx87x8',
+              firstSubtitle: project.namaPekerja ?? '-',
             ),
-            const ListTile(
-              visualDensity: VisualDensity(horizontal: -4, vertical: -4),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Keterangan',
-                style: TextStyle(fontSize: 11,color: Colors.black54),
+            if (project.keterangan != null &&
+                project.keterangan!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              ListTile(
+                visualDensity:
+                    const VisualDensity(horizontal: -4, vertical: -4),
+                contentPadding: EdgeInsets.zero,
+                title: const Text(
+                  'Keterangan',
+                  style: TextStyle(fontSize: 11, color: Colors.black54),
+                ),
+                subtitle: Text(
+                  project.keterangan!,
+                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                ),
+                leading: const Icon(Icons.description_rounded),
               ),
-              subtitle: Text(
-                'Keterangan pak Justinus menjalankan proyek',
-                style: TextStyle(fontSize: 12,color: Colors.black),
-              ),
-              leading: Icon(Icons.description_rounded),
-            ),
+            ],
             const SizedBox(height: 8),
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
-                // Rounded corners
-                border: Border.all(
-                    color: Colors.grey.shade300), // Light grey border
+                border: Border.all(color: Colors.grey.shade300),
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   DoubleListTile(
                     firstIcon: Icons.access_time_outlined,
-                    firstTitle: 'Jam Out',
-                    firstSubtitle: '06:00 WIB',
+                    firstTitle: 'Jam Masuk',
+                    firstSubtitle: project.masuk ?? '-',
                     secondIcon: Icons.access_time_outlined,
-                    secondTitle: 'Jam In',
-                    secondSubtitle: '06:30 WIB',
+                    secondTitle: 'Jam Keluar',
+                    secondSubtitle: project.keluar ?? '-',
                   ),
                 ],
               ),

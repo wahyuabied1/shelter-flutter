@@ -5,6 +5,7 @@ import 'package:shelter_super_app/data/network/guard_network.dart';
 import '../model/guard_guest_response.dart';
 import '../model/guard_key_loan_response.dart';
 import '../model/guard_phone_response.dart';
+import '../model/guard_project_response.dart';
 
 class GuardRepository {
   final GuardNetwork _guardNetwork;
@@ -66,6 +67,20 @@ class GuardRepository {
       tanggalMulai: tanggalMulai,
       tanggalSelesai: tanggalSelesai,
       shift: shift,
+      idPetugas: idPetugas,
+      search: search,
+    );
+  }
+
+  Future<JsonResponse<GuardProjectResponse>> getProject({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? idPetugas,
+    String? search,
+  }) async {
+    return _guardNetwork.getProject(
+      tanggalMulai: tanggalMulai,
+      tanggalSelesai: tanggalSelesai,
       idPetugas: idPetugas,
       search: search,
     );

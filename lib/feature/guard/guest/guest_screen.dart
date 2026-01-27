@@ -8,9 +8,11 @@ import 'package:shelter_super_app/design/loading_list_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
 import 'package:shelter_super_app/design/search_widget.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import '../../../core/utils/common.dart';
 import '../../../data/model/guard_guest_response.dart';
+import '../../../design/default_snackbar.dart';
+import '../../../design/show_image.dart';
 import 'viewmodel/guest_viewmodel.dart';
 
 class GuestScreen extends StatelessWidget {
@@ -449,16 +451,23 @@ class _GuestViewState extends State<_GuestView> {
             if (guest.photo.isNotEmpty) ...[
               const SizedBox(height: 8),
               ...guest.photo.asMap().entries.map((entry) {
-                final index = entry.key;
                 final photoUrl = entry.value;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: ListTile(
                     onTap: () async {
-                      final uri = Uri.parse(photoUrl);
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri,
-                            mode: LaunchMode.externalApplication);
+                      if (photoUrl != "") {
+                        saveToGallery(photoUrl).then((data) {
+                          showDefaultSuccessShowFile(
+                              context, "Gambar berhasil disimpan", () {
+                            showImage(context, data['filePath']);
+                          });
+                        });
+                      } else if (photoUrl != "") {
+                        saveToGallery(photoUrl.toString());
+                      } else {
+                        showDefaultError(
+                            context, "Bukti download tidak ditemukan");
                       }
                     },
                     shape: RoundedRectangleBorder(
@@ -468,13 +477,12 @@ class _GuestViewState extends State<_GuestView> {
                     visualDensity:
                         const VisualDensity(horizontal: -4, vertical: -4),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                    title: Text(
-                      'Foto ${index + 1}',
-                      style:
-                          const TextStyle(fontSize: 14, color: Colors.black54),
+                    title: const Text(
+                      'Foto',
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
                     ),
                     leading: const Icon(Icons.image),
-                    trailing: const Icon(Icons.open_in_new),
+                    trailing: const Icon(Icons.download),
                   ),
                 );
               }).toList(),
