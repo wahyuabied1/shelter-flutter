@@ -3,8 +3,10 @@ import 'package:shelter_super_app/data/model/guard_summary_response.dart';
 import 'package:shelter_super_app/data/network/guard_network.dart';
 
 import '../model/guard_guest_response.dart';
+import '../model/guard_journal_response.dart';
 import '../model/guard_key_loan_response.dart';
 import '../model/guard_mail_response.dart';
+import '../model/guard_news_response.dart';
 import '../model/guard_phone_response.dart';
 import '../model/guard_project_response.dart';
 import '../model/guard_transporter_response.dart';
@@ -110,6 +112,38 @@ class GuardRepository {
     String? search,
   }) async {
     return _guardNetwork.getMail(
+      tanggalMulai: tanggalMulai,
+      tanggalSelesai: tanggalSelesai,
+      shift: shift,
+      idPetugas: idPetugas,
+      search: search,
+    );
+  }
+
+  Future<JsonResponse<GuardJournalResponse>> getJournal({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? shift,
+    List<int>? idPetugas,
+    String? search,
+  }) async {
+    return _guardNetwork.getJournal(
+      tanggalMulai: tanggalMulai,
+      tanggalSelesai: tanggalSelesai,
+      shift: shift,
+      idPetugas: idPetugas,
+      search: search,
+    );
+  }
+
+  Future<JsonResponse<GuardNewsResponse>> getNews({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? shift,
+    List<int>? idPetugas,
+    String? search,
+  }) async {
+    return _guardNetwork.getNews(
       tanggalMulai: tanggalMulai,
       tanggalSelesai: tanggalSelesai,
       shift: shift,
