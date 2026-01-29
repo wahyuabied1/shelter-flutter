@@ -52,9 +52,13 @@ class HadirquNetwork {
 
   Future<JsonListResponse<TimeOffResponse>> getPaidLeave({
     required String date,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
     map['tanggal'] = date;
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
 
     final response = await _http.hadirkuHttp(headers: {
       'sha': await _coreHttpRepository.getSHA(),
@@ -65,9 +69,13 @@ class HadirquNetwork {
 
   Future<JsonListResponse<TimeOffResponse>> getSickLeave({
     required String date,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
     map['tanggal'] = date;
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
 
     final response = await _http.hadirkuHttp(headers: {
       'sha': await _coreHttpRepository.getSHA(),
@@ -78,9 +86,13 @@ class HadirquNetwork {
 
   Future<JsonListResponse<TimeOffResponse>> getOverTime({
     required String date,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
     map['tanggal'] = date;
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
 
     final response = await _http.hadirkuHttp(headers: {
       'sha': await _coreHttpRepository.getSHA(),
@@ -92,9 +104,13 @@ class HadirquNetwork {
   Future<JsonResponse<HadirquReportResponse>> getReport({
     required String date,
     List<int>? departemenIds,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
     map['tanggal'] = date;
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
 
     if (departemenIds != null && departemenIds.isNotEmpty) {
       map['id_departemen'] = departemenIds.map((e) => e.toString()).toList();
@@ -121,10 +137,14 @@ class HadirquNetwork {
     List<int>? idDepartemen,
     List<String>? jabatan,
     String? karyawan,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
 
     map['kehadiran'] = kehadiran.toString();
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
 
     if (tanggal != null) {
       map['tanggal'] = tanggal;
@@ -169,9 +189,12 @@ class HadirquNetwork {
     int? filterKehadiran,
     String? filterKehadiranPersamaan,
     int? filterKehadiranNilai,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
-
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
     if (tanggalMulai != null) {
       map['tanggal_mulai'] = tanggalMulai;
     }
@@ -234,9 +257,12 @@ class HadirquNetwork {
     int? filterKehadiran,
     String? filterKehadiranPersamaan,
     int? filterKehadiranNilai,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
-
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
     if (tanggalMulai != null) {
       map['tanggal_mulai'] = tanggalMulai;
     }
@@ -295,11 +321,15 @@ class HadirquNetwork {
     required String tanggalMulai,
     required String tanggalSelesai,
     required int idKaryawan,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
       'id_karyawan': idKaryawan.toString(),
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     final response = await _http.hadirkuHttp(
@@ -326,11 +356,15 @@ class HadirquNetwork {
     required String tanggalMulai,
     required String tanggalSelesai,
     required int idKaryawan,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
       'id_karyawan': idKaryawan.toString(),
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     final response = await _http.hadirkuHttp(
@@ -357,9 +391,12 @@ class HadirquNetwork {
     List<int>? idDepartemen,
     List<String>? jabatan,
     List<int>? grupId,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{};
-
+    map['limit'] = limit.toString();
+    map['offset'] = offset.toString();
     if (idDepartemen != null && idDepartemen.isNotEmpty) {
       for (int i = 0; i < idDepartemen.length; i++) {
         map['id_departemen[$i]'] = idDepartemen[i].toString();
@@ -402,10 +439,14 @@ class HadirquNetwork {
     required String tanggalSelesai,
     List<int>? idDepartemen,
     List<int>? status,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // ✅ Format array dengan bracket []
@@ -446,10 +487,14 @@ class HadirquNetwork {
     required String tanggalAkhir,
     List<int>? idDepartemen,
     List<int>? status,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_akhir': tanggalAkhir,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     if (idDepartemen != null && idDepartemen.isNotEmpty) {
@@ -489,10 +534,14 @@ class HadirquNetwork {
     required String tanggalAkhir,
     List<int>? idDepartemen,
     List<int>? status,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_akhir': tanggalAkhir,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     if (idDepartemen != null && idDepartemen.isNotEmpty) {

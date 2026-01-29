@@ -20,13 +20,45 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
   int? selectedRuangId;
   String searchQuery = '';
 
+  // Pagination states
+  static const int _pageSize = 10;
+  int _limit = 10;
+  int _offset = 0;
+  bool _hasMore = true;
+  bool _isLoadingMore = false;
+  List<GuardKeyLoan> _allKeyLoans = [];
+
+  // Filter data (dari response pertama)
+  GuardKeyLoanFilter? _filter;
+
   void init() {
-    getKeyLoan();
+    loadInitial();
   }
 
-  Future<bool> getKeyLoan() {
-    keyLoanResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _limit = _pageSize;
+    _offset = 0;
+    _allKeyLoans = [];
+    _hasMore = true;
+    _filter = null;
+    await _fetchKeyLoan(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_isLoadingMore || !_hasMore || keyLoanResult.isInitialOrLoading) return;
+    _offset = _limit;
+    _limit += _pageSize;
+    await _fetchKeyLoan(isLoadMore: true);
+  }
+
+  Future<bool> _fetchKeyLoan({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      keyLoanResult = const Result.loading();
+      notifyListeners();
+    } else {
+      _isLoadingMore = true;
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<GuardKeyLoanResponse>>(
       future: _guardRepository.getKeyLoan(
@@ -36,17 +68,33 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         idRuang: selectedRuangId,
         search: searchQuery.isEmpty ? null : searchQuery,
+        limit: _limit,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          final jsonResponse = result.dataOrNull;
+          final response = result.dataOrNull?.data;
+          final newItems = response?.data ?? [];
 
-          keyLoanResult = Result.success(
-            jsonResponse?.data,
-          );
+          // Simpan filter dari response pertama
+          if (!isLoadMore && response?.filter != null) {
+            _filter = response!.filter;
+          }
+
+          if (isLoadMore) {
+            _allKeyLoans.addAll(newItems);
+          } else {
+            _allKeyLoans = List.from(newItems);
+          }
+
+          _hasMore = newItems.length >= _pageSize;
+
+          keyLoanResult = Result.success(response);
         } else if (result.isError) {
           keyLoanResult = Result.error(result.error);
         }
+
+        _isLoadingMore = false;
         notifyListeners();
       },
     );
@@ -55,37 +103,37 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
   void updateStartDate(DateTime date) {
     startDate = date;
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void updateEndDate(DateTime date) {
     endDate = date;
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void updateShiftFilter(List<int> shift) {
     selectedShift = shift;
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void updatePetugasFilter(List<int> petugasIds) {
     selectedPetugasIds = petugasIds;
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void updateRuangFilter(int? ruangId) {
     selectedRuangId = ruangId;
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
     searchQuery = query;
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void resetFilters() {
@@ -94,7 +142,7 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
     selectedRuangId = null;
     searchQuery = '';
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   String _formatDate(DateTime date) {
@@ -105,26 +153,28 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
   // Helper untuk UI
   // =======================
 
-  GuardKeyLoanResponse? get data => keyLoanResult.dataOrNull;
-
   bool get isLoading => keyLoanResult.isInitialOrLoading;
 
   bool get isError => keyLoanResult.isError;
 
-  List<GuardKeyLoan> get keyLoanList => data?.data ?? [];
+  bool get isLoadingMore => _isLoadingMore;
 
-  int get totalData => keyLoanList.length;
+  bool get hasMore => _hasMore;
+
+  List<GuardKeyLoan> get keyLoanList => _allKeyLoans;
+
+  int get totalData => _allKeyLoans.length;
 
   String get totalDataText => 'Menampilkan $totalData Data';
 
   // Filter data
-  List<int> get availableShifts => data?.filter.shift ?? [];
+  List<int> get availableShifts => _filter?.shift ?? [];
 
   List<GuardKeyLoanFilterRuangan> get availableRuangan =>
-      data?.filter.ruangan ?? [];
+      _filter?.ruangan ?? [];
 
   List<GuardKeyLoanFilterPetugas> get availablePetugas =>
-      data?.filter.petugas ?? [];
+      _filter?.petugas ?? [];
 
   // Text untuk filter buttons
   String get selectedShiftText {
@@ -182,7 +232,7 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
         .where((shift) => selected['Shift $shift'] == true)
         .toList();
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void onPetugasSelected(Map<String, bool> selected) {
@@ -191,7 +241,7 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
         .map((p) => p.id)
         .toList();
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 
   void onRuanganSelected(Map<String, bool> selected) {
@@ -201,6 +251,6 @@ class PinjamanKunciViewmodel extends ABaseChangeNotifier {
     );
     selectedRuangId = selectedRuang.id == 0 ? null : selectedRuang.id;
     notifyListeners();
-    getKeyLoan();
+    loadInitial();
   }
 }

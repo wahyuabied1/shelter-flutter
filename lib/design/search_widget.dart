@@ -7,7 +7,7 @@ class SearchWidget extends StatefulWidget {
   final Function(String) onSearch;
   final ThemeWidget? theme;
 
-  SearchWidget({
+  const SearchWidget({
     super.key,
     required this.onSearch,
     this.theme,
@@ -27,6 +27,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     employeeController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -54,7 +55,7 @@ class _SearchWidgetState extends State<SearchWidget> {
       ),
       keyboardType: TextInputType.emailAddress,
       onChanged: (data) {
-        _debouncer.run((){
+        _debouncer.run(() {
           widget.onSearch.call(data);
         });
       },

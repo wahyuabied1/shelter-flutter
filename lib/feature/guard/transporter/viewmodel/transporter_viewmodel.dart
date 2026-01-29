@@ -14,17 +14,50 @@ class TransporterViewmodel extends ABaseChangeNotifier {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
-  // Filter states (tidak ada shift filter di transporter)
+  // Filter states
   List<int> selectedPetugasIds = [];
   String searchQuery = '';
 
+  // Pagination states
+  static const int _pageSize = 10;
+  int _limit = 10;
+  int _offset = 0;
+  bool _hasMore = true;
+  bool _isLoadingMore = false;
+  List<GuardTransporter> _allTransporters = [];
+
+  // Filter data (dari response pertama)
+  GuardTransporterFilter? _filter;
+
   void init() {
-    getTransporter();
+    loadInitial();
   }
 
-  Future<bool> getTransporter() {
-    transporterResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _limit = _pageSize;
+    _offset = 0;
+    _allTransporters = [];
+    _hasMore = true;
+    _filter = null;
+    await _fetchTransporter(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_isLoadingMore || !_hasMore || transporterResult.isInitialOrLoading)
+      return;
+    _offset = _limit;
+    _limit += _pageSize;
+    await _fetchTransporter(isLoadMore: true);
+  }
+
+  Future<bool> _fetchTransporter({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      transporterResult = const Result.loading();
+      notifyListeners();
+    } else {
+      _isLoadingMore = true;
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<GuardTransporterResponse>>(
       future: _guardRepository.getTransporter(
@@ -32,17 +65,33 @@ class TransporterViewmodel extends ABaseChangeNotifier {
         tanggalSelesai: _formatDate(endDate),
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         search: searchQuery.isEmpty ? null : searchQuery,
+        limit: _limit,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          final jsonResponse = result.dataOrNull;
+          final response = result.dataOrNull?.data;
+          final newItems = response?.data ?? [];
 
-          transporterResult = Result.success(
-            jsonResponse?.data,
-          );
+          // Simpan filter dari response pertama
+          if (!isLoadMore && response?.filter != null) {
+            _filter = response!.filter;
+          }
+
+          if (isLoadMore) {
+            _allTransporters.addAll(newItems);
+          } else {
+            _allTransporters = List.from(newItems);
+          }
+
+          _hasMore = newItems.length >= _pageSize;
+
+          transporterResult = Result.success(response);
         } else if (result.isError) {
           transporterResult = Result.error(result.error);
         }
+
+        _isLoadingMore = false;
         notifyListeners();
       },
     );
@@ -51,32 +100,32 @@ class TransporterViewmodel extends ABaseChangeNotifier {
   void updateStartDate(DateTime date) {
     startDate = date;
     notifyListeners();
-    getTransporter();
+    loadInitial();
   }
 
   void updateEndDate(DateTime date) {
     endDate = date;
     notifyListeners();
-    getTransporter();
+    loadInitial();
   }
 
   void updatePetugasFilter(List<int> petugasIds) {
     selectedPetugasIds = petugasIds;
     notifyListeners();
-    getTransporter();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
     searchQuery = query;
     notifyListeners();
-    getTransporter();
+    loadInitial();
   }
 
   void resetFilters() {
     selectedPetugasIds = [];
     searchQuery = '';
     notifyListeners();
-    getTransporter();
+    loadInitial();
   }
 
   String _formatDate(DateTime date) {
@@ -87,21 +136,23 @@ class TransporterViewmodel extends ABaseChangeNotifier {
   // Helper untuk UI
   // =======================
 
-  GuardTransporterResponse? get data => transporterResult.dataOrNull;
-
   bool get isLoading => transporterResult.isInitialOrLoading;
 
   bool get isError => transporterResult.isError;
 
-  List<GuardTransporter> get transporterList => data?.data ?? [];
+  bool get isLoadingMore => _isLoadingMore;
 
-  int get totalData => transporterList.length;
+  bool get hasMore => _hasMore;
+
+  List<GuardTransporter> get transporterList => _allTransporters;
+
+  int get totalData => _allTransporters.length;
 
   String get totalDataText => 'Menampilkan $totalData Data';
 
   // Filter data
   List<GuardTransporterFilterPetugas> get availablePetugas =>
-      data?.filter.petugas ?? [];
+      _filter?.petugas ?? [];
 
   // Text untuk filter button
   String get selectedPetugasText {

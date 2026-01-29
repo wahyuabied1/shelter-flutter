@@ -10,22 +10,54 @@ class GuestViewmodel extends ABaseChangeNotifier {
 
   Result<GuardGuestResponse?> guestResult = const Result.initial();
 
-  // Date range states
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
-  // Filter states
   List<int> selectedShift = [];
   List<int> selectedPetugasIds = [];
   String searchQuery = '';
 
+  static const int _pageSize = 3;
+  int _currentOffset = 0;
+
+  List<GuardGuest> _allGuests = [];
+
+  bool _hasMore = true;
+  bool _isLoadingMore = false;
+
+  GuardGuestFilter? _filter;
+
   void init() {
-    getGuest();
+    loadInitial();
   }
 
-  Future<bool> getGuest() {
-    guestResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _currentOffset = 0;
+    _allGuests = [];
+    _hasMore = true;
+    _filter = null;
+    await _fetchGuests(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_isLoadingMore || !_hasMore || guestResult.isInitialOrLoading) return;
+
+    _currentOffset += _pageSize;
+    await _fetchGuests(isLoadMore: true);
+  }
+
+  Future<bool> _fetchGuests({required bool isLoadMore}) async {
+    if (!isLoadMore) {
+      guestResult = const Result.loading();
+      notifyListeners();
+    } else {
+      _isLoadingMore = true;
+      notifyListeners();
+    }
+
+    if (isLoadMore) {
+      await Future.delayed(const Duration(milliseconds: 1000));
+    }
 
     return Result.callApi<JsonResponse<GuardGuestResponse>>(
       future: _guardRepository.getGuest(
@@ -34,17 +66,32 @@ class GuestViewmodel extends ABaseChangeNotifier {
         shift: selectedShift.isEmpty ? null : selectedShift,
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         search: searchQuery.isEmpty ? null : searchQuery,
+        limit: _pageSize,
+        offset: _currentOffset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          final jsonResponse = result.dataOrNull;
+          final response = result.dataOrNull?.data;
+          final newItems = response?.data ?? [];
 
-          guestResult = Result.success(
-            jsonResponse?.data,
-          );
+          if (!isLoadMore && response?.filter != null) {
+            _filter = response!.filter;
+          }
+
+          if (isLoadMore) {
+            _allGuests.addAll(newItems);
+          } else {
+            _allGuests = List.from(newItems);
+          }
+
+          _hasMore = newItems.length >= _pageSize;
+
+          guestResult = Result.success(response);
         } else if (result.isError) {
           guestResult = Result.error(result.error);
         }
+
+        _isLoadingMore = false;
         notifyListeners();
       },
     );
@@ -53,31 +100,31 @@ class GuestViewmodel extends ABaseChangeNotifier {
   void updateStartDate(DateTime date) {
     startDate = date;
     notifyListeners();
-    getGuest();
+    loadInitial();
   }
 
   void updateEndDate(DateTime date) {
     endDate = date;
     notifyListeners();
-    getGuest();
+    loadInitial();
   }
 
   void updateShiftFilter(List<int> shift) {
     selectedShift = shift;
     notifyListeners();
-    getGuest();
+    loadInitial();
   }
 
   void updatePetugasFilter(List<int> petugasIds) {
     selectedPetugasIds = petugasIds;
     notifyListeners();
-    getGuest();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
     searchQuery = query;
     notifyListeners();
-    getGuest();
+    loadInitial();
   }
 
   void resetFilters() {
@@ -85,7 +132,7 @@ class GuestViewmodel extends ABaseChangeNotifier {
     selectedPetugasIds = [];
     searchQuery = '';
     notifyListeners();
-    getGuest();
+    loadInitial();
   }
 
   String _formatDate(DateTime date) {
@@ -96,23 +143,24 @@ class GuestViewmodel extends ABaseChangeNotifier {
   // Helper untuk UI
   // =======================
 
-  GuardGuestResponse? get data => guestResult.dataOrNull;
-
   bool get isLoading => guestResult.isInitialOrLoading;
 
   bool get isError => guestResult.isError;
 
-  List<GuardGuest> get guestList => data?.data ?? [];
+  bool get isLoadingMore => _isLoadingMore;
 
-  int get totalData => guestList.length;
+  bool get hasMore => _hasMore;
+
+  List<GuardGuest> get guestList => _allGuests;
+
+  int get totalData => _allGuests.length;
 
   String get totalDataText => 'Menampilkan $totalData Data';
 
   // Filter data
-  List<int> get availableShifts => data?.filter.shift ?? [];
+  List<int> get availableShifts => _filter?.shift ?? [];
 
-  List<GuardGuestFilterPetugas> get availablePetugas =>
-      data?.filter.petugas ?? [];
+  List<GuardGuestFilterPetugas> get availablePetugas => _filter?.petugas ?? [];
 
   // Text untuk filter buttons
   String get selectedShiftText {

@@ -33,6 +33,30 @@ class _PinjamanKunciView extends StatefulWidget {
 }
 
 class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final vm = context.read<PinjamanKunciViewmodel>();
+      if (vm.hasMore && !vm.isLoadingMore) {
+        vm.loadMore();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PinjamanKunciViewmodel>();
@@ -61,18 +85,17 @@ class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
         color: Colors.white,
         padding: const EdgeInsets.all(16),
         child: ListView(
+          controller: _scrollController,
           children: [
             DoubleDateWidget(
               endDate: vm.endDate.ddMMyyyy('/'),
               startDate: vm.startDate.ddMMyyyy('/'),
               onChangeStartDate: (date) {
                 final parsed = DateFormat('dd/MM/yyyy').parse(date);
-
                 vm.updateStartDate(parsed);
               },
               onChangeEndDate: (date) {
                 final parsed = DateFormat('dd/MM/yyyy').parse(date);
-
                 vm.updateEndDate(parsed);
               },
               theme: ThemeWidget.red,
@@ -396,7 +419,7 @@ class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
               const Text('Gagal memuat data'),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: () => vm.getKeyLoan(),
+                onPressed: () => vm.loadInitial(),
                 child: const Text('Coba Lagi'),
               ),
             ],
@@ -424,8 +447,30 @@ class _PinjamanKunciViewState extends State<_PinjamanKunciView> {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: vm.keyLoanList.length,
+      itemCount: vm.keyLoanList.length + 1, // +1 untuk load more indicator
       itemBuilder: (context, index) {
+        // Load more indicator
+        if (index == vm.keyLoanList.length) {
+          return vm.hasMore
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.red,
+                    ),
+                  ),
+                )
+              : const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text(
+                      'Semua data telah ditampilkan',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                );
+        }
+
         final item = vm.keyLoanList[index];
         return _card(item);
       },

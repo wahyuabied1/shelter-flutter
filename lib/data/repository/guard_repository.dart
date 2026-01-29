@@ -19,11 +19,14 @@ class GuardRepository {
   Future<JsonResponse<GuardSummaryResponse>> getSummary({
     required String tanggalMulai,
     required String tanggalSelesai,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getSummary(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardKeyLoanResponse>> getKeyLoan({
@@ -33,15 +36,18 @@ class GuardRepository {
     List<int>? idPetugas,
     int? idRuang,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getKeyLoan(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      shift: shift,
-      idPetugas: idPetugas,
-      idRuang: idRuang,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        shift: shift,
+        idPetugas: idPetugas,
+        idRuang: idRuang,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardPhoneResponse>> getPhone({
@@ -50,14 +56,17 @@ class GuardRepository {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getPhone(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      shift: shift,
-      idPetugas: idPetugas,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        shift: shift,
+        idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardGuestResponse>> getGuest({
@@ -66,14 +75,17 @@ class GuardRepository {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 3,
+    int offset = 0,
   }) async {
     return _guardNetwork.getGuest(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      shift: shift,
-      idPetugas: idPetugas,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        shift: shift,
+        idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardProjectResponse>> getProject({
@@ -81,13 +93,16 @@ class GuardRepository {
     required String tanggalSelesai,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getProject(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      idPetugas: idPetugas,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardTransporterResponse>> getTransporter({
@@ -95,13 +110,16 @@ class GuardRepository {
     required String tanggalSelesai,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getTransporter(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      idPetugas: idPetugas,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardMailResponse>> getMail({
@@ -110,14 +128,17 @@ class GuardRepository {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getMail(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      shift: shift,
-      idPetugas: idPetugas,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        shift: shift,
+        idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardJournalResponse>> getJournal({
@@ -126,14 +147,17 @@ class GuardRepository {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getJournal(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      shift: shift,
-      idPetugas: idPetugas,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        shift: shift,
+        idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<GuardNewsResponse>> getNews({
@@ -142,13 +166,16 @@ class GuardRepository {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _guardNetwork.getNews(
-      tanggalMulai: tanggalMulai,
-      tanggalSelesai: tanggalSelesai,
-      shift: shift,
-      idPetugas: idPetugas,
-      search: search,
-    );
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        shift: shift,
+        idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
   }
 }

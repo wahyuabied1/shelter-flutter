@@ -32,6 +32,34 @@ class _NewsView extends StatefulWidget {
 }
 
 class _NewsViewState extends State<_NewsView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<NewsViewmodel>().loadMore();
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<NewsViewmodel>();
@@ -56,82 +84,96 @@ class _NewsViewState extends State<_NewsView> {
           ),
         ),
       ),
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            DoubleDateWidget(
-              endDate: vm.endDate.ddMMyyyy('/'),
-              startDate: vm.startDate.ddMMyyyy('/'),
-              onChangeStartDate: (date) {
-                final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                vm.updateStartDate(parsed);
-              },
-              onChangeEndDate: (date) {
-                final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                vm.updateEndDate(parsed);
-              },
-              theme: ThemeWidget.red,
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () {
-                  // TODO: Export to Excel
-                },
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.red.shade700,
-                  side: const BorderSide(color: Colors.red, width: 1.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: RefreshIndicator(
+        color: Colors.red,
+        backgroundColor: Colors.white,
+        onRefresh: () => vm.loadInitial(),
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(16),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Export ke Excel',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Colors.red.shade700,
+                    DoubleDateWidget(
+                      endDate: vm.endDate.ddMMyyyy('/'),
+                      startDate: vm.startDate.ddMMyyyy('/'),
+                      onChangeStartDate: (date) {
+                        final parsed = DateFormat('dd/MM/yyyy').parse(date);
+                        vm.updateStartDate(parsed);
+                      },
+                      onChangeEndDate: (date) {
+                        final parsed = DateFormat('dd/MM/yyyy').parse(date);
+                        vm.updateEndDate(parsed);
+                      },
+                      theme: ThemeWidget.red,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // TODO: Export to Excel
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.red.shade700,
+                          side: const BorderSide(color: Colors.red, width: 1.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Export ke Excel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.red.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildShiftFilter(vm),
+                          const SizedBox(width: 12),
+                          _buildPetugasFilter(vm),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      child: SearchWidget(
+                        hint: 'Cari Berita Acara',
+                        onSearch: (search) => vm.updateSearchQuery(search),
+                        theme: ThemeWidget.red,
+                      ),
+                    ),
+                    if (vm.isLoading)
+                      const LoadingLineShimmer()
+                    else
+                      Text(
+                        vm.totalDataText,
+                        style: const TextStyle(
+                            color: Colors.black54, fontSize: 12),
+                      ),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildShiftFilter(vm),
-                  const SizedBox(width: 12),
-                  _buildPetugasFilter(vm),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              child: SearchWidget(
-                hint: 'Cari Berita Acara',
-                onSearch: (search) => vm.updateSearchQuery(search),
-                theme: ThemeWidget.red,
-              ),
-            ),
-            if (vm.isLoading)
-              const LoadingLineShimmer()
-            else
-              Text(
-                vm.totalDataText,
-                style: const TextStyle(color: Colors.black54, fontSize: 12),
-              ),
-            const SizedBox(height: 8),
-            _buildContent(vm),
-          ],
+              _buildContent(vm),
+            ],
+          ),
         ),
       ),
     );
@@ -295,53 +337,81 @@ class _NewsViewState extends State<_NewsView> {
 
   Widget _buildContent(NewsViewmodel vm) {
     if (vm.isLoading) {
-      return const LoadingListShimmer(
-        marginHorizontal: false,
+      return const SliverToBoxAdapter(
+        child: LoadingListShimmer(
+          marginHorizontal: false,
+        ),
       );
     }
 
     if (vm.isError) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Gagal memuat data'),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => vm.getNews(),
-                child: const Text('Coba Lagi'),
-              ),
-            ],
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Gagal memuat data'),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () => vm.loadInitial(),
+                  child: const Text('Coba Lagi'),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
 
     if (vm.newsList.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Text(
-            vm.searchQuery.isNotEmpty ||
-                    vm.selectedShift.isNotEmpty ||
-                    vm.selectedPetugasIds.isNotEmpty
-                ? 'Tidak ada data yang sesuai filter'
-                : 'Tidak ada data',
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Text(
+              vm.searchQuery.isNotEmpty ||
+                      vm.selectedShift.isNotEmpty ||
+                      vm.selectedPetugasIds.isNotEmpty
+                  ? 'Tidak ada data yang sesuai filter'
+                  : 'Tidak ada data',
+            ),
           ),
         ),
       );
     }
 
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: vm.newsList.length,
-      itemBuilder: (context, index) {
-        final item = vm.newsList[index];
-        return _card(item);
-      },
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          // Load more indicator
+          if (index == vm.newsList.length) {
+            return vm.hasMore
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.red,
+                      ),
+                    ),
+                  )
+                : const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Text(
+                        'Semua data telah ditampilkan',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  );
+          }
+
+          final item = vm.newsList[index];
+          return _card(item);
+        },
+        childCount: vm.newsList.length + 1,
+      ),
     );
   }
 

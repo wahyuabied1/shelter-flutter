@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:shelter_super_app/core/network/http/core_http_builder.dart';
 import 'package:shelter_super_app/core/network/repository/core_http_repository.dart';
 import 'package:shelter_super_app/core/network/response/json_response.dart';
@@ -33,10 +34,14 @@ class GuardNetwork {
   Future<JsonResponse<GuardSummaryResponse>> getSummary({
     required String tanggalMulai,
     required String tanggalSelesai,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = {
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     final headers = {
@@ -69,10 +74,14 @@ class GuardNetwork {
     List<int>? idPetugas,
     int? idRuang,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // Array params dengan format shift[0]=1&shift[1]=2
@@ -126,10 +135,14 @@ class GuardNetwork {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // Array params dengan format shift[0]=1&shift[1]=2
@@ -178,10 +191,14 @@ class GuardNetwork {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 3,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // Array params dengan format shift[0]=1&shift[1]=2
@@ -229,10 +246,14 @@ class GuardNetwork {
     required String tanggalSelesai,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // MULTIPLE id_petugas: Duplicate parameter
@@ -273,10 +294,14 @@ class GuardNetwork {
     required String tanggalSelesai,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // MULTIPLE id_petugas: Duplicate parameter
@@ -318,10 +343,14 @@ class GuardNetwork {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // Array params dengan format shift[0]=1&shift[1]=2
@@ -370,10 +399,14 @@ class GuardNetwork {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // Array params dengan format shift[0]=1&shift[1]=2
@@ -422,10 +455,14 @@ class GuardNetwork {
     List<int>? shift,
     List<int>? idPetugas,
     String? search,
+    int limit = 10,
+    int offset = 0,
   }) async {
     final map = <String, dynamic>{
       'tanggal_mulai': tanggalMulai,
       'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
     };
 
     // Array params dengan format shift[0]=1&shift[1]=2

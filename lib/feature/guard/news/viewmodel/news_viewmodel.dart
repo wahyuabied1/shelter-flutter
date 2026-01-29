@@ -14,18 +14,50 @@ class NewsViewmodel extends ABaseChangeNotifier {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
-  // Filter states (ada shift dan petugas)
+  // Filter states
   List<int> selectedShift = [];
   List<int> selectedPetugasIds = [];
   String searchQuery = '';
 
+  // Pagination states
+  static const int _pageSize = 10;
+  int _limit = 10;
+  int _offset = 0;
+  bool _hasMore = true;
+  bool _isLoadingMore = false;
+  List<GuardNews> _allNews = [];
+
+  // Filter data (dari response pertama)
+  GuardNewsFilter? _filter;
+
   void init() {
-    getNews();
+    loadInitial();
   }
 
-  Future<bool> getNews() {
-    newsResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _limit = _pageSize;
+    _offset = 0;
+    _allNews = [];
+    _hasMore = true;
+    _filter = null;
+    await _fetchNews(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_isLoadingMore || !_hasMore || newsResult.isInitialOrLoading) return;
+    _offset = _limit;
+    _limit += _pageSize;
+    await _fetchNews(isLoadMore: true);
+  }
+
+  Future<bool> _fetchNews({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      newsResult = const Result.loading();
+      notifyListeners();
+    } else {
+      _isLoadingMore = true;
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<GuardNewsResponse>>(
       future: _guardRepository.getNews(
@@ -34,17 +66,33 @@ class NewsViewmodel extends ABaseChangeNotifier {
         shift: selectedShift.isEmpty ? null : selectedShift,
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         search: searchQuery.isEmpty ? null : searchQuery,
+        limit: _limit,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          final jsonResponse = result.dataOrNull;
+          final response = result.dataOrNull?.data;
+          final newItems = response?.data ?? [];
 
-          newsResult = Result.success(
-            jsonResponse?.data,
-          );
+          // Simpan filter dari response pertama
+          if (!isLoadMore && response?.filter != null) {
+            _filter = response!.filter;
+          }
+
+          if (isLoadMore) {
+            _allNews.addAll(newItems);
+          } else {
+            _allNews = List.from(newItems);
+          }
+
+          _hasMore = newItems.length >= _pageSize;
+
+          newsResult = Result.success(response);
         } else if (result.isError) {
           newsResult = Result.error(result.error);
         }
+
+        _isLoadingMore = false;
         notifyListeners();
       },
     );
@@ -53,31 +101,31 @@ class NewsViewmodel extends ABaseChangeNotifier {
   void updateStartDate(DateTime date) {
     startDate = date;
     notifyListeners();
-    getNews();
+    loadInitial();
   }
 
   void updateEndDate(DateTime date) {
     endDate = date;
     notifyListeners();
-    getNews();
+    loadInitial();
   }
 
   void updateShiftFilter(List<int> shift) {
     selectedShift = shift;
     notifyListeners();
-    getNews();
+    loadInitial();
   }
 
   void updatePetugasFilter(List<int> petugasIds) {
     selectedPetugasIds = petugasIds;
     notifyListeners();
-    getNews();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
     searchQuery = query;
     notifyListeners();
-    getNews();
+    loadInitial();
   }
 
   void resetFilters() {
@@ -85,7 +133,7 @@ class NewsViewmodel extends ABaseChangeNotifier {
     selectedPetugasIds = [];
     searchQuery = '';
     notifyListeners();
-    getNews();
+    loadInitial();
   }
 
   String _formatDate(DateTime date) {
@@ -96,23 +144,24 @@ class NewsViewmodel extends ABaseChangeNotifier {
   // Helper untuk UI
   // =======================
 
-  GuardNewsResponse? get data => newsResult.dataOrNull;
-
   bool get isLoading => newsResult.isInitialOrLoading;
 
   bool get isError => newsResult.isError;
 
-  List<GuardNews> get newsList => data?.data ?? [];
+  bool get isLoadingMore => _isLoadingMore;
 
-  int get totalData => newsList.length;
+  bool get hasMore => _hasMore;
+
+  List<GuardNews> get newsList => _allNews;
+
+  int get totalData => _allNews.length;
 
   String get totalDataText => 'Menampilkan $totalData Data';
 
   // Filter data
-  List<int> get availableShifts => data?.filter.shift ?? [];
+  List<int> get availableShifts => _filter?.shift ?? [];
 
-  List<GuardNewsFilterPetugas> get availablePetugas =>
-      data?.filter.petugas ?? [];
+  List<GuardNewsFilterPetugas> get availablePetugas => _filter?.petugas ?? [];
 
   // Text untuk filter buttons
   String get selectedShiftText {
