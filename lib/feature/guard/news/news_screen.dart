@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/loading_line_shimmer.dart';
 import 'package:shelter_super_app/design/loading_list_shimmer.dart';
@@ -33,6 +35,8 @@ class _NewsView extends StatefulWidget {
 
 class _NewsViewState extends State<_NewsView> {
   final ScrollController _scrollController = ScrollController();
+  final shimmerHeightThreshold = 68.h;
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -48,16 +52,13 @@ class _NewsViewState extends State<_NewsView> {
   }
 
   void _onScroll() {
-    if (_isBottom) {
-      context.read<NewsViewmodel>().loadMore();
+    final vm = context.read<NewsViewmodel>();
+    if (_scrollController.position.pixels >=
+        (_scrollController.position.maxScrollExtent - shimmerHeightThreshold)) {
+      _debouncer.run((){
+        vm.loadMore();
+      });
     }
-  }
-
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
   }
 
   @override

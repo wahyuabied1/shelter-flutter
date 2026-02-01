@@ -20,11 +20,9 @@ class NewsViewmodel extends ABaseChangeNotifier {
   String searchQuery = '';
 
   // Pagination states
-  static const int _pageSize = 10;
-  int _limit = 10;
   int _offset = 0;
   bool _hasMore = true;
-  bool _isLoadingMore = false;
+  bool isLoadMoreInProgress = false;
   List<GuardNews> _allNews = [];
 
   // Filter data (dari response pertama)
@@ -35,7 +33,6 @@ class NewsViewmodel extends ABaseChangeNotifier {
   }
 
   Future<void> loadInitial() async {
-    _limit = _pageSize;
     _offset = 0;
     _allNews = [];
     _hasMore = true;
@@ -44,18 +41,19 @@ class NewsViewmodel extends ABaseChangeNotifier {
   }
 
   Future<void> loadMore() async {
-    if (_isLoadingMore || !_hasMore || newsResult.isInitialOrLoading) return;
-    _offset = _limit;
-    _limit += _pageSize;
-    await _fetchNews(isLoadMore: true);
+    if(_hasMore){
+      if(isLoadMoreInProgress){
+        return Future(() => []);
+      }else{
+        isLoadMoreInProgress = true;
+        await _fetchNews(isLoadMore: true);
+      }
+    }
   }
 
   Future<bool> _fetchNews({required bool isLoadMore}) {
     if (!isLoadMore) {
       newsResult = const Result.loading();
-      notifyListeners();
-    } else {
-      _isLoadingMore = true;
       notifyListeners();
     }
 
@@ -66,7 +64,7 @@ class NewsViewmodel extends ABaseChangeNotifier {
         shift: selectedShift.isEmpty ? null : selectedShift,
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         search: searchQuery.isEmpty ? null : searchQuery,
-        limit: _limit,
+        limit: 10,
         offset: _offset,
       ),
       onResult: (result) {
@@ -85,14 +83,14 @@ class NewsViewmodel extends ABaseChangeNotifier {
             _allNews = List.from(newItems);
           }
 
-          _hasMore = newItems.length >= _pageSize;
+          _hasMore = newItems.isNotEmpty;
+          _offset = _allNews.length;
 
           newsResult = Result.success(response);
         } else if (result.isError) {
           newsResult = Result.error(result.error);
         }
-
-        _isLoadingMore = false;
+        isLoadMoreInProgress = false;
         notifyListeners();
       },
     );
@@ -147,8 +145,6 @@ class NewsViewmodel extends ABaseChangeNotifier {
   bool get isLoading => newsResult.isInitialOrLoading;
 
   bool get isError => newsResult.isError;
-
-  bool get isLoadingMore => _isLoadingMore;
 
   bool get hasMore => _hasMore;
 
