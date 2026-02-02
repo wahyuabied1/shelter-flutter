@@ -6,13 +6,14 @@ part 'hadirqu_attendance_detail_response.g.dart';
 
 @JsonSerializable()
 class HadirquAttendanceDetailResponse {
+  @JsonKey(defaultValue: [])
   final List<AttendanceDetail> data;
-  final AttendanceDetailFilter filter;
+  final AttendanceDetailFilter? filter;
   final String status;
 
   HadirquAttendanceDetailResponse({
     required this.data,
-    required this.filter,
+    this.filter,
     required this.status,
   });
 
@@ -72,16 +73,37 @@ class AttendanceDetail {
 
 @JsonSerializable()
 class AttendanceDetailFilter {
+  @JsonKey(defaultValue: [])
   final List<Departemen> departemen;
+  @JsonKey(defaultValue: [])
   final List<String> jabatan;
+  @JsonKey(name: 'status_absensi', defaultValue: [])
+  final List<StatusAbsensi> statusAbsensi;
 
   AttendanceDetailFilter({
     required this.departemen,
     required this.jabatan,
+    required this.statusAbsensi,
   });
 
   factory AttendanceDetailFilter.fromJson(Map<String, dynamic> json) =>
       _$AttendanceDetailFilterFromJson(json);
 
   Map<String, dynamic> toJson() => _$AttendanceDetailFilterToJson(this);
+}
+
+@JsonSerializable()
+class StatusAbsensi {
+  final int status;
+  final String text;
+
+  StatusAbsensi({
+    required this.status,
+    required this.text,
+  });
+
+  factory StatusAbsensi.fromJson(Map<String, dynamic> json) =>
+      _$StatusAbsensiFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StatusAbsensiToJson(this);
 }

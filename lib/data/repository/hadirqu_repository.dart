@@ -54,6 +54,7 @@ class HadirquRepository {
     List<int>? idDepartemen,
     List<String>? jabatan,
     String? karyawan,
+    List<int>? status,
   }) async {
     return _hadirquNetwork.getAttendanceDetail(
       kehadiran: kehadiran,
@@ -61,6 +62,7 @@ class HadirquRepository {
       idDepartemen: idDepartemen,
       jabatan: jabatan,
       karyawan: karyawan,
+      status: status,
     );
   }
 
@@ -72,6 +74,8 @@ class HadirquRepository {
     int? filterKehadiran,
     String? filterKehadiranPersamaan,
     int? filterKehadiranNilai,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _hadirquNetwork.getPresenceList(
       tanggalMulai: tanggalMulai,
@@ -81,6 +85,8 @@ class HadirquRepository {
       filterKehadiran: filterKehadiran,
       filterKehadiranPersamaan: filterKehadiranPersamaan,
       filterKehadiranNilai: filterKehadiranNilai,
+      limit: limit,
+      offset: offset,
     );
   }
 
@@ -92,6 +98,8 @@ class HadirquRepository {
     int? filterKehadiran,
     String? filterKehadiranPersamaan,
     int? filterKehadiranNilai,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _hadirquNetwork.getPresenceLogList(
       tanggalMulai: tanggalMulai,
@@ -101,6 +109,8 @@ class HadirquRepository {
       filterKehadiran: filterKehadiran,
       filterKehadiranPersamaan: filterKehadiranPersamaan,
       filterKehadiranNilai: filterKehadiranNilai,
+      limit: limit,
+      offset: offset,
     );
   }
 
@@ -132,12 +142,15 @@ class HadirquRepository {
     List<int>? idDepartemen,
     List<String>? jabatan,
     List<int>? grupId,
+    int limit = 10,
+    int offset = 0,
   }) async {
     return _hadirquNetwork.getEmployeeList(
-      idDepartemen: idDepartemen,
-      jabatan: jabatan,
-      grupId: grupId,
-    );
+        idDepartemen: idDepartemen,
+        jabatan: jabatan,
+        grupId: grupId,
+        limit: limit,
+        offset: offset);
   }
 
   Future<JsonResponse<HadirquLeaveReportResponse>> getLeaveReport({

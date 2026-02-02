@@ -24,6 +24,18 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
   // FILTER STATE
   // =======================
   List<int> selectedDepartemenIds = [];
+  List<int> selectedStatusIds = [];
+
+  // Simpan filter departemen secara terpisah agar tidak hilang saat loading
+  List<Departemen> _cachedDepartemenList = [];
+
+  // Cache filter jabatan dari detail results
+  List<String> _cachedPresentJabatanList = [];
+  List<String> _cachedAbsentJabatanList = [];
+
+  // Cache filter status from detail results
+  List<StatusAbsensi> _cachedPresentStatusList = [];
+  List<StatusAbsensi> _cachedAbsentStatusList = [];
 
   // =======================
   // INIT
@@ -51,6 +63,11 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
         if (result.isSuccess) {
           final reportResponse = result.dataOrNull?.data;
           reportResult = Result.success(reportResponse);
+
+          // Cache filter departemen agar tidak hilang saat loading berikutnya
+          if (reportResponse?.filter?.departemen != null) {
+            _cachedDepartemenList = reportResponse!.filter!.departemen ?? [];
+          }
         } else if (result.isError) {
           reportResult = Result.error(result.error);
         }
@@ -71,10 +88,17 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
         tanggal: selectedDate.yyyyMMdd('-'),
         idDepartemen:
             selectedDepartemenIds.isEmpty ? null : selectedDepartemenIds,
+        status: selectedStatusIds.isEmpty ? null : selectedStatusIds,
       ),
       onResult: (result) {
         if (result.isSuccess) {
           presentDetailResult = Result.success(result.dataOrNull?.data);
+
+          // Cache jabatan list agar tidak hilang saat loading berikutnya
+          if (result.dataOrNull?.data?.filter != null) {
+            _cachedPresentJabatanList = result.dataOrNull!.data!.filter!.jabatan;
+            _cachedPresentStatusList = result.dataOrNull!.data!.filter!.statusAbsensi;
+          }
         } else if (result.isError) {
           presentDetailResult = Result.error(result.error);
         }
@@ -94,10 +118,17 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
         tanggal: selectedDate.yyyyMMdd('-'),
         idDepartemen:
             selectedDepartemenIds.isEmpty ? null : selectedDepartemenIds,
+        status: selectedStatusIds.isEmpty ? null : selectedStatusIds,
       ),
       onResult: (result) {
         if (result.isSuccess) {
           absentDetailResult = Result.success(result.dataOrNull?.data);
+
+          // Cache jabatan list agar tidak hilang saat loading berikutnya
+          if (result.dataOrNull?.data?.filter != null) {
+            _cachedAbsentJabatanList = result.dataOrNull!.data!.filter!.jabatan;
+            _cachedAbsentStatusList = result.dataOrNull!.data!.filter!.statusAbsensi;
+          }
         } else if (result.isError) {
           absentDetailResult = Result.error(result.error);
         }
@@ -219,8 +250,13 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
   // FILTER DATA
   // =======================
 
-  List<Departemen> get departemenList =>
-      reportResult.dataOrNull?.filter?.departemen ?? [];
+  List<Departemen> get departemenList {
+    // Gunakan cached list agar filter tidak hilang saat loading
+    if (_cachedDepartemenList.isNotEmpty) {
+      return _cachedDepartemenList;
+    }
+    return reportResult.dataOrNull?.filter?.departemen ?? [];
+  }
 
   String get selectedDepartemenText {
     if (selectedDepartemenIds.isEmpty) {
@@ -241,5 +277,81 @@ class ReportDashboardViewmodel extends ABaseChangeNotifier {
     }
 
     return '${selectedDepartemenIds.length} Departemen Dipilih';
+  }
+
+  // Jabatan lists dengan caching
+  List<String> get presentJabatanList {
+    // Gunakan cached list agar filter tidak hilang saat loading
+    if (_cachedPresentJabatanList.isNotEmpty) {
+      return _cachedPresentJabatanList;
+    }
+    return presentDetailResult.dataOrNull?.filter?.jabatan ?? [];
+  }
+
+  List<String> get absentJabatanList {
+    // Gunakan cached list agar filter tidak hilang saat loading
+    if (_cachedAbsentJabatanList.isNotEmpty) {
+      return _cachedAbsentJabatanList;
+    }
+    return absentDetailResult.dataOrNull?.filter?.jabatan ?? [];
+  }
+
+  // Status lists dengan caching
+  List<StatusAbsensi> get presentStatusList {
+    // Gunakan cached list agar filter tidak hilang saat loading
+    if (_cachedPresentStatusList.isNotEmpty) {
+      return _cachedPresentStatusList;
+    }
+    return presentDetailResult.dataOrNull?.filter?.statusAbsensi ?? [];
+  }
+
+  List<StatusAbsensi> get absentStatusList {
+    // Gunakan cached list agar filter tidak hilang saat loading
+    if (_cachedAbsentStatusList.isNotEmpty) {
+      return _cachedAbsentStatusList;
+    }
+    return absentDetailResult.dataOrNull?.filter?.statusAbsensi ?? [];
+  }
+
+  // =======================
+  // STATUS FILTER ACTIONS
+  // =======================
+
+  /// Update status filter dan refresh detail
+  void updateStatusFilter(List<int> statusIds) {
+    selectedStatusIds = statusIds;
+    notifyListeners();
+  }
+
+  void clearStatusFilter() {
+    selectedStatusIds.clear();
+    notifyListeners();
+  }
+
+  bool isStatusSelected(int statusId) {
+    return selectedStatusIds.contains(statusId);
+  }
+
+  String get selectedStatusText {
+    if (selectedStatusIds.isEmpty) {
+      return 'Semua Status';
+    }
+
+    if (selectedStatusIds.length == 1) {
+      // Ambil dari cache yang sudah ada
+      final allStatus = [
+        ..._cachedPresentStatusList,
+        ..._cachedAbsentStatusList,
+      ];
+
+      final status = allStatus.firstWhere(
+        (s) => s.status == selectedStatusIds.first,
+        orElse: () => StatusAbsensi(status: 0, text: 'Unknown'),
+      );
+
+      return status.text;
+    }
+
+    return '${selectedStatusIds.length} Status Dipilih';
   }
 }

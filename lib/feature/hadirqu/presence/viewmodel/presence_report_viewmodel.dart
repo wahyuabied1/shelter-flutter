@@ -30,13 +30,39 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
   String? filterKehadiranPersamaan;
   int? filterKehadiranNilai;
 
+  // Pagination states
+  int _offset = 0;
+  bool _hasMore = true;
+  bool isLoadMoreInProgress = false;
+  List<PresenceData> _allPresenceList = [];
+
   void init() {
-    getPresenceList();
+    loadInitial();
   }
 
-  Future<bool> getPresenceList() {
-    presenceResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _offset = 0;
+    _allPresenceList = [];
+    _hasMore = true;
+    await _fetchPresenceList(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_hasMore) {
+      if (isLoadMoreInProgress) {
+        return Future(() => []);
+      } else {
+        isLoadMoreInProgress = true;
+        await _fetchPresenceList(isLoadMore: true);
+      }
+    }
+  }
+
+  Future<bool> _fetchPresenceList({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      presenceResult = const Result.loading();
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<HadirquPresenceListResponse>>(
       future: _hadirquRepository.getPresenceList(
@@ -48,17 +74,38 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
         filterKehadiran: filterKehadiran,
         filterKehadiranPersamaan: filterKehadiranPersamaan,
         filterKehadiranNilai: filterKehadiranNilai,
+        limit: 10,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
           final presenceResponse = result.dataOrNull?.data;
+          final newItems = presenceResponse?.data ?? [];
+
+          if (isLoadMore) {
+            _allPresenceList.addAll(newItems);
+          } else {
+            _allPresenceList = List.from(newItems);
+          }
+
+          // Check if we got a full page - if yes, there might be more data
+          _hasMore = newItems.length >= 10;
+          _offset = _allPresenceList.length;
+
           presenceResult = Result.success(presenceResponse);
         } else if (result.isError) {
           presenceResult = Result.error(result.error);
         }
+        isLoadMoreInProgress = false;
         notifyListeners();
       },
     );
+  }
+
+  // Kept for backward compatibility
+  Future<bool> getPresenceList() async {
+    await loadInitial();
+    return true;
   }
 
   @override
@@ -88,19 +135,19 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
     startDate = start;
     endDate = end;
     notifyListeners();
-    getPresenceList();
+    loadInitial();
   }
 
   void updateDepartemenFilter(List<int> departemenIds) {
     selectedDepartemenIds = departemenIds;
     notifyListeners();
-    getPresenceList();
+    loadInitial();
   }
 
   void updateJabatanFilter(List<String> jabatan) {
     selectedJabatan = jabatan;
     notifyListeners();
-    getPresenceList();
+    loadInitial();
   }
 
   void updateKehadiranFilter({
@@ -112,7 +159,7 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
     filterKehadiranPersamaan = operator;
     filterKehadiranNilai = nilai;
     notifyListeners();
-    getPresenceList();
+    loadInitial();
   }
 
   void resetKehadiranFilter() {
@@ -120,7 +167,7 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
     filterKehadiranPersamaan = null;
     filterKehadiranNilai = null;
     notifyListeners();
-    getPresenceList();
+    loadInitial();
   }
 
   void resetAllFilters() {
@@ -130,7 +177,7 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
     filterKehadiranPersamaan = null;
     filterKehadiranNilai = null;
     notifyListeners();
-    getPresenceList();
+    loadInitial();
   }
 
   // =======================
@@ -143,9 +190,11 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
 
   bool get isError => presenceResult.isError;
 
-  List<PresenceData> get presenceList => data?.data ?? [];
+  bool get hasMore => _hasMore;
 
-  int get totalKaryawan => presenceList.length;
+  List<PresenceData> get presenceList => _allPresenceList;
+
+  int get totalKaryawan => _allPresenceList.length;
 
   List<Departemen> get availableDepartemen => data?.filter.departemen ?? [];
 

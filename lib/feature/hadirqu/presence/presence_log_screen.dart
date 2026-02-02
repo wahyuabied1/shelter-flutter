@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
-
+import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/export_bottom_sheet.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
@@ -37,69 +37,147 @@ class _PresenceLogView extends StatefulWidget {
 }
 
 class _PresenceLogScreenState extends State<_PresenceLogView> {
+  final ScrollController _scrollController = ScrollController();
+  final shimmerHeightThreshold = 68.h;
+  final _debouncer = Debouncer(milliseconds: 500);
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final vm = context.read<PresenceLogViewmodel>();
+    if (_scrollController.position.pixels >=
+        (_scrollController.position.maxScrollExtent - shimmerHeightThreshold)) {
+      _debouncer.run(() {
+        vm.loadMore();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PresenceLogViewmodel>();
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: [
-          _header(context, vm),
-          _buildFilters(context, vm),
-          const SizedBox(height: 12.0),
-
-          // Employee Cards Count
-          if (vm.isLoading)
-            const LoadingLineShimmer()
-          else
-            Text(
-              'Menampilkan ${vm.totalKaryawan} Karyawan',
-              style: TextStyle(color: Colors.black54, fontSize: 12.sp),
+    return RefreshIndicator(
+      color: Colors.blue,
+      backgroundColor: Colors.white,
+      onRefresh: () => vm.loadInitial(),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _header(context, vm),
+                  _buildFilters(context, vm),
+                  const SizedBox(height: 12.0),
+                  // Employee Cards Count
+                  if (vm.isLoading)
+                    const LoadingLineShimmer()
+                  else
+                    Text(
+                      'Menampilkan ${vm.totalKaryawan} Karyawan',
+                      style: TextStyle(color: Colors.black54, fontSize: 12.sp),
+                    ),
+                  const SizedBox(height: 4.0),
+                ],
+              ),
             ),
-          const SizedBox(height: 4.0),
+            _buildContent(vm),
+          ],
+        ),
+      ),
+    );
+  }
 
-          // Loading State
-          if (vm.isLoading)
-            const PresenceLoadingCard()
-          // Error State
-          else if (vm.isError)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Gagal memuat data',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () => vm.getPresenceList(),
-                      child: const Text('Coba Lagi'),
-                    ),
-                  ],
+  Widget _buildContent(PresenceLogViewmodel vm) {
+    if (vm.isLoading) {
+      return const SliverToBoxAdapter(
+        child: PresenceLoadingCard(),
+      );
+    }
+
+    if (vm.isError) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Gagal memuat data',
+                  style: TextStyle(color: Colors.red),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () => vm.loadInitial(),
+                  child: const Text('Coba Lagi'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (vm.presenceList.isEmpty) {
+      return const SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Text('Tidak ada data karyawan'),
+          ),
+        ),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          // Load more indicator
+          if (index == vm.presenceList.length) {
+            // Show loading indicator if loading or has more data
+            if (vm.isLoadMoreInProgress || vm.hasMore) {
+              return const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.blue,
+                  ),
+                ),
+              );
+            }
+            // Show end message when no more data
+            return const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: Text(
+                  'Semua data telah ditampilkan',
+                  style: TextStyle(color: Colors.grey),
                 ),
               ),
-            )
-          else if (vm.presenceList.isNotEmpty)
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: vm.presenceList.length,
-              itemBuilder: (context, index) {
-                return EmployeeCard(employee: vm.presenceList[index], vm: vm);
-              },
-            )
-          // Empty State
-          else
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32.0),
-                child: Text('Tidak ada data karyawan'),
-              ),
-            ),
-        ],
+            );
+          }
+
+          final employee = vm.presenceList[index];
+          return EmployeeCard(employee: employee, vm: vm);
+        },
+        childCount: vm.presenceList.length + 1,
       ),
     );
   }

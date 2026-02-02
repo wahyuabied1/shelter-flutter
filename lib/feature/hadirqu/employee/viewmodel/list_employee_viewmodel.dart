@@ -16,13 +16,39 @@ class ListEmployeeViewmodel extends ABaseChangeNotifier {
   List<int> selectedGrupIds = [];
   String searchQuery = '';
 
+  // Pagination states
+  int _offset = 0;
+  bool _hasMore = true;
+  bool isLoadMoreInProgress = false;
+  List<Employee> _allEmployeeList = [];
+
   void init() {
-    getEmployeeList();
+    loadInitial();
   }
 
-  Future<bool> getEmployeeList() {
-    employeeResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _offset = 0;
+    _allEmployeeList = [];
+    _hasMore = true;
+    await _fetchEmployeeList(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_hasMore) {
+      if (isLoadMoreInProgress) {
+        return Future(() => []);
+      } else {
+        isLoadMoreInProgress = true;
+        await _fetchEmployeeList(isLoadMore: true);
+      }
+    }
+  }
+
+  Future<bool> _fetchEmployeeList({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      employeeResult = const Result.loading();
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<HadirquEmployeeListResponse>>(
       future: _hadirquRepository.getEmployeeList(
@@ -30,34 +56,55 @@ class ListEmployeeViewmodel extends ABaseChangeNotifier {
             selectedDepartemenIds.isEmpty ? null : selectedDepartemenIds,
         jabatan: selectedJabatan.isEmpty ? null : selectedJabatan,
         grupId: selectedGrupIds.isEmpty ? null : selectedGrupIds,
+        limit: 10,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          employeeResult = Result.success(result.dataOrNull?.data);
+          final employeeResponse = result.dataOrNull?.data;
+          final newItems = employeeResponse?.data ?? [];
+
+          if (isLoadMore) {
+            _allEmployeeList.addAll(newItems);
+          } else {
+            _allEmployeeList = List.from(newItems);
+          }
+
+          _hasMore = newItems.length >= 10;
+          _offset = _allEmployeeList.length;
+
+          employeeResult = Result.success(employeeResponse);
         } else if (result.isError) {
           employeeResult = Result.error(result.error);
         }
+        isLoadMoreInProgress = false;
         notifyListeners();
       },
     );
   }
 
+  // Kept for backward compatibility
+  Future<bool> getEmployeeList() async {
+    await loadInitial();
+    return true;
+  }
+
   void updateDepartemenFilter(List<int> departemenIds) {
     selectedDepartemenIds = departemenIds;
     notifyListeners();
-    getEmployeeList();
+    loadInitial();
   }
 
   void updateJabatanFilter(List<String> jabatan) {
     selectedJabatan = jabatan;
     notifyListeners();
-    getEmployeeList();
+    loadInitial();
   }
 
   void updateGrupFilter(List<int> grupIds) {
     selectedGrupIds = grupIds;
     notifyListeners();
-    getEmployeeList();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
@@ -71,7 +118,7 @@ class ListEmployeeViewmodel extends ABaseChangeNotifier {
     selectedGrupIds = [];
     searchQuery = '';
     notifyListeners();
-    getEmployeeList();
+    loadInitial();
   }
 
   // =======================
@@ -84,12 +131,12 @@ class ListEmployeeViewmodel extends ABaseChangeNotifier {
 
   bool get isError => employeeResult.isError;
 
+  bool get hasMore => _hasMore;
+
   List<Employee> get employeeList {
-    final list = data?.data ?? [];
+    if (searchQuery.isEmpty) return _allEmployeeList;
 
-    if (searchQuery.isEmpty) return list;
-
-    return list.where((employee) {
+    return _allEmployeeList.where((employee) {
       return employee.nama.toLowerCase().contains(searchQuery) ||
           (employee.jabatan?.toLowerCase().contains(searchQuery) ?? false) ||
           (employee.namaDepartemen?.toLowerCase().contains(searchQuery) ??

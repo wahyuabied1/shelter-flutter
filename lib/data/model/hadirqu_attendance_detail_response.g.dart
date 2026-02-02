@@ -9,11 +9,14 @@ part of 'hadirqu_attendance_detail_response.dart';
 HadirquAttendanceDetailResponse _$HadirquAttendanceDetailResponseFromJson(
         Map<String, dynamic> json) =>
     HadirquAttendanceDetailResponse(
-      data: (json['data'] as List<dynamic>)
-          .map((e) => AttendanceDetail.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      filter: AttendanceDetailFilter.fromJson(
-          json['filter'] as Map<String, dynamic>),
+      data: (json['data'] as List<dynamic>?)
+              ?.map((e) => AttendanceDetail.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      filter: json['filter'] == null
+          ? null
+          : AttendanceDetailFilter.fromJson(
+              json['filter'] as Map<String, dynamic>),
       status: json['status'] as String,
     );
 
@@ -62,11 +65,18 @@ Map<String, dynamic> _$AttendanceDetailToJson(AttendanceDetail instance) =>
 AttendanceDetailFilter _$AttendanceDetailFilterFromJson(
         Map<String, dynamic> json) =>
     AttendanceDetailFilter(
-      departemen: (json['departemen'] as List<dynamic>)
-          .map((e) => Departemen.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      jabatan:
-          (json['jabatan'] as List<dynamic>).map((e) => e as String).toList(),
+      departemen: (json['departemen'] as List<dynamic>?)
+              ?.map((e) => Departemen.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      jabatan: (json['jabatan'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      statusAbsensi: (json['status_absensi'] as List<dynamic>?)
+              ?.map((e) => StatusAbsensi.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$AttendanceDetailFilterToJson(
@@ -74,4 +84,17 @@ Map<String, dynamic> _$AttendanceDetailFilterToJson(
     <String, dynamic>{
       'departemen': instance.departemen,
       'jabatan': instance.jabatan,
+      'status_absensi': instance.statusAbsensi,
+    };
+
+StatusAbsensi _$StatusAbsensiFromJson(Map<String, dynamic> json) =>
+    StatusAbsensi(
+      status: (json['status'] as num).toInt(),
+      text: json['text'] as String,
+    );
+
+Map<String, dynamic> _$StatusAbsensiToJson(StatusAbsensi instance) =>
+    <String, dynamic>{
+      'status': instance.status,
+      'text': instance.text,
     };

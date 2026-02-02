@@ -7,6 +7,7 @@ import '../model/guard_journal_response.dart';
 import '../model/guard_key_loan_response.dart';
 import '../model/guard_mail_response.dart';
 import '../model/guard_news_response.dart';
+import '../model/guard_operasional_response.dart';
 import '../model/guard_phone_response.dart';
 import '../model/guard_project_response.dart';
 import '../model/guard_transporter_response.dart';
@@ -174,6 +175,25 @@ class GuardRepository {
         tanggalSelesai: tanggalSelesai,
         shift: shift,
         idPetugas: idPetugas,
+        search: search,
+        limit: limit,
+        offset: offset);
+  }
+
+  Future<JsonResponse<GuardOperasionalResponse>> getOperasional({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? idPetugas,
+    int? idKendaraan,
+    String? search,
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    return _guardNetwork.getOperasional(
+        tanggalMulai: tanggalMulai,
+        tanggalSelesai: tanggalSelesai,
+        idPetugas: idPetugas,
+        idKendaraan: idKendaraan,
         search: search,
         limit: limit,
         offset: offset);

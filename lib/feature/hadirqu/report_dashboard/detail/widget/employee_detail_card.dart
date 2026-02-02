@@ -83,6 +83,8 @@ class _EmployeePresentDetailViewState extends State<EmployeePresentDetailCard> {
                         _buildDepartemenFilter(vm),
                         const SizedBox(width: 12),
                         _buildJabatanFilter(vm),
+                        const SizedBox(width: 12),
+                        _buildStatusFilter(vm),
                       ],
                     ),
                   ),
@@ -296,14 +298,10 @@ class _EmployeePresentDetailViewState extends State<EmployeePresentDetailCard> {
   }
 
   Widget _buildJabatanFilter(ReportDashboardViewmodel vm) {
-    final result =
-        widget.isPresent ? vm.presentDetailResult : vm.absentDetailResult;
+    // Gunakan cached jabatan list agar tidak hilang saat loading
+    final jabatanList = widget.isPresent ? vm.presentJabatanList : vm.absentJabatanList;
 
-    final hasData = !result.isInitialOrLoading &&
-        !result.isError &&
-        result.dataOrNull != null;
-
-    if (!hasData) {
+    if (jabatanList.isEmpty) {
       return InkWell(
         onTap: null,
         child: Container(
@@ -323,8 +321,6 @@ class _EmployeePresentDetailViewState extends State<EmployeePresentDetailCard> {
         ),
       );
     }
-
-    final jabatanList = result.dataOrNull?.filter.jabatan ?? [];
 
     return InkWell(
       onTap: () async {
@@ -378,6 +374,110 @@ class _EmployeePresentDetailViewState extends State<EmployeePresentDetailCard> {
             ),
             const SizedBox(width: 4),
             const Icon(Icons.keyboard_arrow_down_sharp),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusFilter(ReportDashboardViewmodel vm) {
+    // Gunakan cached status list agar tidak hilang saat loading
+    final statusList = widget.isPresent ? vm.presentStatusList : vm.absentStatusList;
+
+    if (statusList.isEmpty) {
+      return InkWell(
+        onTap: null,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: const Row(
+            children: [
+              Text('Status', style: TextStyle(color: Colors.grey)),
+              SizedBox(width: 4),
+              Icon(Icons.keyboard_arrow_down_sharp, color: Colors.grey),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return InkWell(
+      onTap: () async {
+        if (statusList.isEmpty) return;
+
+        final Map<String, bool> statusChoice = {};
+        for (var status in statusList) {
+          statusChoice[status.text] = vm.selectedStatusIds.contains(status.status);
+        }
+
+        final result = await showModalBottomSheet<Map<String, bool>>(
+          context: context,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          builder: (context) {
+            return MultiChoiceBottomSheet(
+              title: "Status Absensi",
+              choice: statusChoice,
+            );
+          },
+        );
+
+        if (result != null) {
+          final selectedIds = <int>[];
+          result.forEach((key, isSelected) {
+            if (isSelected) {
+              final status = statusList.firstWhere(
+                (s) => s.text == key,
+                orElse: () => StatusAbsensi(status: 0, text: ''),
+              );
+              if (status.status != 0) selectedIds.add(status.status);
+            }
+          });
+          vm.updateStatusFilter(selectedIds);
+          _loadData();
+        }
+      },
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: vm.selectedStatusIds.isEmpty
+              ? Colors.transparent
+              : Colors.blue.shade50,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: vm.selectedStatusIds.isEmpty
+                ? Colors.grey.shade300
+                : Colors.blue,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              vm.selectedStatusText,
+              style: TextStyle(
+                color: vm.selectedStatusIds.isNotEmpty
+                    ? Colors.blue.shade700
+                    : Colors.black,
+                fontWeight: vm.selectedStatusIds.isNotEmpty
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.keyboard_arrow_down_sharp,
+              color: vm.selectedStatusIds.isNotEmpty
+                  ? Colors.blue.shade700
+                  : Colors.black,
+            ),
           ],
         ),
       ),

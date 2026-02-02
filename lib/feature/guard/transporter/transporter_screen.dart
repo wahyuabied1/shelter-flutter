@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
+import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/double_list_tile.dart';
 import 'package:shelter_super_app/design/loading_line_shimmer.dart';
@@ -34,6 +37,8 @@ class _TransporterView extends StatefulWidget {
 
 class _TransporterViewState extends State<_TransporterView> {
   final ScrollController _scrollController = ScrollController();
+  final shimmerHeightThreshold = 68.h;
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -43,17 +48,18 @@ class _TransporterViewState extends State<_TransporterView> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
+    final vm = context.read<TransporterViewmodel>();
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      final vm = context.read<TransporterViewmodel>();
-      if (vm.hasMore && !vm.isLoadingMore) {
+        (_scrollController.position.maxScrollExtent - shimmerHeightThreshold)) {
+      _debouncer.run(() {
         vm.loadMore();
-      }
+      });
     }
   }
 
@@ -88,76 +94,84 @@ class _TransporterViewState extends State<_TransporterView> {
         child: Container(
           color: Colors.white,
           padding: const EdgeInsets.all(16),
-          child: ListView(
+          child: CustomScrollView(
             controller: _scrollController,
-            children: [
-              DoubleDateWidget(
-                endDate: vm.endDate.ddMMyyyy('/'),
-                startDate: vm.startDate.ddMMyyyy('/'),
-                onChangeStartDate: (date) {
-                  final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                  vm.updateStartDate(parsed);
-                },
-                onChangeEndDate: (date) {
-                  final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                  vm.updateEndDate(parsed);
-                },
-                theme: ThemeWidget.red,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    // TODO: Export to Excel
-                  },
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.red.shade700,
-                    side: const BorderSide(color: Colors.red, width: 1.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DoubleDateWidget(
+                      endDate: vm.endDate.ddMMyyyy('/'),
+                      startDate: vm.startDate.ddMMyyyy('/'),
+                      onChangeStartDate: (date) {
+                        final parsed = DateFormat('dd/MM/yyyy').parse(date);
+                        vm.updateStartDate(parsed);
+                      },
+                      onChangeEndDate: (date) {
+                        final parsed = DateFormat('dd/MM/yyyy').parse(date);
+                        vm.updateEndDate(parsed);
+                      },
+                      theme: ThemeWidget.red,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Export ke Excel',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red.shade700,
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // TODO: Export to Excel
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.red.shade700,
+                          side: const BorderSide(color: Colors.red, width: 1.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Export ke Excel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.red.shade700,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildPetugasFilter(vm),
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildPetugasFilter(vm),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      child: SearchWidget(
+                        hint: 'Cari Transporter',
+                        onSearch: (search) => vm.updateSearchQuery(search),
+                        theme: ThemeWidget.red,
+                      ),
+                    ),
+                    if (vm.isLoading)
+                      const LoadingLineShimmer()
+                    else
+                      Text(
+                        vm.totalDataText,
+                        style: const TextStyle(
+                            color: Colors.black54, fontSize: 12),
+                      ),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                child: SearchWidget(
-                  hint: 'Cari Transporter',
-                  onSearch: (search) => vm.updateSearchQuery(search),
-                  theme: ThemeWidget.red,
-                ),
-              ),
-              if (vm.isLoading)
-                const LoadingLineShimmer()
-              else
-                Text(
-                  vm.totalDataText,
-                  style: const TextStyle(color: Colors.black54, fontSize: 12),
-                ),
-              const SizedBox(height: 8),
               _buildContent(vm),
             ],
           ),
@@ -249,73 +263,79 @@ class _TransporterViewState extends State<_TransporterView> {
 
   Widget _buildContent(TransporterViewmodel vm) {
     if (vm.isLoading) {
-      return const LoadingListShimmer(
-        marginHorizontal: false,
+      return const SliverToBoxAdapter(
+        child: LoadingListShimmer(
+          marginHorizontal: false,
+        ),
       );
     }
 
     if (vm.isError) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Gagal memuat data'),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => vm.loadInitial(),
-                child: const Text('Coba Lagi'),
-              ),
-            ],
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Gagal memuat data'),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () => vm.loadInitial(),
+                  child: const Text('Coba Lagi'),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
 
     if (vm.transporterList.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Text(
-            vm.searchQuery.isNotEmpty || vm.selectedPetugasIds.isNotEmpty
-                ? 'Tidak ada data yang sesuai filter'
-                : 'Tidak ada data',
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Text(
+              vm.searchQuery.isNotEmpty || vm.selectedPetugasIds.isNotEmpty
+                  ? 'Tidak ada data yang sesuai filter'
+                  : 'Tidak ada data',
+            ),
           ),
         ),
       );
     }
 
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: vm.transporterList.length + 1, // +1 untuk load more indicator
-      itemBuilder: (context, index) {
-        // Load more indicator
-        if (index == vm.transporterList.length) {
-          return vm.hasMore
-              ? const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.red,
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          // Load more indicator
+          if (index == vm.transporterList.length) {
+            return vm.hasMore
+                ? const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.red,
+                      ),
                     ),
-                  ),
-                )
-              : const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(
-                    child: Text(
-                      'Semua data telah ditampilkan',
-                      style: TextStyle(color: Colors.grey),
+                  )
+                : const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Text(
+                        'Semua data telah ditampilkan',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
-                  ),
-                );
-        }
+                  );
+          }
 
-        final item = vm.transporterList[index];
-        return _card(item);
-      },
+          final item = vm.transporterList[index];
+          return _card(item);
+        },
+        childCount: vm.transporterList.length + 1,
+      ),
     );
   }
 

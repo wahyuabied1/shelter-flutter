@@ -30,7 +30,33 @@ class _ListEmployeeView extends StatefulWidget {
 }
 
 class _ListEmployeeScreenState extends State<_ListEmployeeView> {
+  final ScrollController _scrollController = ScrollController();
+  final shimmerHeightThreshold = 68.h;
   final _debouncer = Debouncer(milliseconds: 800);
+  final _scrollDebouncer = Debouncer(milliseconds: 500);
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final vm = context.read<ListEmployeeViewmodel>();
+    if (_scrollController.position.pixels >=
+        (_scrollController.position.maxScrollExtent - shimmerHeightThreshold)) {
+      _scrollDebouncer.run(() {
+        vm.loadMore();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,85 +83,92 @@ class _ListEmployeeScreenState extends State<_ListEmployeeView> {
           ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          children: [
-            // Search Field
-            TextField(
-              onChanged: (value) {
-                _debouncer.run(() {
-                  vm.updateSearchQuery(value);
-                });
-              },
-              cursorColor: Colors.blue[800],
-              decoration: InputDecoration(
-                hintText: 'Cari karyawan',
-                hintStyle: const TextStyle(color: Colors.black12),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 16,
-                ),
-                enabledBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  borderSide: BorderSide(width: 1, color: Colors.black12),
-                ),
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  borderSide: BorderSide(width: 1, color: Colors.black12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(12)),
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: Colors.blue.shade700,
-                  ),
+      body: RefreshIndicator(
+        color: Colors.blue,
+        backgroundColor: Colors.white,
+        onRefresh: () => vm.loadInitial(),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Search Field
+                    TextField(
+                      onChanged: (value) {
+                        _debouncer.run(() {
+                          vm.updateSearchQuery(value);
+                        });
+                      },
+                      cursorColor: Colors.blue[800],
+                      decoration: InputDecoration(
+                        hintText: 'Cari karyawan',
+                        hintStyle: const TextStyle(color: Colors.black12),
+                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 16,
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(width: 1, color: Colors.black12),
+                        ),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(width: 1, color: Colors.black12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(
+                            width: 1,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                      ),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Filter Buttons
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildDepartemenFilter(vm),
+                          SizedBox(width: 12.w),
+                          _buildJabatanFilter(vm),
+                          SizedBox(width: 12.w),
+                          _buildGrupFilter(vm),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Employee Count
+                    if (vm.isLoading)
+                      const LoadingLineShimmer()
+                    else
+                      Text(
+                        'Menampilkan ${vm.totalEmployees} Karyawan',
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 12,
+                        ),
+                      ),
+                    const SizedBox(height: 8),
+                  ],
                 ),
               ),
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-
-            // Filter Buttons
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildDepartemenFilter(vm),
-                  SizedBox(width: 12.w),
-                  _buildJabatanFilter(vm),
-                  SizedBox(width: 12.w),
-                  _buildGrupFilter(vm),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Employee Count
-            if (vm.isLoading)
-              const LoadingLineShimmer()
-            else
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Menampilkan ${vm.totalEmployees} Karyawan',
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            const SizedBox(height: 8),
-
-            // Employee List
-            Expanded(
-              child: _buildContent(vm),
-            ),
-          ],
+              _buildContent(vm),
+            ],
+          ),
         ),
       ),
     );
@@ -378,52 +411,91 @@ class _ListEmployeeScreenState extends State<_ListEmployeeView> {
 
   Widget _buildContent(ListEmployeeViewmodel vm) {
     if (vm.isLoading) {
-      return ListView.builder(
-        itemCount: 5,
-        itemBuilder: (_, __) => const LoadingListShimmer(
-          marginHorizontal: false,
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (_, __) => const LoadingListShimmer(
+            marginHorizontal: false,
+          ),
+          childCount: 5,
         ),
       );
     }
 
     if (vm.isError) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Gagal memuat data'),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => vm.getEmployeeList(),
-              child: const Text('Coba Lagi'),
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Gagal memuat data'),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => vm.loadInitial(),
+                  child: const Text('Coba Lagi'),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       );
     }
 
     if (vm.employeeList.isEmpty) {
-      return Center(
-        child: Text(
-          vm.searchQuery.isNotEmpty ||
-                  vm.selectedDepartemenIds.isNotEmpty ||
-                  vm.selectedJabatan.isNotEmpty ||
-                  vm.selectedGrupIds.isNotEmpty
-              ? 'Tidak ada karyawan yang sesuai filter'
-              : 'Tidak ada data karyawan',
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Text(
+              vm.searchQuery.isNotEmpty ||
+                      vm.selectedDepartemenIds.isNotEmpty ||
+                      vm.selectedJabatan.isNotEmpty ||
+                      vm.selectedGrupIds.isNotEmpty
+                  ? 'Tidak ada karyawan yang sesuai filter'
+                  : 'Tidak ada data karyawan',
+            ),
+          ),
         ),
       );
     }
 
-    return ListView.builder(
-      itemCount: vm.employeeList.length,
-      itemBuilder: (context, index) {
-        final employee = vm.employeeList[index];
-        return ProfileCard(
-          employee: employee,
-          index: index,
-        );
-      },
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          // Load more indicator
+          if (index == vm.employeeList.length) {
+            // Show loading indicator if loading or has more data
+            if (vm.isLoadMoreInProgress || vm.hasMore) {
+              return const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.blue,
+                  ),
+                ),
+              );
+            }
+            // Show end message when no more data
+            return const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: Text(
+                  'Semua data telah ditampilkan',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            );
+          }
+
+          final employee = vm.employeeList[index];
+          return ProfileCard(
+            employee: employee,
+            index: index,
+          );
+        },
+        childCount: vm.employeeList.length + 1,
+      ),
     );
   }
 }

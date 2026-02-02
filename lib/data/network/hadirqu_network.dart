@@ -137,30 +137,41 @@ class HadirquNetwork {
     List<int>? idDepartemen,
     List<String>? jabatan,
     String? karyawan,
+    List<int>? status,
     int limit = 10,
     int offset = 0,
   }) async {
     final map = <String, dynamic>{};
 
     map['kehadiran'] = kehadiran.toString();
-    map['limit'] = limit.toString();
-    map['offset'] = offset.toString();
+    // Jangan kirim limit dan offset kalau tidak dibutuhkan API
+    // map['limit'] = limit.toString();
+    // map['offset'] = offset.toString();
 
     if (tanggal != null) {
       map['tanggal'] = tanggal;
     }
 
     if (idDepartemen != null && idDepartemen.isNotEmpty) {
-      map['id_departemen'] = idDepartemen.map((e) => e.toString()).toList();
+      // API expects id_departemen[] format for array parameters
+      map['id_departemen[]'] = idDepartemen.map((e) => e.toString()).toList();
     }
 
     if (jabatan != null && jabatan.isNotEmpty) {
-      map['jabatan'] = jabatan;
+      // API expects jabatan[] format for array parameters
+      map['jabatan[]'] = jabatan;
     }
 
     if (karyawan != null && karyawan.isNotEmpty) {
       map['karyawan'] = karyawan;
     }
+
+    if (status != null && status.isNotEmpty) {
+      // API expects status[] format for array parameters
+      map['status[]'] = status.map((e) => e.toString()).toList();
+    }
+
+    // 📝 LOG: Query parameters
 
     final response = await _http.hadirkuHttp(
       headers: {
@@ -171,8 +182,15 @@ class HadirquNetwork {
       query: map,
     ).get();
 
+    // 📝 LOG: Response
+
     final json = jsonDecode(response.body) as Map<String, dynamic>;
+
+    // 📝 LOG: Parsed JSON
+
     final data = HadirquAttendanceDetailResponse.fromJson(json);
+
+    // 📝 LOG: Model data
 
     return JsonResponse(
       response,

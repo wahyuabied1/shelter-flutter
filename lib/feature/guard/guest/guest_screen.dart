@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
+import 'package:shelter_super_app/core/basic_extensions/string_extension.dart';
+import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/double_list_tile.dart';
 import 'package:shelter_super_app/design/loading_line_shimmer.dart';
@@ -36,6 +39,8 @@ class _GuestView extends StatefulWidget {
 
 class _GuestViewState extends State<_GuestView> {
   final ScrollController _scrollController = ScrollController();
+  final shimmerHeightThreshold = 68.h;
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -45,17 +50,18 @@ class _GuestViewState extends State<_GuestView> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
+    final vm = context.read<GuestViewmodel>();
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      final vm = context.read<GuestViewmodel>();
-      if (vm.hasMore && !vm.isLoadingMore) {
+        (_scrollController.position.maxScrollExtent - shimmerHeightThreshold)) {
+      _debouncer.run(() {
         vm.loadMore();
-      }
+      });
     }
   }
 
@@ -83,14 +89,18 @@ class _GuestViewState extends State<_GuestView> {
           ),
         ),
       ),
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16),
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            // Header Section (Filters, Search, etc)
-            SliverToBoxAdapter(
+      body: RefreshIndicator(
+        color: Colors.red,
+        backgroundColor: Colors.white,
+        onRefresh: () => vm.loadInitial(),
+        child: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(16),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              // Header Section (Filters, Search, etc)
+              SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -171,6 +181,7 @@ class _GuestViewState extends State<_GuestView> {
             // Content Section
             _buildContent(vm),
           ],
+        ),
         ),
       ),
     );

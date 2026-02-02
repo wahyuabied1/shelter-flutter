@@ -19,13 +19,39 @@ class PemakaianTelpViewmodel extends ABaseChangeNotifier {
   List<int> selectedPetugasIds = [];
   String searchQuery = '';
 
+  // Pagination states
+  int _offset = 0;
+  bool _hasMore = true;
+  bool isLoadMoreInProgress = false;
+  List<GuardPhone> _allPhones = [];
+
   void init() {
-    getPhone();
+    loadInitial();
   }
 
-  Future<bool> getPhone() {
-    phoneResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _offset = 0;
+    _allPhones = [];
+    _hasMore = true;
+    await _fetchPhone(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_hasMore) {
+      if (isLoadMoreInProgress) {
+        return Future(() => []);
+      } else {
+        isLoadMoreInProgress = true;
+        await _fetchPhone(isLoadMore: true);
+      }
+    }
+  }
+
+  Future<bool> _fetchPhone({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      phoneResult = const Result.loading();
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<GuardPhoneResponse>>(
       future: _guardRepository.getPhone(
@@ -34,50 +60,67 @@ class PemakaianTelpViewmodel extends ABaseChangeNotifier {
         shift: selectedShift.isEmpty ? null : selectedShift,
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         search: searchQuery.isEmpty ? null : searchQuery,
+        limit: 10,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          final jsonResponse = result.dataOrNull;
+          final response = result.dataOrNull?.data;
+          final newItems = response?.data ?? [];
 
-          phoneResult = Result.success(
-            jsonResponse?.data,
-          );
+          if (isLoadMore) {
+            _allPhones.addAll(newItems);
+          } else {
+            _allPhones = List.from(newItems);
+          }
+
+          _hasMore = newItems.isNotEmpty;
+          _offset = _allPhones.length;
+
+          phoneResult = Result.success(response);
         } else if (result.isError) {
           phoneResult = Result.error(result.error);
         }
+        isLoadMoreInProgress = false;
         notifyListeners();
       },
     );
   }
 
+  // Kept for backward compatibility
+  Future<bool> getPhone() async {
+    await loadInitial();
+    return true;
+  }
+
   void updateStartDate(DateTime date) {
     startDate = date;
     notifyListeners();
-    getPhone();
+    loadInitial();
   }
 
   void updateEndDate(DateTime date) {
     endDate = date;
     notifyListeners();
-    getPhone();
+    loadInitial();
   }
 
   void updateShiftFilter(List<int> shift) {
     selectedShift = shift;
     notifyListeners();
-    getPhone();
+    loadInitial();
   }
 
   void updatePetugasFilter(List<int> petugasIds) {
     selectedPetugasIds = petugasIds;
     notifyListeners();
-    getPhone();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
     searchQuery = query;
     notifyListeners();
-    getPhone();
+    loadInitial();
   }
 
   void resetFilters() {
@@ -85,7 +128,7 @@ class PemakaianTelpViewmodel extends ABaseChangeNotifier {
     selectedPetugasIds = [];
     searchQuery = '';
     notifyListeners();
-    getPhone();
+    loadInitial();
   }
 
   String _formatDate(DateTime date) {
@@ -102,9 +145,11 @@ class PemakaianTelpViewmodel extends ABaseChangeNotifier {
 
   bool get isError => phoneResult.isError;
 
-  List<GuardPhone> get phoneList => data?.data ?? [];
+  bool get hasMore => _hasMore;
 
-  int get totalData => phoneList.length;
+  List<GuardPhone> get phoneList => _allPhones;
+
+  int get totalData => _allPhones.length;
 
   String get totalDataText => 'Menampilkan $totalData Data';
 

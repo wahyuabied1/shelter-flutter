@@ -19,13 +19,39 @@ class MailViewmodel extends ABaseChangeNotifier {
   List<int> selectedPetugasIds = [];
   String searchQuery = '';
 
+  // Pagination states
+  int _offset = 0;
+  bool _hasMore = true;
+  bool isLoadMoreInProgress = false;
+  List<GuardMail> _allMails = [];
+
   void init() {
-    getMail();
+    loadInitial();
   }
 
-  Future<bool> getMail() {
-    mailResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _offset = 0;
+    _allMails = [];
+    _hasMore = true;
+    await _fetchMail(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_hasMore) {
+      if (isLoadMoreInProgress) {
+        return Future(() => []);
+      } else {
+        isLoadMoreInProgress = true;
+        await _fetchMail(isLoadMore: true);
+      }
+    }
+  }
+
+  Future<bool> _fetchMail({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      mailResult = const Result.loading();
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<GuardMailResponse>>(
       future: _guardRepository.getMail(
@@ -34,50 +60,67 @@ class MailViewmodel extends ABaseChangeNotifier {
         shift: selectedShift.isEmpty ? null : selectedShift,
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         search: searchQuery.isEmpty ? null : searchQuery,
+        limit: 10,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          final jsonResponse = result.dataOrNull;
+          final response = result.dataOrNull?.data;
+          final newItems = response?.data ?? [];
 
-          mailResult = Result.success(
-            jsonResponse?.data,
-          );
+          if (isLoadMore) {
+            _allMails.addAll(newItems);
+          } else {
+            _allMails = List.from(newItems);
+          }
+
+          _hasMore = newItems.isNotEmpty;
+          _offset = _allMails.length;
+
+          mailResult = Result.success(response);
         } else if (result.isError) {
           mailResult = Result.error(result.error);
         }
+        isLoadMoreInProgress = false;
         notifyListeners();
       },
     );
   }
 
+  // Kept for backward compatibility
+  Future<bool> getMail() async {
+    await loadInitial();
+    return true;
+  }
+
   void updateStartDate(DateTime date) {
     startDate = date;
     notifyListeners();
-    getMail();
+    loadInitial();
   }
 
   void updateEndDate(DateTime date) {
     endDate = date;
     notifyListeners();
-    getMail();
+    loadInitial();
   }
 
   void updateShiftFilter(List<int> shift) {
     selectedShift = shift;
     notifyListeners();
-    getMail();
+    loadInitial();
   }
 
   void updatePetugasFilter(List<int> petugasIds) {
     selectedPetugasIds = petugasIds;
     notifyListeners();
-    getMail();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
     searchQuery = query;
     notifyListeners();
-    getMail();
+    loadInitial();
   }
 
   void resetFilters() {
@@ -85,7 +128,7 @@ class MailViewmodel extends ABaseChangeNotifier {
     selectedPetugasIds = [];
     searchQuery = '';
     notifyListeners();
-    getMail();
+    loadInitial();
   }
 
   String _formatDate(DateTime date) {
@@ -102,9 +145,11 @@ class MailViewmodel extends ABaseChangeNotifier {
 
   bool get isError => mailResult.isError;
 
-  List<GuardMail> get mailList => data?.data ?? [];
+  bool get hasMore => _hasMore;
 
-  int get totalData => mailList.length;
+  List<GuardMail> get mailList => _allMails;
+
+  int get totalData => _allMails.length;
 
   String get totalDataText => 'Menampilkan $totalData Data';
 

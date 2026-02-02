@@ -18,13 +18,39 @@ class ProjectViewmodel extends ABaseChangeNotifier {
   List<int> selectedPetugasIds = [];
   String searchQuery = '';
 
+  // Pagination states
+  int _offset = 0;
+  bool _hasMore = true;
+  bool isLoadMoreInProgress = false;
+  List<GuardProject> _allProjects = [];
+
   void init() {
-    getProject();
+    loadInitial();
   }
 
-  Future<bool> getProject() {
-    projectResult = const Result.loading();
-    notifyListeners();
+  Future<void> loadInitial() async {
+    _offset = 0;
+    _allProjects = [];
+    _hasMore = true;
+    await _fetchProject(isLoadMore: false);
+  }
+
+  Future<void> loadMore() async {
+    if (_hasMore) {
+      if (isLoadMoreInProgress) {
+        return Future(() => []);
+      } else {
+        isLoadMoreInProgress = true;
+        await _fetchProject(isLoadMore: true);
+      }
+    }
+  }
+
+  Future<bool> _fetchProject({required bool isLoadMore}) {
+    if (!isLoadMore) {
+      projectResult = const Result.loading();
+      notifyListeners();
+    }
 
     return Result.callApi<JsonResponse<GuardProjectResponse>>(
       future: _guardRepository.getProject(
@@ -32,51 +58,68 @@ class ProjectViewmodel extends ABaseChangeNotifier {
         tanggalSelesai: _formatDate(endDate),
         idPetugas: selectedPetugasIds.isEmpty ? null : selectedPetugasIds,
         search: searchQuery.isEmpty ? null : searchQuery,
+        limit: 10,
+        offset: _offset,
       ),
       onResult: (result) {
         if (result.isSuccess) {
-          final jsonResponse = result.dataOrNull;
+          final response = result.dataOrNull?.data;
+          final newItems = response?.data ?? [];
 
-          projectResult = Result.success(
-            jsonResponse?.data,
-          );
+          if (isLoadMore) {
+            _allProjects.addAll(newItems);
+          } else {
+            _allProjects = List.from(newItems);
+          }
+
+          _hasMore = newItems.isNotEmpty;
+          _offset = _allProjects.length;
+
+          projectResult = Result.success(response);
         } else if (result.isError) {
           projectResult = Result.error(result.error);
         }
+        isLoadMoreInProgress = false;
         notifyListeners();
       },
     );
   }
 
+  // Kept for backward compatibility
+  Future<bool> getProject() async {
+    await loadInitial();
+    return true;
+  }
+
   void updateStartDate(DateTime date) {
     startDate = date;
     notifyListeners();
-    getProject();
+    loadInitial();
   }
 
   void updateEndDate(DateTime date) {
     endDate = date;
     notifyListeners();
-    getProject();
+    loadInitial();
   }
 
   void updatePetugasFilter(List<int> petugasIds) {
     selectedPetugasIds = petugasIds;
     notifyListeners();
-    getProject();
+    loadInitial();
   }
 
   void updateSearchQuery(String query) {
     searchQuery = query;
     notifyListeners();
-    getProject();
+    loadInitial();
   }
 
   void resetFilters() {
     selectedPetugasIds = [];
     searchQuery = '';
     notifyListeners();
-    getProject();
+    loadInitial();
   }
 
   String _formatDate(DateTime date) {
@@ -93,9 +136,11 @@ class ProjectViewmodel extends ABaseChangeNotifier {
 
   bool get isError => projectResult.isError;
 
-  List<GuardProject> get projectList => data?.data ?? [];
+  bool get hasMore => _hasMore;
 
-  int get totalData => projectList.length;
+  List<GuardProject> get projectList => _allProjects;
+
+  int get totalData => _allProjects.length;
 
   String get totalDataText => 'Menampilkan $totalData Data';
 

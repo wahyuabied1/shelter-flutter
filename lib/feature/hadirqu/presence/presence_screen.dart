@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shelter_super_app/core/routing/core/bottom_sheet_page.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_log_screen.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/presence_report_screen.dart';
@@ -62,28 +61,25 @@ class _PresenceScreenState extends State<PresenceScreen>
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TabBar(
+      body: Column(
+        children: [
+          TabBar(
+            controller: tabController,
+            indicatorColor: Colors.blue,
+            labelColor: Colors.blue.shade700,
+            unselectedLabelColor: Colors.grey,
+            tabs: const [
+              Tab(text: 'Laporan Presensi'),
+              Tab(text: 'Log Presensi'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
               controller: tabController,
-              indicatorColor: Colors.blue,
-              labelColor: Colors.blue.shade700,
-              unselectedLabelColor: Colors.grey,
-              tabs: const [
-                Tab(text: 'Laporan Presensi'),
-                Tab(text: 'Log Presensi'),
-              ],
+              children: const [PresenceReportScreen(), PresenceLogScreen()],
             ),
-            Container(
-              constraints: BoxConstraints(minHeight: 200.h, maxHeight: 700.h),
-              child: TabBarView(
-                controller: tabController,
-                children: const [PresenceReportScreen(), PresenceLogScreen()],
-              ),
-            )
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

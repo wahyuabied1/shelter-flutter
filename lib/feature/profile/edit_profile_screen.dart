@@ -101,9 +101,9 @@ class _EditProfileScreenState extends State<_EditProfileView> {
         titleSpacing: 0,
         leading: const BackButton(color: Colors.white),
         centerTitle: false,
-        backgroundColor: Color(0xFF205B9A),
+        backgroundColor: const Color(0xFF205B9A),
         elevation: 0,
-        title: Text('Edit Profile',
+        title: const Text('Edit Profile',
             style: TextStyle(
               fontSize: 20,
               color: Colors.white,
@@ -111,12 +111,12 @@ class _EditProfileScreenState extends State<_EditProfileView> {
             )),
       ),
       body: Container(
-        margin: EdgeInsets.all(16),
+        margin: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Stack(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 50),
+                margin: const EdgeInsets.only(top: 50),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -126,44 +126,40 @@ class _EditProfileScreenState extends State<_EditProfileView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('Informasi Data Diri',
+                    const Text('Informasi Data Diri',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildTextField(
                       label: 'Nama Lengkap',
                       controller: _nameController,
-                      onValueChanged: (val) => {
-                        vm.onChangeName(_nameController.text)
-                      },
+                      onValueChanged: (val) =>
+                          {vm.onChangeName(_nameController.text)},
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildTextField(
                       label: 'NIK/Username',
                       controller: _userNameController,
-                      onValueChanged: (val) => {
-                        vm.onChangeUsername(_userNameController.text)
-                      },
+                      onValueChanged: (val) =>
+                          {vm.onChangeUsername(_userNameController.text)},
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildTextField(
                       label: 'Email',
                       controller: _emailNameController,
                       keyboardType: TextInputType.emailAddress,
-                      onValueChanged: (val) => {
-                        vm.onChangeEmail(_emailNameController.text)
-                      },
+                      onValueChanged: (val) =>
+                          {vm.onChangeEmail(_emailNameController.text)},
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildTextField(
                       label: 'Alamat',
                       controller: _addressNameController,
                       maxLines: 3,
-                      onValueChanged: (val) => {
-                        vm.onChangeAddress(_addressNameController.text)
-                      },
+                      onValueChanged: (val) =>
+                          {vm.onChangeAddress(_addressNameController.text)},
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -188,7 +184,7 @@ class _EditProfileScreenState extends State<_EditProfileView> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Flexible(
                           flex: 1,
                           child: SizedBox(
@@ -241,32 +237,32 @@ class _EditProfileScreenState extends State<_EditProfileView> {
                     children: [
                       Shimmer(
                         isLoading: vm.userResult.isLoading,
-                        child:
-                        _imageFile != null ? CircleAvatar(
-                          radius: 50,
-                          backgroundImage: FileImage(_imageFile!),
-                        )
-                            :
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.blue.shade700,
-                          child: Text(
-                            (vm.userResult.dataOrNull?.user?.nama ?? "-")
-                                .initialName(),
-                            style: TextStyle(
-                              fontSize: 24.sp,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                        child: _imageFile != null
+                            ? CircleAvatar(
+                                radius: 50,
+                                backgroundImage: FileImage(_imageFile!),
+                              )
+                            : CircleAvatar(
+                                radius: 50,
+                                backgroundColor: Colors.blue.shade700,
+                                child: Text(
+                                  (vm.userResult.dataOrNull?.user?.nama ?? "-")
+                                      .initialName(),
+                                  style: TextStyle(
+                                    fontSize: 24.sp,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                       ),
                       CircleAvatar(
                         radius: 16,
                         backgroundColor: Colors.blue,
                         child: IconButton(
                           padding: EdgeInsets.zero,
-                          icon: Icon(Icons.edit, size: 16, color: Colors.white),
+                          icon: const Icon(Icons.edit,
+                              size: 16, color: Colors.white),
                           onPressed: () {
                             _updatePhoto();
                           },
@@ -293,44 +289,44 @@ class _EditProfileScreenState extends State<_EditProfileView> {
     var vm = context.watch<EditProfileViewmodel>();
 
     return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      cursorColor: Colors.blue[800],
-      decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4.0),
-          borderSide: BorderSide(color: Colors.black26),
+        controller: controller,
+        keyboardType: keyboardType,
+        maxLines: maxLines,
+        cursorColor: Colors.blue[800],
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: const BorderSide(color: Colors.black26),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4.0),
+            borderSide: BorderSide(color: Colors.blue.shade700),
+          ),
+          labelStyle: const TextStyle(color: Colors.black54),
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4.0),
-          borderSide: BorderSide(color: Colors.blue.shade700),
-        ),
-        labelStyle: const TextStyle(color: Colors.black54),
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      onChanged:(value){
-        onValueChanged.call(value);
-      }
-    );
+        onChanged: (value) {
+          onValueChanged.call(value);
+        });
   }
 
-  Future<void> _saveProfile(EditProfileViewmodel  vm) async {
+  Future<void> _saveProfile(EditProfileViewmodel vm) async {
     await LoadingDialog.runWithLoading(
       context,
-          () => vm.changeProfile(),
+      () => vm.changeProfile(),
       width: 250,
       message: "Memproses",
     ).then((value) {
-      if(!mounted) return;
+      if (!mounted) return;
       if (vm.updateResult.isSuccess) {
-        showDefaultSuccess(context,"Berhasil mengubah profile!");
-        context.goNamed(HomepageRoutes.main.name!,queryParameters: {'page':'2'});
-      } else if(vm.updateResult.isError){
-        showDefaultError(context,vm.updateResult.error);
+        showDefaultSuccess(context, "Berhasil mengubah profile!");
+        context
+            .goNamed(HomepageRoutes.main.name!, queryParameters: {'page': '2'});
+      } else if (vm.updateResult.isError) {
+        showDefaultError(context, vm.updateResult.error);
       }
     });
   }

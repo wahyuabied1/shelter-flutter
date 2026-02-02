@@ -11,6 +11,7 @@ import '../model/guard_journal_response.dart';
 import '../model/guard_key_loan_response.dart';
 import '../model/guard_mail_response.dart';
 import '../model/guard_news_response.dart';
+import '../model/guard_operasional_response.dart';
 import '../model/guard_phone_response.dart';
 import '../model/guard_project_response.dart';
 import '../model/guard_transporter_response.dart';
@@ -25,6 +26,7 @@ class GuardNetwork {
   static const _mail = "posko/surat";
   static const _journal = "posko/jurnal";
   static const _news = "posko/berita";
+  static const _operasional = "posko/operasional";
 
   final CoreHttpBuilder _http;
   final CoreHttpRepository _coreHttpRepository;
@@ -497,6 +499,59 @@ class GuardNetwork {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     final data = GuardNewsResponse.fromJson(json);
+
+    return JsonResponse(
+      response,
+      (_) => data,
+      source: () => json,
+    );
+  }
+
+  Future<JsonResponse<GuardOperasionalResponse>> getOperasional({
+    required String tanggalMulai,
+    required String tanggalSelesai,
+    List<int>? idPetugas,
+    int? idKendaraan,
+    String? search,
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    final map = <String, dynamic>{
+      'tanggal_mulai': tanggalMulai,
+      'tanggal_selesai': tanggalSelesai,
+      'limit': limit.toString(),
+      'offset': offset.toString(),
+    };
+
+    // MULTIPLE id_petugas: Duplicate parameter
+    // id_petugas=492&id_petugas=5152
+    if (idPetugas != null && idPetugas.isNotEmpty) {
+      map['id_petugas'] = idPetugas.map((e) => e.toString()).toList();
+    }
+
+    if (idKendaraan != null) {
+      map['id_kendaraan'] = idKendaraan.toString();
+    }
+
+    if (search != null && search.isNotEmpty) {
+      map['search'] = search;
+    }
+
+    final headers = {
+      'sha': await _coreHttpRepository.getSHA(),
+      'salt': await _coreHttpRepository.getToken(),
+    };
+
+    final response = await _http
+        .guardHttp(
+          headers: headers,
+          path: _operasional,
+          query: map,
+        )
+        .get();
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = GuardOperasionalResponse.fromJson(json);
 
     return JsonResponse(
       response,
