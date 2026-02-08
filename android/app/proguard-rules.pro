@@ -11,3 +11,9 @@
 #-keep class com.google.gson.stream.** { *; }
 
 -keep class com.android.billingclient.api.** { *; }
+
+
+# Keep Kotlin metadata
+-keep class kotlin.Metadata { *; }
+-dontwarn javax.naming.**
+-dontwarn javax.naming.directory.**
