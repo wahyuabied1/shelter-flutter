@@ -42,13 +42,13 @@ class _ScheduleReportScreenState extends State<ScheduleReportScreen> {
         padding: EdgeInsets.all(16),
         child: ListView(
           children: [
-            DoubleDateWidget(
-              endDate: DateTime.now().ddMMyyyy('/'),
-              startDate: DateTime.now().ddMMyyyy('/'),
-              onChangeStartDate: (date) {},
-              onChangeEndDate: (date) {},
-              theme: ThemeWidget.orange,
-            ),
+            // DoubleDateWidget(
+            //   endDate: DateTime.now().ddMMyyyy('/'),
+            //   startDate: DateTime.now().ddMMyyyy('/'),
+            //   onChangeDate: (date) {},
+            //   onChangeEndDate: (date) {},
+            //   theme: ThemeWidget.orange,
+            // ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
               width: double.infinity,

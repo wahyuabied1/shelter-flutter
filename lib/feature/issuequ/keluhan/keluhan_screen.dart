@@ -77,10 +77,9 @@ class _TransporterScreenState extends State<KeluhanScreen> {
         child: ListView(
           children: [
             DoubleDateWidget(
-              endDate: DateTime.now().ddMMyyyy('/'),
-              startDate: DateTime.now().ddMMyyyy('/'),
-              onChangeStartDate: (date) {},
-              onChangeEndDate: (date) {},
+              endDate: DateTime.now(),
+              startDate: DateTime.now(),
+              onChangeDate: (date) {},
               theme: ThemeWidget.darkBlue,
             ),
             Container(

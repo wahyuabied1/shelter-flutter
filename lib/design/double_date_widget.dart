@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/design/theme_widget.dart';
 
 class DoubleDateWidget extends StatefulWidget {
-  String startDate;
-  String endDate;
 
-  final Function(String) onChangeStartDate;
-  final Function(String) onChangeEndDate;
-
-  ThemeWidget? theme;
+  DateTime startDate;
+  DateTime endDate;
+  final Function(DateTimeRange) onChangeDate;
+  ThemeWidget theme;
 
   DoubleDateWidget({
     super.key,
     required this.endDate,
     required this.startDate,
-    required this.onChangeStartDate,
-    required this.onChangeEndDate,
-    this.theme = ThemeWidget.blue,
+    required this.onChangeDate,
+    required this.theme,
   });
 
   @override
@@ -24,13 +22,14 @@ class DoubleDateWidget extends StatefulWidget {
 }
 
 class _DoubleDateWidgetState extends State<DoubleDateWidget> {
-  String _formatDate(DateTime date) {
-    final day = date.day.toString().padLeft(2, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    final year = date.year.toString();
+  DateTimeRange? _selectedRange;
 
-    return '$day/$month/$year';
+  @override
+  void initState() {
+    super.initState();
+    _selectedRange = DateTimeRange(start: widget.startDate, end: widget.endDate);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,9 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
               const Text('Tanggal Mulai'),
               const SizedBox(height: 8.0),
               GestureDetector(
-                onTap: () => _selectDate(context, true),
+                onTap: (){
+                  _pickDateRange();
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       vertical: 12.0, horizontal: 16.0),
@@ -55,7 +56,7 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
                     children: [
                       const Icon(Icons.calendar_today, color: Colors.grey),
                       const SizedBox(width: 8.0),
-                      Flexible(child: Text(widget.startDate)),
+                      Flexible(child: Text(_selectedRange!.start.ddMMyyyy('/'))),
                     ],
                   ),
                 ),
@@ -71,7 +72,9 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
               const Text('Tanggal Berakhir'),
               const SizedBox(height: 8.0),
               GestureDetector(
-                onTap: () => _selectDate(context, false),
+                onTap: (){
+                  _pickDateRange();
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       vertical: 12.0, horizontal: 16.0),
@@ -83,7 +86,7 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
                     children: [
                       const Icon(Icons.calendar_today, color: Colors.grey),
                       const SizedBox(width: 8.0),
-                      Flexible(child: Text(widget.endDate)),
+                      Flexible(child: Text(_selectedRange!.end.ddMMyyyy('/'))),
                     ],
                   ),
                 ),
@@ -95,17 +98,27 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
-    DateTime? pickedDate = await showDatePicker(
+  Future<void> _pickDateRange() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final fallbackRange = DateTimeRange(
+      start: today,
+      end: today,
+    );
+
+    final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(now.year - 5),
+      lastDate: today, // disable tomorrow & future
+      initialDateRange: _selectedRange ?? fallbackRange,
+      initialEntryMode: DatePickerEntryMode.calendar, // ✅ can switch to input
       builder: (context, child) {
         return Theme(
-          data: ThemeData.light().copyWith(
+          data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: widget.theme?.colorTheme() ?? Colors.blue,
+              primary: widget.theme.colorTheme(),
+              secondary: widget.theme.subColorTheme(),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -115,20 +128,9 @@ class _DoubleDateWidgetState extends State<DoubleDateWidget> {
       },
     );
 
-    if (pickedDate != null) {
-      final formatted = _formatDate(pickedDate);
-
-      setState(() {
-        if (isStartDate) {
-          widget.startDate = formatted;
-
-          widget.onChangeStartDate.call(formatted);
-        } else {
-          widget.endDate = formatted;
-
-          widget.onChangeEndDate.call(formatted);
-        }
-      });
+    if (picked != null) {
+      setState(() => _selectedRange = picked);
+      widget.onChangeDate(picked);
     }
   }
 }

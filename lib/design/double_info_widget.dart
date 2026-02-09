@@ -69,7 +69,7 @@ class DoubleInfoWidget extends StatelessWidget {
                   secondValue ?? '-',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: secondValue != null ? theme.colorTheme() : null,
+                    color: secondValue != null ? theme?.colorTheme() : null,
                   ),
                 )
               ],

@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:shelter_super_app/core/basic_extensions/date_time_formatter_extension.dart';
 import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/export_bottom_sheet.dart';
 import 'package:shelter_super_app/design/loading_line_shimmer.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
+import 'package:shelter_super_app/design/theme_widget.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/viewmodel/presence_report_viewmodel.dart';
 import 'package:shelter_super_app/design/selection_filter_bottom_sheet.dart';
-import 'package:shelter_super_app/data/model/hadirqu_presence_list_response.dart';
-import 'package:intl/intl.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/widget/employee_card.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/widget/presence_loading_card.dart';
 import '../../../data/model/hadirqu_departement_filter_response.dart';
-import '../../../design/shimmer.dart';
 
 class PresenceReportScreen extends StatelessWidget {
   const PresenceReportScreen({super.key});
@@ -72,7 +69,7 @@ class _PresenceReportScreenState extends State<_PresenceReportView> {
       backgroundColor: Colors.white,
       onRefresh: () => vm.loadInitial(),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8.0),
         child: CustomScrollView(
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -385,22 +382,18 @@ class _PresenceReportScreenState extends State<_PresenceReportView> {
 
   Widget _header(BuildContext context, PresenceReportViewmodel vm) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(left: 8.0, right:8.0 ,bottom: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Date Input Fields
           DoubleDateWidget(
-            startDate: vm.startDate.ddMMyyyy('/'),
-            endDate: vm.endDate.ddMMyyyy('/'),
-            onChangeStartDate: (date) {
-              final parsed = DateFormat('dd/MM/yyyy').parse(date);
-              vm.updateDateRange(parsed, vm.endDate);
+            startDate: vm.startDate,
+            endDate: vm.endDate,
+            onChangeDate: (date){
+              vm.updateDateRange(date.start, date.end);
             },
-            onChangeEndDate: (date) {
-              final parsed = DateFormat('dd/MM/yyyy').parse(date);
-              vm.updateDateRange(vm.startDate, parsed);
-            },
+            theme: ThemeWidget.blue,
           ),
           const SizedBox(height: 12.0),
           SizedBox(

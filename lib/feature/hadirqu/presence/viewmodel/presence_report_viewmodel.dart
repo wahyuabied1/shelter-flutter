@@ -20,7 +20,7 @@ class PresenceReportViewmodel extends ABaseChangeNotifier
   Result<HadirquPresenceDetailResponse?> presenceDetailResult =
       const Result.initial();
 
-  DateTime startDate = DateTime(2025, 1, 1);
+  DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
   // Filter states

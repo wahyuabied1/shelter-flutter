@@ -253,31 +253,31 @@ class _GuardHomeState extends State<GuardHome> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Consumer<GuardHomeViewmodel>(
-                              builder: (context, vm, _) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  child: DoubleDateWidget(
-                                    theme: ThemeWidget.red,
-                                    endDate: vm.endDate.ddMMyyyy('/'),
-                                    startDate: vm.startDate.ddMMyyyy('/'),
-                                    onChangeStartDate: (date) {
-                                      final parsed =
-                                          DateFormat('dd/MM/yyyy').parse(date);
-
-                                      vm.updateStartDate(parsed);
-                                    },
-                                    onChangeEndDate: (date) {
-                                      final parsed =
-                                          DateFormat('dd/MM/yyyy').parse(date);
-
-                                      vm.updateEndDate(parsed);
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
+                            // Consumer<GuardHomeViewmodel>(
+                            //   builder: (context, vm, _) {
+                            //     return Padding(
+                            //       padding:
+                            //           const EdgeInsets.symmetric(vertical: 12),
+                            //       child: DoubleDateWidget(
+                            //         theme: ThemeWidget.red,
+                            //         endDate: vm.endDate.ddMMyyyy('/'),
+                            //         startDate: vm.startDate.ddMMyyyy('/'),
+                            //         onChangeDate: (date) {
+                            //           final parsed =
+                            //               DateFormat('dd/MM/yyyy').parse(date);
+                            //
+                            //           vm.updateStartDate(parsed);
+                            //         },
+                            //         onChangeEndDate: (date) {
+                            //           final parsed =
+                            //               DateFormat('dd/MM/yyyy').parse(date);
+                            //
+                            //           vm.updateEndDate(parsed);
+                            //         },
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
                             Consumer<GuardHomeViewmodel>(
                               builder: (context, vm, _) {
                                 if (vm.isLoading) {

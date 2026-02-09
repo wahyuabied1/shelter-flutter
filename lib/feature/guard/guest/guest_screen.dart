@@ -104,19 +104,19 @@ class _GuestViewState extends State<_GuestView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DoubleDateWidget(
-                    endDate: vm.endDate.ddMMyyyy('/'),
-                    startDate: vm.startDate.ddMMyyyy('/'),
-                    onChangeStartDate: (date) {
-                      final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                      vm.updateStartDate(parsed);
-                    },
-                    onChangeEndDate: (date) {
-                      final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                      vm.updateEndDate(parsed);
-                    },
-                    theme: ThemeWidget.red,
-                  ),
+                  // DoubleDateWidget(
+                  //   endDate: vm.endDate.ddMMyyyy('/'),
+                  //   startDate: vm.startDate.ddMMyyyy('/'),
+                  //   onChangeDate: (date) {
+                  //     final parsed = DateFormat('dd/MM/yyyy').parse(date);
+                  //     vm.updateStartDate(parsed);
+                  //   },
+                  //   onChangeEndDate: (date) {
+                  //     final parsed = DateFormat('dd/MM/yyyy').parse(date);
+                  //     vm.updateEndDate(parsed);
+                  //   },
+                  //   theme: ThemeWidget.red,
+                  // ),
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     width: double.infinity,

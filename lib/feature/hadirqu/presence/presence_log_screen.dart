@@ -6,6 +6,7 @@ import 'package:shelter_super_app/core/debouncer/debouncer.dart';
 import 'package:shelter_super_app/design/double_date_widget.dart';
 import 'package:shelter_super_app/design/export_bottom_sheet.dart';
 import 'package:shelter_super_app/design/multi_choice_bottom_sheet.dart';
+import 'package:shelter_super_app/design/theme_widget.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/viewmodel/presence_log_viewmodel.dart';
 import 'package:shelter_super_app/feature/hadirqu/presence/viewmodel/presence_report_viewmodel.dart';
 import 'package:shelter_super_app/design/selection_filter_bottom_sheet.dart';
@@ -392,16 +393,12 @@ class _PresenceLogScreenState extends State<_PresenceLogView> {
         children: [
           // Date Input Fields
           DoubleDateWidget(
-            startDate: vm.startDate.ddMMyyyy('/'),
-            endDate: vm.endDate.ddMMyyyy('/'),
-            onChangeStartDate: (date) {
-              final parsed = DateFormat('dd/MM/yyyy').parse(date);
-              vm.updateDateRange(parsed, vm.endDate);
+            startDate: vm.startDate,
+            endDate: vm.endDate,
+            onChangeDate: (date){
+              vm.updateDateRange(date.start, date.end);
             },
-            onChangeEndDate: (date) {
-              final parsed = DateFormat('dd/MM/yyyy').parse(date);
-              vm.updateDateRange(vm.startDate, parsed);
-            },
+            theme: ThemeWidget.blue,
           ),
           const SizedBox(height: 12.0),
           SizedBox(

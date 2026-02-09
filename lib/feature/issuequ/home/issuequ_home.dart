@@ -114,10 +114,9 @@ class IssueQuHome extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: DoubleDateWidget(
                               theme: ThemeWidget.darkBlue,
-                              endDate: DateTime.now().ddMMyyyy('/'),
-                              startDate: DateTime.now().ddMMyyyy('/'),
-                              onChangeStartDate: (date) {},
-                              onChangeEndDate: (date) {},
+                              endDate: DateTime.now(),
+                              startDate: DateTime.now(),
+                              onChangeDate: (date) {},
                             ),
                           ),
                       Container(

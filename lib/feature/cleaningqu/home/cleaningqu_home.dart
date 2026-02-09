@@ -100,16 +100,16 @@ class CleaningQuHome extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: DoubleDateWidget(
-                              theme: ThemeWidget.orange,
-                              endDate: DateTime.now().ddMMyyyy('/'),
-                              startDate: DateTime.now().ddMMyyyy('/'),
-                              onChangeStartDate: (date) {},
-                              onChangeEndDate: (date) {},
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(vertical: 12),
+                          //   child: DoubleDateWidget(
+                          //     theme: ThemeWidget.orange,
+                          //     endDate: DateTime.now().ddMMyyyy('/'),
+                          //     startDate: DateTime.now().ddMMyyyy('/'),
+                          //     onChangeDate: (date) {},
+                          //     onChangeEndDate: (date) {},
+                          //   ),
+                          // ),
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
