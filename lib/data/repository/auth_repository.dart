@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:shelter_super_app/core/network/repository/core_http_repository.dart';
 import 'package:shelter_super_app/core/network/response/api_response.dart';
@@ -21,8 +21,18 @@ class AuthRepository {
   Future<void> saveSession({
     UserResponse? user,
   }) async {
+    print('📝 SAVE SESSION CALLED:');
+    print('   user: ${user != null ? "ADA" : "NULL"}');
+    print('   token: ${user?.token ?? "NULL"}');
+    print('   user.user: ${user?.user != null ? "ADA" : "NULL"}');
+    print('   user.menus: ${user?.menus != null ? "ADA" : "NULL"}');
+
     if (user?.token != null && user!.token!.isNotEmpty) {
+      print('   ✅ TOKEN VALID - Akan save ke storage');
       await _coreHttpRepository.setUser(user);
+      print('   ✅ SAVE KE STORAGE SELESAI');
+    } else {
+      print('   ❌ TOKEN NULL/EMPTY - TIDAK SAVE!');
     }
   }
 
@@ -70,8 +80,8 @@ class AuthRepository {
   }
 
   Future<JsonResponse<User>> changeAvatar({
-    required Image image,
+    required File imageFile,
   }) async {
-    return _authNetwork.changeAvatar(image: image);
+    return _authNetwork.changeAvatar(imageFile: imageFile);
   }
 }

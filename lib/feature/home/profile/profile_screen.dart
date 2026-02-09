@@ -87,15 +87,27 @@ class _ProfileScreenState extends State<_ProfileView> {
                         child: CircleAvatar(
                           radius: 30,
                           backgroundColor: Colors.blue.shade700,
-                          child: Text(
-                            vm.userResult.dataOrNull?.user?.nama?.initialName() ??
-                                '-',
-                            style: TextStyle(
-                              fontSize: 24.sp,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          backgroundImage:
+                              (vm.userResult.dataOrNull?.user?.foto != null &&
+                                      vm.userResult.dataOrNull!.user!.foto!
+                                          .isNotEmpty)
+                                  ? NetworkImage(
+                                      vm.userResult.dataOrNull!.user!.foto!)
+                                  : null,
+                          child: (vm.userResult.dataOrNull?.user?.foto ==
+                                      null ||
+                                  vm.userResult.dataOrNull!.user!.foto!.isEmpty)
+                              ? Text(
+                                  vm.userResult.dataOrNull?.user?.nama
+                                          ?.initialName() ??
+                                      '-',
+                                  style: TextStyle(
+                                    fontSize: 24.sp,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -198,7 +210,8 @@ class _ProfileScreenState extends State<_ProfileView> {
                           subtitle: Text('Perbarui Informasi Profile'),
                         ),
                         ListTile(
-                          leading: Icon(Icons.lock, color: Colors.blue.shade700),
+                          leading:
+                              Icon(Icons.lock, color: Colors.blue.shade700),
                           title: Text(
                             'Ubah Password',
                             style: TextStyle(
@@ -241,17 +254,19 @@ class _ProfileScreenState extends State<_ProfileView> {
                     ).then((value) {
                       if (!context.mounted) return;
                       if (vm.logoutResult.isSuccess) {
-                        showDefaultSnackbar("Berhasil Logout",vm.logoutResult.isSuccess);
+                        showDefaultSnackbar(
+                            "Berhasil Logout", vm.logoutResult.isSuccess);
                         context.pushNamed(HomepageRoutes.login.name!);
                       } else if (vm.logoutResult.isError) {
-                        showDefaultSnackbar(vm.logoutResult.error,vm.logoutResult.isSuccess);
+                        showDefaultSnackbar(
+                            vm.logoutResult.error, vm.logoutResult.isSuccess);
                       }
                     });
                   },
                 ),
               ),
             ),
-      
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -268,7 +283,8 @@ class _ProfileScreenState extends State<_ProfileView> {
                             isLoading: vm.userResult.isLoading,
                             child: Text(
                               'User Sejak: ${vm.getUserCreatedDate()}',
-                              style: TextStyle(color: Colors.black87, fontSize: 12),
+                              style: TextStyle(
+                                  color: Colors.black87, fontSize: 12),
                             ),
                           ),
                         ],
@@ -300,7 +316,7 @@ class _ProfileScreenState extends State<_ProfileView> {
   void showDefaultSnackbar(String errorMessage, bool isSuccess) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: isSuccess ?Colors.green :Colors.red,
+        backgroundColor: isSuccess ? Colors.green : Colors.red,
         content: Text(errorMessage),
       ),
     );

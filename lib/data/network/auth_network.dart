@@ -1,5 +1,6 @@
-import 'dart:ui';
+import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:shelter_super_app/core/network/http/core_http_builder.dart';
 import 'package:shelter_super_app/core/network/response/api_response.dart';
 import 'package:shelter_super_app/core/network/response/json_response.dart';
@@ -77,13 +78,22 @@ class AuthNetwork {
   }
 
   Future<JsonResponse<User>> changeAvatar({
-    required Image image,
+    required File imageFile,
   }) async {
-    final map = <String, dynamic>{};
-    map['foto'] = image;
-    map['_method'] = 'PUT';
-    final response = await _http.shelterHttp(path: _changeAvatar).post(map);
+    final multipartFile = await http.MultipartFile.fromPath(
+      'foto',
+      imageFile.path,
+    );
 
-    return JsonResponse(response, User.fromJson);
+    final response = await _http.shelterHttp(path: _changeAvatar).postMultipart(
+      fields: {'_method': 'PUT'},
+      files: [multipartFile],
+    );
+
+    // Convert StreamedResponse to Response
+    final responseBody = await response.stream.bytesToString();
+    final httpResponse = http.Response(responseBody, response.statusCode);
+
+    return JsonResponse(httpResponse, User.fromJson);
   }
 }

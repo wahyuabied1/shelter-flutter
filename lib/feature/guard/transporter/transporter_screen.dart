@@ -114,6 +114,15 @@ class _TransporterViewState extends State<_TransporterView> {
                     //   },
                     //   theme: ThemeWidget.red,
                     // ),
+
+                    DoubleDateWidget(
+                      startDate: vm.startDate,
+                      endDate: vm.endDate,
+                      onChangeDate: (date) {
+                        vm.updateDateRange(date.start, date.end);
+                      },
+                      theme: ThemeWidget.blue,
+                    ),
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       width: double.infinity,

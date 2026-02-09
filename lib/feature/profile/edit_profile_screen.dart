@@ -237,15 +237,24 @@ class _EditProfileScreenState extends State<_EditProfileView> {
                     children: [
                       Shimmer(
                         isLoading: vm.userResult.isLoading,
-                        child: _imageFile != null
-                            ? CircleAvatar(
-                                radius: 50,
-                                backgroundImage: FileImage(_imageFile!),
-                              )
-                            : CircleAvatar(
-                                radius: 50,
-                                backgroundColor: Colors.blue.shade700,
-                                child: Text(
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.blue.shade700,
+                          backgroundImage: _imageFile != null
+                              ? FileImage(_imageFile!) as ImageProvider
+                              : (vm.userResult.dataOrNull?.user?.foto != null &&
+                                      vm.userResult.dataOrNull!.user!.foto!
+                                          .isNotEmpty
+                                  ? NetworkImage(
+                                      vm.userResult.dataOrNull!.user!.foto!,
+                                    ) as ImageProvider
+                                  : null),
+                          child: (_imageFile == null &&
+                                  (vm.userResult.dataOrNull?.user?.foto ==
+                                          null ||
+                                      vm.userResult.dataOrNull!.user!.foto!
+                                          .isEmpty))
+                              ? Text(
                                   (vm.userResult.dataOrNull?.user?.nama ?? "-")
                                       .initialName(),
                                   style: TextStyle(
@@ -253,8 +262,9 @@ class _EditProfileScreenState extends State<_EditProfileView> {
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                              ),
+                                )
+                              : null,
+                        ),
                       ),
                       CircleAvatar(
                         radius: 16,
@@ -316,7 +326,21 @@ class _EditProfileScreenState extends State<_EditProfileView> {
   Future<void> _saveProfile(EditProfileViewmodel vm) async {
     await LoadingDialog.runWithLoading(
       context,
-      () => vm.changeProfile(),
+      () async {
+        // KUNCI: Upload foto dulu jika ada foto baru yang dipilih
+        if (_imageFile != null) {
+          await vm.updatePhoto(_imageFile);
+          // Reset _imageFile setelah upload
+          if (mounted) {
+            setState(() {
+              _imageFile = null;
+            });
+          }
+        }
+
+        // Kemudian update profile data lainnya
+        await vm.changeProfile();
+      },
       width: 250,
       message: "Memproses",
     ).then((value) {
