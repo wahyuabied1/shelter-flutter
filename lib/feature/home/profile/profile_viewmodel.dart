@@ -12,11 +12,15 @@ class ProfileViewmodel extends ABaseChangeNotifier {
   Result<void> logoutResult = const Result.initial();
   Result<UserResponse?> userResult = const Result.initial();
 
+  /// Versi foto, berubah setiap getUser() agar NetworkImage fetch ulang
+  int fotoVersion = DateTime.now().millisecondsSinceEpoch;
+
   void init() {
     getUser();
   }
 
   Future<void> getUser() async {
+    fotoVersion = DateTime.now().millisecondsSinceEpoch;
     _authRepository.getUser().then((data) {
       userResult = Result.success(data);
       notifyListeners();

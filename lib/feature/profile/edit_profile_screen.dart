@@ -327,10 +327,9 @@ class _EditProfileScreenState extends State<_EditProfileView> {
     await LoadingDialog.runWithLoading(
       context,
       () async {
-        // KUNCI: Upload foto dulu jika ada foto baru yang dipilih
+        // Upload foto dulu jika ada foto baru yang dipilih
         if (_imageFile != null) {
           await vm.updatePhoto(_imageFile);
-          // Reset _imageFile setelah upload
           if (mounted) {
             setState(() {
               _imageFile = null;
@@ -340,6 +339,10 @@ class _EditProfileScreenState extends State<_EditProfileView> {
 
         // Kemudian update profile data lainnya
         await vm.changeProfile();
+
+        // Refresh session dari server untuk mendapatkan data terbaru
+        // (termasuk foto URL baru, seperti efek login ulang)
+        await vm.refreshSession();
       },
       width: 250,
       message: "Memproses",

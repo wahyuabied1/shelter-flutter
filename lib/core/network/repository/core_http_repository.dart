@@ -36,48 +36,13 @@ class CoreHttpRepository {
   }
 
   Future<void> setUser(UserResponse user)async {
-    print('💾 SET USER - Akan save:');
-    print('   token: ${user.token != null ? "ADA (${user.token!.substring(0, 20)}...)" : "NULL"}');
-    print('   user.id: ${user.user?.id}');
-    print('   user.nama: ${user.user?.nama}');
-    print('   user.email: ${user.user?.email}');
-    print('   menus: ${user.menus != null ? "ADA" : "NULL"}');
-
-    final serialized = UserResponse.serialize(user);
-    print('   📦 Serialized length: ${serialized.length} chars');
-
     setToken(user.token ?? "");
-    await secureStorage.setString(userKey, serialized);
-
-    print('   ✅ SET USER SELESAI');
+    await secureStorage.setString(userKey, UserResponse.serialize(user));
   }
 
   Future<UserResponse> getUser() async{
-    print('📖 GET USER - Membaca dari storage...');
     var json = await secureStorage.getString(userKey);
-
-    // ✅ Handle empty string from storage
-    if (json.isEmpty) {
-      print('⚠️ WARNING: User data is EMPTY in storage!');
-      return UserResponse(); // Return empty UserResponse instead of crash
-    }
-
-    print('   📦 JSON length dari storage: ${json.length} chars');
-
-    try {
-      final userResponse = UserResponse.deserialize(json);
-      print('   ✅ Deserialization berhasil:');
-      print('      token: ${userResponse.token != null ? "ADA" : "NULL"}');
-      print('      user.id: ${userResponse.user?.id}');
-      print('      user.nama: ${userResponse.user?.nama}');
-      print('      user.email: ${userResponse.user?.email}');
-      print('      menus: ${userResponse.menus != null ? "ADA" : "NULL"}');
-      return userResponse;
-    } catch (e) {
-      print('❌ ERROR deserializing user: $e');
-      print('JSON from storage: ${json.substring(0, json.length > 200 ? 200 : json.length)}...');
-      return UserResponse(); // Return empty UserResponse on error
-    }
+    return UserResponse.deserialize(json);
   }
 
   // can be empty

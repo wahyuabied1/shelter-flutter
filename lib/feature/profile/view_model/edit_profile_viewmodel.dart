@@ -28,61 +28,16 @@ class EditProfileViewmodel extends ABaseChangeNotifier {
     });
   }
 
-  /// Upload foto ke server dan update local storage
+  /// Upload foto ke server
   Future<bool> updatePhoto(File? imageFile) async {
     if (imageFile == null) return false;
 
-    // Upload foto baru ke server
-    return Result.callApi<User>(
-      future: _authRepository.changeAvatar(
-        imageFile: imageFile,
-      ),
-      onResult: (result) async {
-        if (result.isSuccess) {
-          // KUNCI: Ambil current session
-          final currentSession = userResult.dataOrNull;
-          final updatedUserWithNewPhoto = result.dataOrNull;
-
-          print('🔍 DEBUG UPDATE PHOTO:');
-          print('  API Response - updatedUserWithNewPhoto:');
-          print('     id: ${updatedUserWithNewPhoto?.id}');
-          print('     nama: ${updatedUserWithNewPhoto?.nama}');
-          print('     email: ${updatedUserWithNewPhoto?.email}');
-          print('     foto: ${updatedUserWithNewPhoto?.foto}');
-          print('  currentSession: ${currentSession != null ? "ADA" : "NULL"}');
-          print('  token: ${currentSession?.token ?? "NULL"}');
-          print('  updatedUserWithNewPhoto: ${updatedUserWithNewPhoto != null ? "ADA" : "NULL"}');
-
-          // Update session dengan user baru, KEEP token dan menus lama
-          if (currentSession != null &&
-              updatedUserWithNewPhoto != null &&
-              currentSession.token != null &&  // ✅ Pastikan token ada
-              currentSession.token!.isNotEmpty) {
-
-            // Create UserResponse baru dengan token & menus lama, user baru
-            final updatedSession = UserResponse(
-              token: currentSession.token,  // ✅ KEEP token lama
-              user: updatedUserWithNewPhoto,  // ✅ User baru dari response
-              menus: currentSession.menus,  // ✅ KEEP menus lama
-            );
-
-            print('  ✅ AKAN SAVE SESSION dengan token: ${updatedSession.token}');
-            await _authRepository.saveSession(user: updatedSession);
-            print('  ✅ SAVE SESSION SELESAI');
-
-            // Refresh user data dari local storage (sudah diupdate)
-            await getUser();
-            print('  ✅ GET USER SELESAI - userResult: ${userResult.dataOrNull?.user?.nama}');
-          } else {
-            print('  ❌ SKIP SAVE SESSION - Validation gagal!');
-            print('     currentSession null? ${currentSession == null}');
-            print('     updatedUser null? ${updatedUserWithNewPhoto == null}');
-            print('     token null/empty? ${currentSession?.token == null || currentSession!.token!.isEmpty}');
-          }
-        }
-        notifyListeners();
-      },
-    );
+    try {
+      final response = await _authRepository.changeAvatar(imageFile: imageFile);
+      return response.statusCode >= 200 && response.statusCode < 300;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<bool> changeProfile() {
@@ -91,50 +46,15 @@ class EditProfileViewmodel extends ABaseChangeNotifier {
         future: _authRepository.changeProfile(
           user: updatedUser!,
         ),
-        onResult: (result) async {
+        onResult: (result) {
           if (result.isSuccess) {
             updateResult = Result.success(updateResult.dataOrNull);
-
-            // KUNCI: Ambil current session
-            final currentSession = userResult.dataOrNull;
-            final updatedUserFromServer = result.dataOrNull;
-
-            print('🔍 DEBUG CHANGE PROFILE:');
-            print('  API Response - updatedUserFromServer:');
-            print('     id: ${updatedUserFromServer?.id}');
-            print('     nama: ${updatedUserFromServer?.nama}');
-            print('     email: ${updatedUserFromServer?.email}');
-            print('     foto: ${updatedUserFromServer?.foto}');
-            print('  currentSession: ${currentSession != null ? "ADA" : "NULL"}');
-            print('  token: ${currentSession?.token ?? "NULL"}');
-            print('  updatedUserFromServer: ${updatedUserFromServer != null ? "ADA" : "NULL"}');
-
-            // Update session dengan user baru, KEEP token dan menus lama
-            if (currentSession != null &&
-                updatedUserFromServer != null &&
-                currentSession.token != null &&  // ✅ Pastikan token ada
-                currentSession.token!.isNotEmpty) {
-
-              // Create UserResponse baru dengan token & menus lama, user baru
-              final updatedSession = UserResponse(
-                token: currentSession.token,  // ✅ KEEP token lama
-                user: updatedUserFromServer,  // ✅ User baru dari response
-                menus: currentSession.menus,  // ✅ KEEP menus lama
-              );
-
-              print('  ✅ AKAN SAVE SESSION dengan token: ${updatedSession.token}');
-              await _authRepository.saveSession(user: updatedSession);
-              print('  ✅ SAVE SESSION SELESAI');
-
-              // Refresh user data dari local storage (sudah diupdate)
-              await getUser();
-              print('  ✅ GET USER SELESAI - userResult: ${userResult.dataOrNull?.user?.nama}');
-            } else {
-              print('  ❌ SKIP SAVE SESSION - Validation gagal!');
-              print('     currentSession null? ${currentSession == null}');
-              print('     updatedUser null? ${updatedUserFromServer == null}');
-              print('     token null/empty? ${currentSession?.token == null || currentSession!.token!.isEmpty}');
-            }
+            // Save session dengan updatedUser (data lokal yang lengkap)
+            // BUKAN result.dataOrNull (API response yang bisa incomplete)
+            _authRepository.saveSession(
+              user: userResult.dataOrNull?.copyWith(user: updatedUser),
+            );
+            getUser();
           } else if (result.isError) {
             updateResult = Result.error(result.error);
           }
@@ -159,5 +79,17 @@ class EditProfileViewmodel extends ABaseChangeNotifier {
 
   void onChangeAddress(String address) {
     updatedUser = updatedUser?.copyWith(alamat: address);
+  }
+
+  /// Refresh session dari server (seperti login ulang tapi tanpa logout)
+  /// Untuk mendapatkan data terbaru termasuk foto URL baru
+  Future<void> refreshSession() async {
+    try {
+      final response = await _authRepository.refreshToken();
+      if (response.data != null) {
+        await _authRepository.saveSession(user: response.data);
+        await getUser();
+      }
+    } catch (_) {}
   }
 }

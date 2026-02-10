@@ -92,7 +92,7 @@ class _ProfileScreenState extends State<_ProfileView> {
                                       vm.userResult.dataOrNull!.user!.foto!
                                           .isNotEmpty)
                                   ? NetworkImage(
-                                      vm.userResult.dataOrNull!.user!.foto!)
+                                      '${vm.userResult.dataOrNull!.user!.foto!.split('?').first}?v=${vm.fotoVersion}')
                                   : null,
                           child: (vm.userResult.dataOrNull?.user?.foto ==
                                       null ||
