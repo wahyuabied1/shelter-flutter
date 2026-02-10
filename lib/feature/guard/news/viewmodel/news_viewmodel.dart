@@ -96,14 +96,9 @@ class NewsViewmodel extends ABaseChangeNotifier {
     );
   }
 
-  void updateStartDate(DateTime date) {
-    startDate = date;
-    notifyListeners();
-    loadInitial();
-  }
-
-  void updateEndDate(DateTime date) {
-    endDate = date;
+ void updateDateRange(DateTime start, DateTime end) {
+    startDate = start;
+    endDate = end;
     notifyListeners();
     loadInitial();
   }

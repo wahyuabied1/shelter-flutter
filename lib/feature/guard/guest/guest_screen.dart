@@ -101,87 +101,82 @@ class _GuestViewState extends State<_GuestView> {
             slivers: [
               // Header Section (Filters, Search, etc)
               SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // DoubleDateWidget(
-                  //   endDate: vm.endDate.ddMMyyyy('/'),
-                  //   startDate: vm.startDate.ddMMyyyy('/'),
-                  //   onChangeDate: (date) {
-                  //     final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                  //     vm.updateStartDate(parsed);
-                  //   },
-                  //   onChangeEndDate: (date) {
-                  //     final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                  //     vm.updateEndDate(parsed);
-                  //   },
-                  //   theme: ThemeWidget.red,
-                  // ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        // TODO: Export to Excel
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DoubleDateWidget(
+                      startDate: vm.startDate,
+                      endDate: vm.endDate,
+                      onChangeDate: (date) {
+                        vm.updateDateRange(date.start, date.end);
                       },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.red.shade700,
-                        side: const BorderSide(color: Colors.red, width: 1.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
+                      theme: ThemeWidget.blue,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          // TODO: Export to Excel
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.red.shade700,
+                          side: const BorderSide(color: Colors.red, width: 1.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Export ke Excel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Colors.red.shade700,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Export ke Excel',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Colors.red.shade700,
-                            ),
-                          ),
+                          _buildShiftFilter(vm),
+                          const SizedBox(width: 12),
+                          _buildPetugasFilter(vm),
                         ],
                       ),
                     ),
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildShiftFilter(vm),
-                        const SizedBox(width: 12),
-                        _buildPetugasFilter(vm),
-                      ],
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      child: SearchWidget(
+                        hint: 'Cari Nama Tamu',
+                        onSearch: (search) => vm.updateSearchQuery(search),
+                        theme: ThemeWidget.red,
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 12),
-                    child: SearchWidget(
-                      hint: 'Cari Nama Tamu',
-                      onSearch: (search) => vm.updateSearchQuery(search),
-                      theme: ThemeWidget.red,
-                    ),
-                  ),
-                  if (vm.isLoading)
-                    const LoadingLineShimmer()
-                  else
-                    Text(
-                      vm.totalDataText,
-                      style:
-                          const TextStyle(color: Colors.black54, fontSize: 12),
-                    ),
-                  const SizedBox(height: 8),
-                ],
+                    if (vm.isLoading)
+                      const LoadingLineShimmer()
+                    else
+                      Text(
+                        vm.totalDataText,
+                        style: const TextStyle(
+                            color: Colors.black54, fontSize: 12),
+                      ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
-            ),
 
-            // Content Section
-            _buildContent(vm),
-          ],
-        ),
+              // Content Section
+              _buildContent(vm),
+            ],
+          ),
         ),
       ),
     );

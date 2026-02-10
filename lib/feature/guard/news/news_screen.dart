@@ -99,19 +99,15 @@ class _NewsViewState extends State<_NewsView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // DoubleDateWidget(
-                    //   endDate: vm.endDate.ddMMyyyy('/'),
-                    //   startDate: vm.startDate.ddMMyyyy('/'),
-                    //   onChangeDate: (date) {
-                    //     final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                    //     vm.updateStartDate(parsed);
-                    //   },
-                    //   onChangeEndDate: (date) {
-                    //     final parsed = DateFormat('dd/MM/yyyy').parse(date);
-                    //     vm.updateEndDate(parsed);
-                    //   },
-                    //   theme: ThemeWidget.red,
-                    // ),
+                    
+                    DoubleDateWidget(
+                      startDate: vm.startDate,
+                      endDate: vm.endDate,
+                      onChangeDate: (date) {
+                        vm.updateDateRange(date.start, date.end);
+                      },
+                      theme: ThemeWidget.blue,
+                    ),
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       width: double.infinity,
