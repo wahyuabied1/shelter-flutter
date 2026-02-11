@@ -81,16 +81,17 @@ class _LoginViewState extends State<_LoginView> {
                             ),
                             SizedBox(height: 12.h),
                             const Center(
-                              child: Text('Masukkan Email dan Password untuk Login'),
+                              child: Text(
+                                  'Masukkan Email dan Password untuk Login'),
                             ),
                             SizedBox(height: 48.h),
                             TextField(
                               controller: emailController,
-                              cursorColor:Colors.blue[800],
-
+                              cursorColor: Colors.blue[800],
                               decoration: InputDecoration(
                                 labelText: 'Email',
-                                labelStyle: const TextStyle(color: Colors.black54),
+                                labelStyle:
+                                    const TextStyle(color: Colors.black54),
                                 border: const OutlineInputBorder(),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4.0),
@@ -98,7 +99,8 @@ class _LoginViewState extends State<_LoginView> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: BorderSide(color: Colors.blue.shade700),
+                                  borderSide:
+                                      BorderSide(color: Colors.blue.shade700),
                                 ),
                               ),
                               keyboardType: TextInputType.emailAddress,
@@ -107,8 +109,7 @@ class _LoginViewState extends State<_LoginView> {
                             TextField(
                               controller: passwordController,
                               obscureText: !_isPasswordVisible,
-                              cursorColor:Colors.blue[800],
-
+                              cursorColor: Colors.blue[800],
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(),
                                 enabledBorder: OutlineInputBorder(
@@ -117,10 +118,12 @@ class _LoginViewState extends State<_LoginView> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: BorderSide(color: Colors.blue.shade700),
+                                  borderSide:
+                                      BorderSide(color: Colors.blue.shade700),
                                 ),
                                 labelText: 'Password',
-                                labelStyle: const TextStyle(color: Colors.black54),
+                                labelStyle:
+                                    const TextStyle(color: Colors.black54),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _isPasswordVisible
@@ -171,7 +174,8 @@ class _LoginViewState extends State<_LoginView> {
                                         style: TextStyle(color: Colors.blue),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
-                                          context.pushNamed(HomepageRoutes.resetPass.name!);
+                                            context.pushNamed(
+                                                HomepageRoutes.resetPass.name!);
                                           }),
                                   ],
                                 ),

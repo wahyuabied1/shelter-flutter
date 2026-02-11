@@ -54,12 +54,14 @@ class _MainHomeState extends State<_MainHomeView> {
   EnableListFeature? enableFeature;
 
   @override
-  initState(){
+  initState() {
     super.initState();
     _remoteConfig.streamString(promotion).listen((value) {
       setState(() {
         List<dynamic> jsonList = jsonDecode(value);
-        listData = jsonList.map((json) => PromotionResponse.fromJson(json)).toList();  // your variable
+        listData = jsonList
+            .map((json) => PromotionResponse.fromJson(json))
+            .toList(); // your variable
       });
     });
 
@@ -68,7 +70,6 @@ class _MainHomeState extends State<_MainHomeView> {
         enableFeature = EnableListFeature.fromJson(jsonDecode(value));
       });
     });
-
   }
 
   @override
@@ -134,7 +135,8 @@ class _MainHomeState extends State<_MainHomeView> {
                 children: [
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      (vm.userResult.dataOrNull?.menus?.hadirKu ?? false) && (enableFeature?.hadirqu ?? false),
+                      (vm.userResult.dataOrNull?.menus?.hadirKu ?? false) &&
+                          (enableFeature?.hadirqu ?? false),
                       AppAssets.icIconHadirqu,
                       'HadirQu',
                       '(Kehadiran)', () {
@@ -142,7 +144,8 @@ class _MainHomeState extends State<_MainHomeView> {
                   }),
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      (vm.userResult.dataOrNull?.menus?.cleaningQu ?? false)  && (enableFeature?.cleaningqu ?? false),
+                      (vm.userResult.dataOrNull?.menus?.cleaningQu ?? false) &&
+                          (enableFeature?.cleaningqu ?? false),
                       AppAssets.icIconCleaningqu,
                       'CleaningQu',
                       '(Kebersihan)', () {
@@ -150,7 +153,8 @@ class _MainHomeState extends State<_MainHomeView> {
                   }),
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      (vm.userResult.dataOrNull?.menus?.issueQu ?? false) && (enableFeature?.issuequ ?? false),
+                      (vm.userResult.dataOrNull?.menus?.issueQu ?? false) &&
+                          (enableFeature?.issuequ ?? false),
                       AppAssets.icIconIssuequ,
                       'IssueQu',
                       '(Keluhan)', () {
@@ -158,7 +162,8 @@ class _MainHomeState extends State<_MainHomeView> {
                   }),
                   _buildQuickActionButton(
                       vm.userResult.isLoading,
-                      (vm.userResult.dataOrNull?.menus?.poskoPatrol ?? false) && (enableFeature?.guard ?? false),
+                      (vm.userResult.dataOrNull?.menus?.poskoPatrol ?? false) &&
+                          (enableFeature?.guard ?? false),
                       AppAssets.icIconGuard,
                       'Guard',
                       '(Keamanan)', () {
